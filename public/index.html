@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reverse DCF | Torghatten Capital</title>
+<meta name="description" content="Work backwards from today's share price to the growth it already assumes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Instrument+Sans:wght@400..600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF2F1; --surface:#FFFFFF; --ink:#10262E; --muted:#566B72; --line:#D2DCDB;
+  --accent:#0B6E6E; --accent-soft:#CFE5E3; --mark:#A65F08; --neg:#8C9AA0;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0C1D23; --surface:#132A32; --ink:#E7EFEE; --muted:#93A7AC; --line:#274049;
+    --accent:#56C2BA; --accent-soft:#1D4A4C; --mark:#F0B24A; --neg:#5E747B;}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);font-variant-numeric:tabular-nums}
+main{max-width:720px;margin:0 auto;padding:20px 16px 64px}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.15;margin:0;letter-spacing:-.01em}
+p{margin:0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.brand{font-family:var(--display);font-weight:600;font-size:15px;color:var(--ink);text-decoration:none}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;padding:4px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+.intro h1{font-size:clamp(30px,8vw,46px);max-width:14ch}
+.intro p{color:var(--muted);margin-top:12px;max-width:52ch}
+.intro.compact h1{font-size:20px;max-width:none}
+.intro.compact p{display:none}
+
+.search{position:relative;margin-top:20px}
+.search input{width:100%;padding:14px 16px;border:1.5px solid var(--ink);border-radius:10px;background:var(--surface);font-size:17px}
+.search input::placeholder{color:var(--muted)}
+.suggest{position:absolute;z-index:5;left:0;right:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:0;padding:4px;list-style:none;box-shadow:0 12px 28px rgba(16,38,46,.16)}
+.suggest li{padding:10px 12px;border-radius:7px;cursor:pointer;display:flex;justify-content:space-between;gap:12px}
+.suggest li[aria-selected="true"],.suggest li:hover{background:var(--accent-soft)}
+.suggest .sym{font-weight:600}
+.suggest .ex{color:var(--muted);font-size:13px;white-space:nowrap}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center;font-size:14px;color:var(--muted)}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;cursor:pointer;font-size:14px}
+.chip:hover{border-color:var(--ink)}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer;font-size:14px}
+.notice{margin-top:14px;padding:12px 14px;border-left:3px solid var(--mark);background:var(--surface);border-radius:0 8px 8px 0;font-size:14px}
+.status{margin-top:16px;color:var(--muted);font-size:14px}
+
+.company{margin-top:32px;padding-top:20px;border-top:1.5px solid var(--ink)}
+.company h2{font-size:24px}
+.company .sub{color:var(--muted);font-size:14px;margin-top:2px}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 20px;margin-top:18px}
+@media(min-width:560px){.facts{grid-template-columns:repeat(4,1fr)}}
+.fact dt{font-size:13px;color:var(--muted)}
+.fact dd{margin:2px 0 0;font-family:var(--display);font-size:20px;font-weight:600}
+.fact input{width:100%;border:0;border-bottom:1.5px dashed var(--muted);background:transparent;font-family:var(--display);font-size:20px;font-weight:600;padding:0 0 1px;border-radius:0}
+.fact small{display:block;font-size:12px;color:var(--muted);font-family:var(--body);font-weight:400}
+
+.answer{margin-top:36px}
+.answer .lead{font-family:var(--display);font-size:19px;font-weight:500}
+.answer .big{font-family:var(--display);font-weight:700;font-size:clamp(56px,19vw,104px);line-height:.95;letter-spacing:-.035em;color:var(--mark);margin:6px 0 8px}
+.answer .big small{font-size:.3em;letter-spacing:-.01em;font-weight:600;color:var(--ink);margin-left:.25em}
+.answer .tail{font-size:17px;max-width:46ch}
+.answer .need{margin-top:10px;color:var(--muted);font-size:15px;max-width:54ch}
+
+.ruler{position:relative;margin-top:30px;height:150px}
+.ruler .axis{position:absolute;left:0;right:0;top:54px;height:2px;background:var(--ink)}
+.ruler .tick{position:absolute;top:56px;width:1px;height:6px;background:var(--muted)}
+.ruler .ticklab{position:absolute;top:64px;transform:translateX(-50%);font-size:11px;color:var(--muted)}
+.ruler .pin{position:absolute;transform:translateX(-50%)}
+.ruler .pin.implied{top:0;text-align:center;white-space:nowrap}
+.ruler .pin.implied b{display:block;font-family:var(--display);font-size:14px;font-weight:600}
+.ruler .pin.implied i{display:block;width:14px;height:14px;background:var(--mark);transform:rotate(45deg);margin:22px auto 0;border:2px solid var(--bg)}
+.ruler .dot{position:absolute;top:49px;width:12px;height:12px;border-radius:50%;transform:translateX(-50%);border:2px solid var(--bg);background:var(--accent)}
+.ruler .dot.hist{background:var(--ink);border-radius:2px}
+.ruler .lab{position:absolute;font-size:12.5px;white-space:nowrap;padding:0 2px}
+.ruler .lab::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:5px}
+.ruler .lab.hist::before{background:var(--ink);border-radius:1px}
+.ruler .stem{position:absolute;width:1px;background:var(--line);top:61px}
+
+section.block{margin-top:44px}
+section.block>h3{font-size:19px;margin-bottom:4px}
+section.block>.hint{color:var(--muted);font-size:14px;margin-bottom:16px;max-width:60ch}
+
+.controls{display:grid;gap:18px}
+@media(min-width:560px){.controls{grid-template-columns:1fr 1fr;gap:20px 32px}}
+.ctl label{display:flex;justify-content:space-between;font-size:14px}
+.ctl output{font-weight:600;font-family:var(--display);font-size:16px}
+.ctl input[type=range]{width:100%;accent-color:var(--accent);margin:8px 0 0;height:24px}
+.ctl .note{font-size:12.5px;color:var(--muted);margin-top:2px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-top:18px}
+.check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--accent);flex:none}
+.check span small{display:block;color:var(--muted);font-size:12.5px}
+
+.chartwrap{position:relative;background:var(--surface);border-radius:12px;padding:14px 10px 6px}
+.chartwrap svg{display:block;width:100%}
+.chartwrap text{font-family:var(--body);fill:var(--muted);font-size:11px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-100%);z-index:3}
+.record{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:16px}
+details{margin-top:10px;font-size:14px}
+summary{cursor:pointer;color:var(--accent)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;padding-left:0}
+th{font-weight:500;color:var(--muted);font-size:12.5px}
+td input{width:56px;text-align:right;border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:5px 6px}
+tr.priced td{font-weight:600}
+tr.priced td:first-child::before,.key::before{content:"";display:inline-block;width:8px;height:8px;background:var(--mark);transform:rotate(45deg);margin-right:7px}
+td.ret{font-family:var(--display);font-weight:600;font-size:16px}
+#scen th{white-space:normal;vertical-align:bottom}
+@media(max-width:480px){#scen{font-size:13px}#scen th,#scen td{padding:8px 4px}#scen td input{width:44px;padding:5px 4px}td.ret{font-size:14px}}
+
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:500}
+.btn.ghost{background:transparent;color:var(--ink)}
+.summary{margin-top:14px;padding:14px 16px;background:var(--surface);border-radius:12px;font-size:15px;white-space:pre-wrap}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+footer p+p{margin-top:8px}
+footer a{color:inherit}
+@media (prefers-reduced-motion:no-preference){.answer .big{transition:color .2s}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <a class="brand" id="brand" href="#">Torghatten Capital</a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="no" aria-pressed="false">NO</button>
+    </div>
+  </div>
+
+  <header class="intro" id="intro">
+    <h1 data-i18n="h1"></h1>
+    <p data-i18n="introP"></p>
+  </header>
+
+  <div class="search">
+    <input id="q" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list">
+    <ul class="suggest" id="suggest" role="listbox" hidden></ul>
+  </div>
+  <div class="quick">
+    <span data-i18n="try"></span>
+    <button class="chip" type="button" data-sym="CSU.TO">CSU.TO</button>
+    <button class="chip" type="button" data-sym="MSFT">MSFT</button>
+    <button class="chip" type="button" data-sym="KOG.OL">KOG.OL</button>
+    <button class="linkbtn" type="button" id="manualBtn" data-i18n="manual"></button>
+  </div>
+  <div class="notice" id="notice" hidden></div>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+
+  <div id="result" hidden>
+    <section class="company">
+      <h2 id="cName"></h2>
+      <div class="sub" id="cSub"></div>
+      <dl class="facts">
+        <div class="fact"><dt><label for="inPrice" data-i18n="price"></label></dt><dd><input id="inPrice" inputmode="decimal"><small id="priceNote"></small></dd></div>
+        <div class="fact"><dt><label for="inF0" data-i18n="fcfps"></label></dt><dd><input id="inF0" inputmode="decimal"><small id="f0Note"></small></dd></div>
+        <div class="fact"><dt data-i18n="multiple"></dt><dd id="fMult"></dd></div>
+        <div class="fact"><dt data-i18n="yield"></dt><dd id="fYield"></dd></div>
+      </dl>
+      <div class="notice" id="warn" hidden></div>
+    </section>
+
+    <section class="answer" id="answer" aria-live="polite">
+      <p class="lead" id="aLead"></p>
+      <p class="big" id="aBig"></p>
+      <p class="tail" id="aTail"></p>
+      <p class="need" id="aNeed"></p>
+      <div class="ruler" id="ruler" aria-hidden="true"></div>
+    </section>
+
+    <section class="block">
+      <h3 data-i18n="assumeH"></h3>
+      <p class="hint" data-i18n="assumeP"></p>
+      <div class="controls">
+        <div class="ctl"><label for="rR"><span data-i18n="cReturn"></span><output id="oR"></output></label><input id="rR" type="range" min="4" max="20" step="0.5"></div>
+        <div class="ctl"><label for="rM"><span id="cMultLab"></span><output id="oM"></output></label><input id="rM" type="range" min="5" max="50" step="1"><div class="note" id="mNote"></div></div>
+        <div class="ctl"><label for="rN"><span data-i18n="cYears"></span><output id="oN"></output></label><input id="rN" type="range" min="3" max="15" step="1"></div>
+        <div class="ctl"><label for="rD"><span data-i18n="cPayout"></span><output id="oD"></output></label><input id="rD" type="range" min="0" max="100" step="5"><div class="note" data-i18n="cPayoutNote"></div></div>
+      </div>
+      <label class="check" id="sbcWrap"><input type="checkbox" id="cSbc"><span><span data-i18n="sbc"></span><small id="sbcNote"></small></span></label>
+    </section>
+
+    <section class="block" id="histBlock">
+      <h3 data-i18n="histH"></h3>
+      <p class="hint" id="histP"></p>
+      <dl class="record">
+        <div class="fact"><dt id="hCagrLab"></dt><dd id="hCagr"></dd></div>
+        <div class="fact"><dt data-i18n="hRange"></dt><dd id="hRange"></dd></div>
+      </dl>
+      <div class="chartwrap" id="chartwrap"><svg id="chart" role="img"></svg><div class="tip" id="tip" hidden></div></div>
+      <details><summary data-i18n="showTable"></summary><div class="scroll"><table id="histTable"></table></div></details>
+    </section>
+
+    <section class="block">
+      <h3 data-i18n="scenH"></h3>
+      <p class="hint" data-i18n="scenP"></p>
+      <div class="scroll"><table id="scen">
+        <thead><tr><th></th><th data-i18n="sGrowth"></th><th data-i18n="sMult"></th><th data-i18n="sRet"></th><th id="sPriceH"></th></tr></thead>
+        <tbody>
+          <tr data-s="bear"><td data-i18n="bear"></td><td><input inputmode="decimal" data-k="g" aria-label="Bear growth %"></td><td><input inputmode="decimal" data-k="m" aria-label="Bear multiple"></td><td class="ret"></td><td class="px"></td></tr>
+          <tr class="priced"><td data-i18n="pricedIn"></td><td id="pG"></td><td id="pM"></td><td class="ret" id="pR"></td><td id="pP"></td></tr>
+          <tr data-s="base"><td data-i18n="base"></td><td><input inputmode="decimal" data-k="g" aria-label="Base growth %"></td><td><input inputmode="decimal" data-k="m" aria-label="Base multiple"></td><td class="ret"></td><td class="px"></td></tr>
+          <tr data-s="bull"><td data-i18n="bull"></td><td><input inputmode="decimal" data-k="g" aria-label="Bull growth %"></td><td><input inputmode="decimal" data-k="m" aria-label="Bull multiple"></td><td class="ret"></td><td class="px"></td></tr>
+        </tbody>
+      </table></div>
+      <div class="actions">
+        <button class="btn" type="button" id="copySum" data-i18n="copySum"></button>
+        <button class="btn ghost" type="button" id="copyLink" data-i18n="copyLink"></button>
+      </div>
+      <div class="summary" id="summary"></div>
+    </section>
+
+    <section class="block">
+      <h3 data-i18n="howH"></h3>
+      <p class="hint" data-i18n="howP" style="max-width:64ch"></p>
+    </section>
+  </div>
+
+  <footer>
+    <p data-i18n="foot1"></p>
+    <p data-i18n="foot2"></p>
+    <p id="footLink" hidden></p>
+  </footer>
+</main>
+
+<script id="model">
+// ---- Valuation model (pure functions; unit-tested in test/run.js) ------------
+// Value today = dividends paid along the way + the price in year N, discounted
+// at the return you require. Buybacks are not a cash flow here: they show up as
+// faster growth per share.
+function presentValue(f0, g, r, m, n, payout) {
+  let v = 0, f = f0;
+  for (let t = 1; t <= n; t++) { f *= 1 + g; v += (payout * f) / Math.pow(1 + r, t); }
+  return v + (f * m) / Math.pow(1 + r, n);
+}
+function bisect(fn, lo, hi) {
+  let flo = fn(lo), fhi = fn(hi);
+  if (!isFinite(flo) || !isFinite(fhi) || flo * fhi > 0) return null;
+  for (let i = 0; i < 80; i++) {
+    const mid = (lo + hi) / 2, fm = fn(mid);
+    if (flo * fm <= 0) { hi = mid; } else { lo = mid; flo = fm; }
+  }
+  return (lo + hi) / 2;
+}
+// Growth in FCF per share that makes the value equal today's price.
+function impliedGrowth(price, f0, r, m, n, payout) {
+  if (!(price > 0) || !(f0 > 0) || !(m > 0)) return null;
+  return bisect((g) => presentValue(f0, g, r, m, n, payout) - price, -0.6, 2);
+}
+// Annual return if you pay today's price and the scenario plays out.
+function scenarioReturn(price, f0, g, m, n, payout) {
+  if (!(price > 0) || !(f0 > 0) || !(m > 0)) return null;
+  return bisect((r) => presentValue(f0, g, r, m, n, payout) - price, -0.9, 5);
+}
+function futurePrice(f0, g, m, n) { return f0 * Math.pow(1 + g, n) * m; }
+function cagr(a, b, years) { return a > 0 && b > 0 && years > 0 ? Math.pow(b / a, 1 / years) - 1 : null; }
+if (typeof module !== "undefined") module.exports = { presentValue, impliedGrowth, scenarioReturn, futurePrice, cagr };
+</script>
+
+<script>
+// Set this to your Substack address to show a link in the footer.
+const SUBSTACK_URL = "https://substack.com/@torghattencapital";
+
+const I18N = {
+en: {
+  h1: "What does the price already assume?",
+  introP: "Instead of guessing what a company is worth, work backwards from today's share price to the growth it takes for granted. Then decide if you believe it.",
+  ph: "Company name or ticker, for example CSU.TO",
+  try: "Try", manual: "Enter the numbers yourself",
+  searching: "Searching…", loading: "Fetching price and cash flow history for {s}…", nohits: "No listed company matches “{q}”.",
+  apiDown: "Live lookup isn't reachable right now. Enter the numbers yourself, or open the Constellation Software example.",
+  openExample: "Open the example",
+  notFound: "No data found for {s}. Check the ticker, including the exchange suffix (for example .TO or .OL).",
+  price: "Share price", fcfps: "Free cash flow per share", multiple: "Price to free cash flow", yield: "Free cash flow yield",
+  priceAsOf: "as of {d}", edited: "edited", ttm: "last 12 months to {d}", lastFy: "fiscal year to {d}", yourNumber: "your number",
+  converted: "{fin} converted to {cur} at {fx}",
+  lead: "{price} a share already assumes",
+  perYear: "a year",
+  tail: "growth in free cash flow per share for {n} years, if you want {r} a year and the stock trades at {m} free cash flow in {y}.",
+  needReinvest: "The company keeps about {k} of its cash flow. To grow that fast on retained cash alone, each unit reinvested has to earn roughly {roi} a year.",
+  needAll: "All cash flow is paid out, so the growth has to come from pricing and volume alone.",
+  negF: "Free cash flow per share is zero or negative, so the price can't be explained by current cash flow. Enter a normalised figure for free cash flow per share to continue.",
+  negG: "The price assumes cash flow per share shrinks. That is {g} a year for {n} years.",
+  assumeH: "Your assumptions", assumeP: "Three numbers drive the answer. Move them and everything below updates.",
+  cReturn: "Return you require", cMult: "Price to free cash flow in {y}", cYears: "Years", cPayout: "Share of cash flow paid as dividends",
+  cPayoutNote: "Buybacks count as growth per share, not as payout.",
+  mNote: "Today {now}. Range since {from}: {lo} to {hi}.", mNoteShort: "Today {now}.",
+  sbc: "Subtract stock-based compensation", sbcNote: "{v} over the last 12 months, {p} of free cash flow.",
+  histH: "Track record", histP: "Free cash flow per share by fiscal year, in {cur}.",
+  hCagr: "Growth per year, {a} to {b}", hCagrNone: "Growth per year", hRange: "Price to free cash flow range", na: "n/a",
+  showTable: "Show the numbers", tYear: "Fiscal year", tFcf: "Free cash flow", tShares: "Shares", tPs: "Per share", tPx: "Year-end price", tMult: "P/FCF",
+  scenH: "Scenarios", scenP: "What you earn per year from today's price if growth and the ending multiple turn out differently. Edit any number.",
+  sGrowth: "Growth", sMult: "Multiple", sRet: "Return a year", sPrice: "Price in {y}",
+  bear: "Bear", base: "Base", bull: "Bull", pricedIn: "Priced in", history: "History",
+  copySum: "Copy summary", copyLink: "Copy link", copied: "Copied",
+  howH: "How it works",
+  howP: "The value of a share today is the dividends you collect plus the price you can sell at later, discounted at the return you require. The tool sets that value equal to today's price and solves for the growth in free cash flow per share that makes it true. Free cash flow is cash from operations minus capital expenditure. Acquisition spending is not deducted, so for serial acquirers the implied growth includes growth bought with that cash.",
+  foot1: "Prices and financials: Yahoo Finance. Older US history: SEC EDGAR filings. Data can be late or wrong, so check the numbers against the company's reports.",
+  foot2: "This is a calculator, not investment advice.",
+  sumA: "${sym} reverse DCF. At {price} the stock trades at {mult} free cash flow, a {yld} yield.",
+  sumB: "Priced in: if you want {r} a year and assume {m} in {y}, the price implies {g} growth in free cash flow per share for {n} years.",
+  sumC: "Track record: free cash flow per share grew {h} a year from {a} to {b}.",
+  sumD: "Scenarios: bear, {bg} growth and {bm}: {br} a year. Base, {sg} and {sm}: {sr}. Bull, {ug} and {um}: {ur}.",
+  sumE: "Price in {y}: bear {bp}, priced in {pp}, base {sp}, bull {up}, against {price} today.",
+  wFx: "Exchange rate unavailable. Free cash flow per share is shown in {fin}; adjust it to {cur} yourself.",
+  wNoFund: "Price found, but no cash flow data. Enter free cash flow per share yourself.",
+  wFy: "No trailing figures available, so the latest fiscal year is used.",
+  exampleNote: "Figures from the Torghatten Capital write-up on Constellation Software.",
+  manualName: "Your own numbers",
+},
+no: {
+  h1: "Hva forutsetter kursen allerede?",
+  introP: "I stedet for å gjette hva et selskap er verdt, kan du regne baklengs fra dagens kurs til veksten markedet tar for gitt. Så avgjør du om du tror på den.",
+  ph: "Selskapsnavn eller ticker, for eksempel CSU.TO",
+  try: "Prøv", manual: "Legg inn tallene selv",
+  searching: "Søker …", loading: "Henter kurs og kontantstrømhistorikk for {s} …", nohits: "Fant ingen børsnoterte selskaper for «{q}».",
+  apiDown: "Oppslaget er ikke tilgjengelig akkurat nå. Legg inn tallene selv, eller åpne eksempelet med Constellation Software.",
+  openExample: "Åpne eksempelet",
+  notFound: "Fant ingen data for {s}. Sjekk tickeren, inkludert børssuffiks (for eksempel .TO eller .OL).",
+  price: "Aksjekurs", fcfps: "Fri kontantstrøm per aksje", multiple: "Kurs / fri kontantstrøm", yield: "Kontantstrømavkastning",
+  priceAsOf: "per {d}", edited: "endret", ttm: "siste 12 måneder til {d}", lastFy: "regnskapsår til {d}", yourNumber: "ditt tall",
+  converted: "{fin} omregnet til {cur} med kurs {fx}",
+  lead: "{price} per aksje forutsetter allerede",
+  perYear: "per år",
+  tail: "vekst i fri kontantstrøm per aksje i {n} år, hvis du krever {r} per år og aksjen handles til {m} fri kontantstrøm i {y}.",
+  needReinvest: "Selskapet beholder rundt {k} av kontantstrømmen. Skal veksten komme fra tilbakeholdt kapital alene, må hver reinvesterte krone gi omtrent {roi} per år.",
+  needAll: "Hele kontantstrømmen deles ut, så veksten må komme fra pris og volum alene.",
+  negF: "Fri kontantstrøm per aksje er null eller negativ, så kursen kan ikke forklares med dagens kontantstrøm. Legg inn et normalisert tall for fri kontantstrøm per aksje for å gå videre.",
+  negG: "Kursen forutsetter at kontantstrømmen per aksje krymper, med {g} per år i {n} år.",
+  assumeH: "Dine forutsetninger", assumeP: "Tre tall styrer svaret. Flytt på dem, så oppdateres alt under.",
+  cReturn: "Avkastningskrav", cMult: "Kurs / fri kontantstrøm i {y}", cYears: "Antall år", cPayout: "Andel av kontantstrømmen betalt som utbytte",
+  cPayoutNote: "Tilbakekjøp teller som vekst per aksje, ikke som utdeling.",
+  mNote: "I dag {now}. Intervall siden {from}: {lo} til {hi}.", mNoteShort: "I dag {now}.",
+  sbc: "Trekk fra aksjebasert avlønning", sbcNote: "{v} siste 12 måneder, {p} av fri kontantstrøm.",
+  histH: "Historikk", histP: "Fri kontantstrøm per aksje per regnskapsår, i {cur}.",
+  hCagr: "Årlig vekst, {a} til {b}", hCagrNone: "Årlig vekst", hRange: "Intervall for kurs / fri kontantstrøm", na: "i.t.",
+  showTable: "Vis tallene", tYear: "Regnskapsår", tFcf: "Fri kontantstrøm", tShares: "Aksjer", tPs: "Per aksje", tPx: "Kurs ved årsslutt", tMult: "P/FCF",
+  scenH: "Scenarier", scenP: "Årlig avkastning fra dagens kurs hvis veksten og sluttmultippelen blir annerledes. Alle tall kan endres.",
+  sGrowth: "Vekst", sMult: "Multippel", sRet: "Avkastning per år", sPrice: "Kurs i {y}",
+  bear: "Svakt", base: "Basis", bull: "Sterkt", pricedIn: "Priset inn", history: "Historikk",
+  copySum: "Kopier sammendrag", copyLink: "Kopier lenke", copied: "Kopiert",
+  howH: "Slik virker det",
+  howP: "Verdien av en aksje i dag er utbyttene du mottar pluss prisen du kan selge for senere, diskontert med avkastningskravet ditt. Verktøyet setter den verdien lik dagens kurs og løser for veksten i fri kontantstrøm per aksje som får regnestykket til å gå opp. Fri kontantstrøm er kontantstrøm fra drift minus investeringer i varige driftsmidler. Oppkjøp trekkes ikke fra, så for serieoppkjøpere inkluderer den implisitte veksten også vekst som er kjøpt med de pengene.",
+  foot1: "Kurser og regnskapstall: Yahoo Finance. Eldre amerikansk historikk: SEC EDGAR. Data kan være forsinket eller feil, så sjekk tallene mot selskapets rapporter.",
+  foot2: "Dette er en kalkulator, ikke investeringsrådgivning.",
+  sumA: "${sym} reversert DCF. På {price} handles aksjen til {mult} fri kontantstrøm, en avkastning på {yld}.",
+  sumB: "Priset inn: krever du {r} per år og antar {m} i {y}, forutsetter kursen {g} vekst i fri kontantstrøm per aksje i {n} år.",
+  sumC: "Historikk: fri kontantstrøm per aksje vokste {h} per år fra {a} til {b}.",
+  sumD: "Scenarier: svakt, {bg} vekst og {bm}: {br} per år. Basis, {sg} og {sm}: {sr}. Sterkt, {ug} og {um}: {ur}.",
+  sumE: "Kurs i {y}: svakt {bp}, priset inn {pp}, basis {sp}, sterkt {up}, mot {price} i dag.",
+  wFx: "Valutakurs er ikke tilgjengelig. Fri kontantstrøm per aksje vises i {fin}; juster den til {cur} selv.",
+  wNoFund: "Fant kurs, men ingen kontantstrømdata. Legg inn fri kontantstrøm per aksje selv.",
+  wFy: "Ingen tall for siste 12 måneder, så siste regnskapsår brukes.",
+  exampleNote: "Tall fra Torghatten Capitals gjennomgang av Constellation Software.",
+  manualName: "Dine egne tall",
+}};
+
+// The CSU example works without any data connection.
+const EXAMPLE = {
+  symbol: "CSU.TO", name: "Constellation Software Inc.", exchange: "Toronto", currency: "CAD",
+  price: 3385, f0: 91.74 * (3385 / 2387), r: 9, m: 20, n: 10, d: 0,
+  hist: { cagr: 0.17, from: 2018, to: 2025 },
+  scen: { bear: { g: 8, m: 18 }, base: { g: 13, m: 22 }, bull: { g: 17, m: 25 } },
+  multNow: null, note: "exampleNote",
+};
+
+const $ = (id) => document.getElementById(id);
+const S = { lang: "en", data: null, example: null, price: null, f0: null, f0Manual: false, priceManual: false,
+  r: 9, m: 20, n: 10, d: 0, sbc: false, scen: { bear: {}, base: {}, bull: {} }, cur: "USD", apiDown: false };
+
+try { S.lang = localStorage.getItem("rdcf-lang") || (/^(nb|nn|no)/i.test(navigator.language) ? "no" : "en"); } catch (e) {}
+
+function t(key, vars) {
+  let s = (I18N[S.lang] && I18N[S.lang][key]) ?? I18N.en[key] ?? key;
+  if (vars) for (const k in vars) s = s.split("{" + k + "}").join(vars[k]);
+  return s;
+}
+const loc = () => (S.lang === "no" ? "nb-NO" : "en-US");
+function money(v, cur) {
+  if (!isFinite(v) || v == null) return t("na");
+  const dp = Math.abs(v) >= 1000 ? 0 : 2;
+  try { return new Intl.NumberFormat(loc(), { style: "currency", currency: cur || S.cur, maximumFractionDigits: dp, minimumFractionDigits: dp }).format(v); }
+  catch (e) { return v.toFixed(dp) + " " + (cur || S.cur); }
+}
+function big(v, cur) {
+  if (!isFinite(v) || v == null) return t("na");
+  try { return new Intl.NumberFormat(loc(), { style: "currency", currency: cur, notation: "compact", maximumFractionDigits: 1 }).format(v); }
+  catch (e) { return (v / 1e6).toFixed(0) + "m " + cur; }
+}
+const num = (v, dp = 0) => new Intl.NumberFormat(loc(), { maximumFractionDigits: dp, minimumFractionDigits: dp }).format(v);
+const pct = (v, dp = 0) => (v == null || !isFinite(v) ? t("na") : num(v * 100, dp) + (S.lang === "no" ? " %" : "%"));
+const mx = (v, dp = 0) => (v == null || !isFinite(v) ? t("na") : num(v, dp) + "x");
+const parse = (s) => { const v = parseFloat(String(s).replace(/\s/g, "").replace(",", ".")); return isFinite(v) ? v : null; };
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const dateFmt = (iso) => { try { return new Date(iso).toLocaleDateString(loc(), { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return iso; } };
+const endYear = () => new Date().getFullYear() + S.n;
+
+// ---- derived history -------------------------------------------------------
+function perShare(row) { return (row.fcf - (S.sbc && row.sbc ? row.sbc : 0)) / row.shares; }
+function derive() {
+  const d = S.data, out = { rows: [], hist: null, range: null, ttmPs: null };
+  if (S.example) { out.hist = S.example.hist; return out; }
+  if (!d) return out;
+  out.rows = d.annual.map((r) => {
+    const ps = perShare(r);
+    return { ...r, ps, mult: ps > 0 && r.price ? r.price / (ps * r.fx) : null };
+  });
+  if (d.ttm) out.ttmPs = perShare(d.ttm) * d.fx;
+  const rows = out.rows;
+  if (rows.length >= 3) {
+    const b = rows[rows.length - 1];
+    const a = rows.find((r) => r.ps > 0);
+    if (a && a !== b) {
+      const yrs = (Date.parse(b.date) - Date.parse(a.date)) / (365.25 * 864e5);
+      const c = cagr(a.ps, b.ps, yrs);
+      if (c != null && yrs >= 2) out.hist = { cagr: c, from: a.year, to: b.year };
+    }
+  }
+  let lo = null, hi = null, i = 0;
+  for (const [ds, close, fx] of d.monthly) {
+    while (i + 1 < rows.length && rows[i + 1].date <= ds) i++;
+    if (!rows[i] || rows[i].date > ds || !(rows[i].ps > 0)) continue;
+    const m = close / (rows[i].ps * fx);
+    if (!(m > 0) || m > 150) continue;
+    if (lo == null || m < lo) lo = m;
+    if (hi == null || m > hi) hi = m;
+  }
+  if (lo != null && rows.length) out.range = { lo, hi, from: rows[0].year };
+  return out;
+}
+
+// ---- loading ---------------------------------------------------------------
+let seq = 0;
+async function api(path) {
+  const res = await fetch(path, { headers: { Accept: "application/json" } });
+  const ct = res.headers.get("content-type") || "";
+  if (!ct.includes("json")) throw new Error("api_down");
+  const body = await res.json();
+  if (!res.ok) { const e = new Error(body.error || "error"); e.status = res.status; throw e; }
+  return body;
+}
+function showApiDown() {
+  S.apiDown = true;
+  const n = $("notice");
+  n.hidden = false;
+  n.innerHTML = "";
+  n.append(t("apiDown") + " ");
+  const b = document.createElement("button");
+  b.className = "linkbtn"; b.type = "button"; b.textContent = t("openExample");
+  b.onclick = loadExample;
+  n.append(b);
+}
+async function loadSymbol(sym) {
+  const my = ++seq;
+  closeSuggest();
+  $("q").value = sym;
+  $("notice").hidden = true;
+  $("status").textContent = t("loading", { s: sym });
+  try {
+    const data = await api("/api/company?symbol=" + encodeURIComponent(sym));
+    if (my !== seq) return;
+    $("status").textContent = "";
+    setData(data);
+  } catch (e) {
+    if (my !== seq) return;
+    if (e.status === 404 || e.status === 400) { $("status").textContent = t("notFound", { s: sym }); return; }
+    $("status").textContent = "";
+    showApiDown();
+  }
+}
+function setDefaults(multNow, hist) {
+  S.m = multNow ? clamp(Math.round(multNow * 0.8), 8, 25) : 18;
+  S.r = 9; S.n = 10;
+  const g0 = impliedGrowth(S.price, S.f0, S.r / 100, S.m, S.n, S.d / 100);
+  const h = hist && hist.cagr > 0 ? clamp(hist.cagr * 100, 4, 25) : clamp((g0 ?? 0.06) * 100 + 3, 4, 25);
+  const mm = multNow ? clamp(multNow, 8, 35) : 20;
+  S.scen = {
+    bull: { g: Math.round(h), m: Math.round(mm) },
+    base: { g: Math.round(h * 0.65), m: Math.round(clamp(mm * 0.85, 7, 30)) },
+    bear: { g: Math.round(h * 0.35), m: Math.round(clamp(mm * 0.7, 6, 25)) },
+  };
+}
+function setData(data) {
+  S.data = data; S.example = null; S.cur = data.currency; S.sbc = false;
+  S.f0Manual = false; S.priceManual = false;
+  S.price = data.price;
+  const dv = derive();
+  S.f0 = dv.ttmPs;
+  const t0 = data.ttm;
+  S.d = t0 && t0.dividends && t0.fcf > 0 ? clamp(Math.round((t0.dividends / t0.fcf) * 20) * 5, 0, 100) : 0;
+  setDefaults(S.f0 > 0 ? S.price / S.f0 : null, dv.hist);
+  syncInputs(); show();
+  try { history.replaceState(null, "", "?t=" + encodeURIComponent(data.symbol)); } catch (e) {}
+}
+function loadExample() {
+  seq++;
+  const e = EXAMPLE;
+  S.data = null; S.example = e; S.cur = e.currency; S.sbc = false; S.f0Manual = true; S.priceManual = true;
+  S.price = e.price; S.f0 = e.f0; S.r = e.r; S.m = e.m; S.n = e.n; S.d = e.d;
+  S.scen = JSON.parse(JSON.stringify(e.scen));
+  $("notice").hidden = true; $("status").textContent = "";
+  syncInputs(); show();
+}
+function loadManual() {
+  seq++;
+  S.data = null; S.example = null; S.sbc = false; S.f0Manual = true; S.priceManual = true;
+  S.price = 100; S.f0 = 5; S.d = 0; S.cur = S.cur || "USD";
+  setDefaults(20, null);
+  $("notice").hidden = true; $("status").textContent = "";
+  syncInputs(); show();
+  $("inPrice").focus();
+}
+function show() {
+  $("result").hidden = false;
+  $("intro").classList.add("compact");
+  render();
+}
+function syncInputs() {
+  $("inPrice").value = S.price != null ? num(S.price, S.price >= 1000 ? 0 : 2) : "";
+  $("inF0").value = S.f0 != null && isFinite(S.f0) ? num(S.f0, 2) : "";
+  $("rR").value = S.r; $("rM").value = S.m; $("rN").value = S.n; $("rD").value = S.d;
+  $("cSbc").checked = S.sbc;
+  document.querySelectorAll("#scen tr[data-s]").forEach((tr) => {
+    const sc = S.scen[tr.dataset.s];
+    tr.querySelectorAll("input").forEach((inp) => (inp.value = sc[inp.dataset.k]));
+  });
+}
+
+// ---- render ----------------------------------------------------------------
+function render() {
+  const d = S.data, ex = S.example, dv = derive();
+  const y = endYear();
+  document.documentElement.lang = S.lang === "no" ? "nb" : "en";
+  document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === S.lang)));
+  $("q").placeholder = t("ph");
+  if (S.apiDown && !$("notice").hidden) showApiDown();
+  if ($("result").hidden) return;
+
+  $("cName").textContent = d ? d.name : ex ? ex.name : t("manualName");
+  $("cSub").textContent = d ? [d.symbol, d.exchange, d.currency].filter(Boolean).join(", ") : ex ? [ex.symbol, ex.exchange, ex.currency].join(", ") + ". " + t(ex.note) : "";
+  $("priceNote").textContent = S.priceManual && d ? t("edited") : d && d.priceTime ? t("priceAsOf", { d: dateFmt(d.priceTime) }) : S.cur;
+  let f0n = t("yourNumber");
+  if (d && d.ttm && !S.f0Manual) {
+    f0n = t(d.ttm.isAnnual ? "lastFy" : "ttm", { d: dateFmt(d.ttm.asOf) });
+    if (d.finCurrency !== d.currency && !d.warnings.includes("fx_unavailable")) f0n += ". " + t("converted", { fin: d.finCurrency, cur: d.currency, fx: num(d.fx, 3) });
+  }
+  $("f0Note").textContent = f0n;
+
+  const warns = [];
+  if (d) {
+    if (d.warnings.includes("no_fundamentals")) warns.push(t("wNoFund"));
+    if (d.warnings.includes("fx_unavailable")) warns.push(t("wFx", { fin: d.finCurrency, cur: d.currency }));
+    if (d.warnings.includes("ttm_is_last_fiscal_year")) warns.push(t("wFy"));
+  }
+  $("warn").hidden = !warns.length; $("warn").textContent = warns.join(" ");
+
+  const P = S.price, F = S.f0, r = S.r / 100, pay = S.d / 100;
+  const multNow = P > 0 && F > 0 ? P / F : null;
+  $("fMult").textContent = mx(multNow, multNow && multNow < 20 ? 1 : 0);
+  $("fYield").textContent = multNow ? pct(1 / multNow, 1) : t("na");
+
+  // answer
+  const g = impliedGrowth(P, F, r, S.m, S.n, pay);
+  $("aLead").textContent = t("lead", { price: money(P) });
+  if (g == null) {
+    $("aBig").textContent = "";
+    $("aTail").textContent = t("negF");
+    $("aNeed").textContent = "";
+  } else {
+    $("aBig").innerHTML = "";
+    $("aBig").append(pct(g, 1));
+    const sm = document.createElement("small"); sm.textContent = t("perYear"); $("aBig").append(sm);
+    $("aTail").textContent = g < 0
+      ? t("negG", { g: pct(g, 1), n: S.n })
+      : t("tail", { n: S.n, r: pct(r, r * 100 % 1 ? 1 : 0), m: mx(S.m), y });
+    $("aNeed").textContent = g <= 0 ? "" : pay >= 1 ? t("needAll") : t("needReinvest", { k: pct(1 - pay), roi: pct(g / (1 - pay), 0) });
+  }
+
+  // controls
+  $("oR").textContent = pct(r, 1); $("oM").textContent = mx(S.m); $("oN").textContent = S.n; $("oD").textContent = pct(pay);
+  $("cMultLab").textContent = t("cMult", { y });
+  $("mNote").textContent = !multNow ? "" : dv.range
+    ? t("mNote", { now: mx(multNow), from: dv.range.from, lo: mx(dv.range.lo), hi: mx(dv.range.hi) })
+    : t("mNoteShort", { now: mx(multNow) });
+  const hasSbc = !!(d && d.ttm && d.ttm.sbc > 0);
+  $("sbcWrap").hidden = !hasSbc;
+  if (hasSbc) $("sbcNote").textContent = t("sbcNote", { v: big(d.ttm.sbc, d.finCurrency), p: d.ttm.fcf > 0 ? pct(d.ttm.sbc / d.ttm.fcf) : t("na") });
+
+  // history
+  const showHist = dv.rows.length > 0 || !!dv.hist;
+  $("histBlock").hidden = !showHist;
+  if (showHist) {
+    $("histP").textContent = dv.rows.length ? t("histP", { cur: d.finCurrency }) : "";
+    $("hCagrLab").textContent = dv.hist ? t("hCagr", { a: dv.hist.from, b: dv.hist.to }) : t("hCagrNone");
+    $("hCagr").textContent = dv.hist ? pct(dv.hist.cagr, 1) : t("na");
+    $("hRange").textContent = dv.range ? mx(dv.range.lo) + " – " + mx(dv.range.hi) : t("na");
+    $("chartwrap").hidden = !dv.rows.length;
+    $("histTable").parentElement.parentElement.hidden = !dv.rows.length;
+    if (dv.rows.length) { drawChart(dv); drawTable(dv); }
+  }
+
+  // scenarios
+  $("sPriceH").textContent = t("sPrice", { y }) + ", " + S.cur;
+  const plain = (v) => num(v, v >= 1000 ? 0 : 2);
+  const res = {};
+  document.querySelectorAll("#scen tr[data-s]").forEach((tr) => {
+    const sc = S.scen[tr.dataset.s];
+    const ret = scenarioReturn(P, F, sc.g / 100, sc.m, S.n, pay);
+    const px = F > 0 ? futurePrice(F, sc.g / 100, sc.m, S.n) : null;
+    res[tr.dataset.s] = { ret, px };
+    tr.querySelector(".ret").textContent = pct(ret, 1);
+    tr.querySelector(".px").textContent = px ? plain(px) : t("na");
+  });
+  $("pG").textContent = pct(g, 1); $("pM").textContent = mx(S.m); $("pR").textContent = g == null ? t("na") : pct(r, 1);
+  const pp = g == null ? null : futurePrice(F, g, S.m, S.n);
+  $("pP").textContent = pp ? plain(pp) : t("na");
+
+  drawRuler(g, dv.hist);
+  $("summary").textContent = buildSummary(g, multNow, dv.hist, res, pp, y);
+
+  const fl = $("footLink");
+  fl.hidden = !SUBSTACK_URL;
+  if (SUBSTACK_URL) { fl.innerHTML = ""; const a = document.createElement("a"); a.href = SUBSTACK_URL; a.textContent = "Torghatten Capital"; fl.append(a); $("brand").href = SUBSTACK_URL; }
+}
+
+function buildSummary(g, multNow, hist, res, pp, y) {
+  if (g == null) return "";
+  const sym = (S.data && S.data.symbol.split(".")[0]) || (S.example && "CSU") || "";
+  const sc = S.scen, lines = [];
+  lines.push(t("sumA", { sym, price: money(S.price), mult: mx(multNow), yld: pct(1 / multNow, 1) }).replace(/^\$ /, ""));
+  lines.push(t("sumB", { r: pct(S.r / 100, S.r % 1 ? 1 : 0), m: mx(S.m), y, g: pct(g, 1), n: S.n }));
+  if (hist) lines.push(t("sumC", { h: pct(hist.cagr, 0), a: hist.from, b: hist.to }));
+  lines.push(t("sumD", { bg: pct(sc.bear.g / 100), bm: mx(sc.bear.m), br: pct(res.bear.ret, 0), sg: pct(sc.base.g / 100), sm: mx(sc.base.m), sr: pct(res.base.ret, 0), ug: pct(sc.bull.g / 100), um: mx(sc.bull.m), ur: pct(res.bull.ret, 0) }));
+  lines.push(t("sumE", { y, bp: money(res.bear.px), pp: money(pp), sp: money(res.base.px), up: money(res.bull.px), price: money(S.price) }));
+  return lines.join("\n\n");
+}
+
+// One axis: growth per year. The diamond is what the price assumes; the dots
+// are the track record and the three scenarios.
+function drawRuler(g, hist) {
+  const el = $("ruler");
+  el.innerHTML = "";
+  if (g == null) { el.hidden = true; return; }
+  el.hidden = false;
+  const items = [
+    hist ? { v: hist.cagr * 100, label: t("history") + " " + pct(hist.cagr, 0), cls: "hist" } : null,
+    { v: S.scen.bear.g, label: t("bear") + " " + pct(S.scen.bear.g / 100), cls: "" },
+    { v: S.scen.base.g, label: t("base") + " " + pct(S.scen.base.g / 100), cls: "" },
+    { v: S.scen.bull.g, label: t("bull") + " " + pct(S.scen.bull.g / 100), cls: "" },
+  ].filter(Boolean);
+  const vals = items.map((i) => i.v).concat([g * 100, 0]);
+  let lo = Math.floor(Math.min(...vals) / 5) * 5, hi = Math.ceil((Math.max(...vals) + 0.5) / 5) * 5;
+  lo = Math.max(lo, -60); hi = Math.min(Math.max(hi, lo + 10), 80);
+  const W = el.clientWidth, pad = 14;
+  const x = (v) => pad + ((clamp(v, lo, hi) - lo) / (hi - lo)) * (W - 2 * pad);
+  const add = (cls, style, text) => { const n = document.createElement("div"); n.className = cls; Object.assign(n.style, style); if (text != null) n.textContent = text; el.append(n); return n; };
+  add("axis", {});
+  const step = hi - lo > 40 ? 10 : 5;
+  for (let v = lo; v <= hi; v += step) { add("tick", { left: x(v) + "px" }); add("ticklab", { left: x(v) + "px" }, pct(v / 100)); }
+  const pin = add("pin implied", { left: x(g * 100) + "px" });
+  const b = document.createElement("b"); b.textContent = t("pricedIn") + " " + pct(g, 1); pin.append(b, document.createElement("i"));
+  const pw = pin.offsetWidth / 2, px = x(g * 100);
+  if (px - pw < 0) b.style.transform = `translateX(${pw - px}px)`;
+  if (px + pw > W) b.style.transform = `translateX(${W - px - pw}px)`;
+  // labels below the axis, stacked into rows so they never overlap
+  const rows = [];
+  items.sort((a, c) => a.v - c.v).forEach((it) => {
+    add("dot " + it.cls, { left: x(it.v) + "px" });
+    const lab = add("lab " + it.cls, { left: "0px", top: "0px" }, it.label);
+    const w = lab.offsetWidth;
+    const left = clamp(x(it.v) - w / 2, 0, W - w);
+    let row = 0;
+    while (rows[row] != null && rows[row] > left - 6) row++;
+    rows[row] = left + w;
+    lab.style.left = left + "px";
+    lab.style.top = 84 + row * 20 + "px";
+    add("stem", { left: x(it.v) + "px", height: 84 + row * 20 - 61 + "px" });
+  });
+  el.style.height = 84 + rows.length * 20 + 6 + "px";
+}
+
+function drawChart(dv) {
+  const svg = $("chart"), wrap = $("chartwrap"), d = S.data;
+  const bars = dv.rows.map((r) => ({ label: String(r.year), v: r.ps, ttm: false }));
+  if (d.ttm && !d.ttm.isAnnual) bars.push({ label: S.lang === "no" ? "12 md" : "TTM", v: perShare(d.ttm), ttm: true });
+  const W = wrap.clientWidth - 20, H = 200, L = 44, R = 6, T = 10, B = 24;
+  const max = Math.max(0, ...bars.map((b) => b.v)), min = Math.min(0, ...bars.map((b) => b.v));
+  const span = max - min || 1;
+  const yv = (v) => T + ((max - v) / span) * (H - T - B);
+  const bw = (W - L - R) / bars.length, w = Math.max(3, Math.min(34, bw - 2));
+  const css = getComputedStyle(document.documentElement);
+  const c = (n) => css.getPropertyValue(n).trim();
+  let h = "";
+  const nice = (v) => { const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v / p; return (f >= 5 ? 5 : f >= 2 ? 2 : 1) * p; };
+  const stepY = nice(span / 3);
+  for (let v = Math.ceil(min / stepY) * stepY; v <= max + 1e-9; v += stepY) {
+    h += `<line x1="${L}" x2="${W - R}" y1="${yv(v)}" y2="${yv(v)}" stroke="${c("--line")}" stroke-width="${Math.abs(v) < 1e-9 ? 1.5 : 1}"/>`;
+    h += `<text x="${L - 6}" y="${yv(v) + 4}" text-anchor="end">${num(v, stepY < 1 ? 2 : stepY < 10 ? 1 : 0)}</text>`;
+  }
+  const every = Math.ceil(bars.length / Math.max(1, Math.floor((W - L - R) / 34)));
+  bars.forEach((b, i) => {
+    const cx = L + bw * i + bw / 2, y0 = yv(0), y1 = yv(b.v), top = Math.min(y0, y1), hh = Math.max(1, Math.abs(y1 - y0));
+    const rr = Math.min(4, w / 2, hh);
+    const path = b.v >= 0
+      ? `M${cx - w / 2},${y0}V${top + rr}q0,-${rr} ${rr},-${rr}h${w - 2 * rr}q${rr},0 ${rr},${rr}V${y0}z`
+      : `M${cx - w / 2},${y0}V${y1 - rr}q0,${rr} ${rr},${rr}h${w - 2 * rr}q${rr},0 ${rr},-${rr}V${y0}z`;
+    const fill = b.v < 0 ? c("--neg") : b.ttm ? c("--mark") : c("--accent");
+    h += `<path d="${path}" fill="${fill}"/>`;
+    h += `<rect class="hit" data-i="${i}" x="${L + bw * i}" y="${T}" width="${bw}" height="${H - T - B}" fill="transparent"/>`;
+    if (b.ttm || (bars.length - 1 - i) % every === 0)
+      h += `<text x="${cx}" y="${H - 7}" text-anchor="middle">${b.ttm || bars.length <= 8 ? b.label : "’" + b.label.slice(2)}</text>`;
+  });
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("height", H);
+  svg.setAttribute("aria-label", t("histP", { cur: d.finCurrency }));
+  svg.innerHTML = h;
+  const tip = $("tip");
+  const showTip = (e) => {
+    const i = e.target.dataset && e.target.dataset.i;
+    if (i == null) { tip.hidden = true; return; }
+    const b = bars[i];
+    tip.textContent = b.label + ": " + money(b.v, d.finCurrency);
+    tip.hidden = false;
+    const cx = 10 + L + bw * i + bw / 2;
+    tip.style.left = clamp(cx, 60, W - 40) + "px";
+    tip.style.top = 14 + Math.min(yv(b.v), yv(0)) - 4 + "px";
+  };
+  svg.onpointermove = showTip; svg.onpointerdown = showTip; svg.onpointerleave = () => (tip.hidden = true);
+}
+function drawTable(dv) {
+  const d = S.data, fc = d.finCurrency;
+  let h = `<thead><tr><th>${t("tYear")}</th><th>${t("tFcf")}</th><th>${t("tShares")}</th><th>${t("tPs")}</th><th>${t("tPx")}</th><th>${t("tMult")}</th></tr></thead><tbody>`;
+  for (const r of dv.rows)
+    h += `<tr><td>${r.year}</td><td>${big(r.fcf - (S.sbc && r.sbc ? r.sbc : 0), fc)}</td><td>${num(r.shares / 1e6, 1)}m</td><td>${money(r.ps, fc)}</td><td>${r.price ? money(r.price, d.currency) : t("na")}</td><td>${mx(r.mult)}</td></tr>`;
+  $("histTable").innerHTML = h + "</tbody>";
+}
+
+// ---- search ----------------------------------------------------------------
+let sugg = [], sel = -1, timer = null, sseq = 0;
+function closeSuggest() { $("suggest").hidden = true; $("q").setAttribute("aria-expanded", "false"); sugg = []; sel = -1; }
+function drawSuggest() {
+  const ul = $("suggest"); ul.innerHTML = "";
+  sugg.forEach((s, i) => {
+    const li = document.createElement("li");
+    li.setAttribute("role", "option"); li.setAttribute("aria-selected", String(i === sel));
+    const a = document.createElement("span"); const sy = document.createElement("span"); sy.className = "sym"; sy.textContent = s.symbol;
+    a.append(sy, " " + s.name);
+    const e = document.createElement("span"); e.className = "ex"; e.textContent = s.exchange;
+    li.append(a, e);
+    li.onpointerdown = (ev) => { ev.preventDefault(); loadSymbol(s.symbol); };
+    ul.append(li);
+  });
+  ul.hidden = !sugg.length; $("q").setAttribute("aria-expanded", String(!!sugg.length));
+}
+async function runSearch(q) {
+  const my = ++sseq;
+  try {
+    const { results } = await api("/api/search?q=" + encodeURIComponent(q));
+    if (my !== sseq) return;
+    sugg = results; sel = -1; drawSuggest();
+    $("status").textContent = results.length ? "" : t("nohits", { q });
+  } catch (e) { if (my === sseq) { closeSuggest(); $("status").textContent = ""; showApiDown(); } }
+}
+$("q").addEventListener("input", () => {
+  clearTimeout(timer);
+  const q = $("q").value.trim();
+  if (q.length < 2) { closeSuggest(); return; }
+  timer = setTimeout(() => runSearch(q), 250);
+});
+$("q").addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    if (!sugg.length) return;
+    e.preventDefault();
+    sel = (sel + (e.key === "ArrowDown" ? 1 : -1) + sugg.length) % sugg.length; drawSuggest();
+  } else if (e.key === "Enter") {
+    e.preventDefault(); clearTimeout(timer);
+    const q = $("q").value.trim();
+    if (sugg.length) loadSymbol(sugg[Math.max(sel, 0)].symbol);
+    else if (/^\$?[A-Za-z0-9][A-Za-z0-9.\-]{0,11}$/.test(q)) loadSymbol(q.replace(/^\$/, "").toUpperCase());
+    else if (q) runSearch(q);
+  } else if (e.key === "Escape") closeSuggest();
+});
+$("q").addEventListener("blur", () => setTimeout(closeSuggest, 150));
+
+// ---- inputs ----------------------------------------------------------------
+document.querySelectorAll(".chip").forEach((b) => (b.onclick = () => loadSymbol(b.dataset.sym)));
+$("manualBtn").onclick = loadManual;
+$("inPrice").addEventListener("input", () => { const v = parse($("inPrice").value); if (v != null) { S.price = v; S.priceManual = true; render(); } });
+$("inF0").addEventListener("input", () => { const v = parse($("inF0").value); if (v != null) { S.f0 = v; S.f0Manual = true; render(); } });
+[["rR", "r"], ["rM", "m"], ["rN", "n"], ["rD", "d"]].forEach(([id, k]) => $(id).addEventListener("input", () => { S[k] = parseFloat($(id).value); render(); }));
+$("cSbc").addEventListener("change", () => {
+  S.sbc = $("cSbc").checked; S.f0Manual = false;
+  S.f0 = derive().ttmPs; $("inF0").value = num(S.f0, 2); render();
+});
+document.querySelectorAll("#scen tr[data-s] input").forEach((inp) => inp.addEventListener("input", () => {
+  const v = parse(inp.value); if (v == null) return;
+  S.scen[inp.closest("tr").dataset.s][inp.dataset.k] = v; render();
+}));
+document.querySelectorAll(".lang button").forEach((b) => (b.onclick = () => {
+  S.lang = b.dataset.lang; try { localStorage.setItem("rdcf-lang", S.lang); } catch (e) {}
+  render(); if (!$("result").hidden) syncInputs();
+}));
+function copy(btn, text) {
+  const done = () => { const o = btn.textContent; btn.textContent = t("copied"); setTimeout(() => (btn.textContent = o), 1400); };
+  try { navigator.clipboard.writeText(text).then(done, () => {}); } catch (e) {}
+}
+$("copySum").onclick = () => copy($("copySum"), $("summary").textContent);
+$("copyLink").onclick = () => copy($("copyLink"), location.origin + location.pathname + (S.data ? "?t=" + encodeURIComponent(S.data.symbol) : ""));
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(render, 120); });
+
+render();
+(function boot() {
+  let sym = null;
+  try { sym = new URLSearchParams(location.search).get("t") || (location.hash.length > 1 ? decodeURIComponent(location.hash.slice(1)) : null); } catch (e) {}
+  if (sym && /^[A-Za-z0-9][A-Za-z0-9.\-]{0,14}$/.test(sym)) loadSymbol(sym.toUpperCase());
+})();
+</script>
+</body>
+</html>

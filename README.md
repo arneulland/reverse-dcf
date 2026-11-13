@@ -1,0 +1,70 @@
+# Reverse DCF
+
+A small web app that works backwards from a share price to the growth in free
+cash flow per share the price already assumes. Readers search for a company,
+and the app fetches the price and cash flow history and does the rest.
+
+## What's in here
+
+| Path | What it does |
+|---|---|
+| `public/index.html` | The whole page: layout, model, charts, English and Norwegian text |
+| `api/search.js` | Company and ticker search |
+| `api/company.js` | Price, cash flow history, share count, and exchange rate for one ticker |
+| `api/health.js` | Shows which data sources respond. Open it after you deploy |
+| `lib/` | Yahoo Finance client, SEC EDGAR client, and the data assembly |
+| `test/` | Checks, mock data, and a local server |
+
+There are no dependencies and no build step.
+
+## Deploy to Vercel
+
+1. Create a GitHub repository and push this folder to it.
+2. On vercel.com, select **Add New**, then **Project**, and import the repository.
+   Keep the defaults and select **Deploy**.
+3. Optional: under **Settings**, then **Environment Variables**, add
+   `SEC_USER_AGENT` with a value like `reverse-dcf you@example.com`. The SEC
+   asks for a contact address on requests to EDGAR.
+4. Open `https://<your-project>.vercel.app/api/health`. Each source should show
+   `"ok": true`.
+
+Link to a specific company from a post with `?t=`, for example
+`https://<your-project>.vercel.app/?t=CSU.TO`.
+
+To show a link back to your Substack, set `SUBSTACK_URL` near the top of the
+second script in `public/index.html`.
+
+## Run it locally
+
+```
+npm test              # model and data checks
+npm run dev           # live data, http://localhost:3000
+MOCK=1 npm run dev    # mock data, no network needed
+```
+
+## Data sources and their limits
+
+- **Yahoo Finance** (unofficial web endpoints, no key): search, prices, about
+  four fiscal years of cash flow, and trailing twelve months. Covers most
+  exchanges, including Toronto and Oslo. Yahoo doesn't document or guarantee
+  these endpoints, and it can rate-limit cloud servers. Responses are cached
+  for an hour at the edge to keep request volume low.
+- **SEC EDGAR** (official, free): extends history to ten years or more for
+  companies that file a 10-K. Not available for foreign listings.
+
+If a source fails, the page says so and readers can still enter their own
+numbers or open the built-in Constellation Software example.
+
+To switch to a paid provider later, replace the three functions in
+`lib/yahoo.js` (`search`, `chart`, `fundamentals`). Nothing else changes.
+
+## The model
+
+Value today = dividends received over N years + the price in year N, both
+discounted at the required return. The price in year N is free cash flow per
+share in that year times the exit multiple. The app sets value equal to today's
+price and solves for growth. Buybacks aren't a cash flow in the model, because
+they already show up as growth per share.
+
+Free cash flow is cash from operations minus capital expenditure. Acquisition
+spending isn't deducted.
