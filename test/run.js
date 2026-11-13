@@ -60,4 +60,11 @@ assert.ok(ratios.every((x) => x > 0.9 && x < 1.1), "share count is continuous ac
 assert.equal(sp.annual.find((r) => r.year === 2023).src, "yahoo", "Yahoo wins where both have the year");
 near(sp.ttm.shares, 3.97e9, 1, "latest share count");
 
+// a hole in the SEC history drops everything older than the hole
+const { adjustForSplits } = await import("../lib/build.js");
+const c0 = await chart("SPLT"), f0 = await fundamentals("SPLT");
+const holed = (await history("SPLT")).filter((r) => !["2017", "2018"].includes(r.date.slice(0, 4)));
+const gap = buildCompany({ symbol: "SPLT", chart: c0, fund: f0, edgarRows: holed });
+assert.equal(gap.annual[0].year, 2019, "history starts after the gap");
+
 console.log("All checks passed.");
