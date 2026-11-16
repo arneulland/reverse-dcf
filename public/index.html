@@ -592,8 +592,10 @@ function render() {
     $("aTail").textContent = g < 0
       ? t("negG", { g: pct(g, 1), n: S.n })
       : t("tail", { n: S.n, r: pct(r, r * 100 % 1 ? 1 : 0), m: mx(S.m), y });
-    const mEff = multNow ? Math.pow(S.m / multNow, 1 / S.n) - 1 : 0;
-    const dEff = r - ((1 + g) * (1 + mEff) - 1);
+    // Parts are stated so that they sum to the required return.
+    const priceOnly = multNow ? (1 + g) * Math.pow(S.m / multNow, 1 / S.n) - 1 : g;
+    const mEff = priceOnly - g;
+    const dEff = r - priceOnly;
     const sg = (v) => (v < -0.0005 ? "\u2212" : "+") + pct(Math.abs(v), 1);
     $("aSplit").textContent = t("split", { r: pct(r, 1), g: pct(g, 1), m: sg(mEff), now: mx(multNow, 1), then: mx(S.m), d: sg(dEff) });
     $("aNeed").textContent = g <= 0 ? "" : pay >= 1 ? t("needAll") : t("needReinvest", { k: pct(1 - pay), roi: pct(g / (1 - pay), 0) });
