@@ -68,3 +68,8 @@ const gap = buildCompany({ symbol: "SPLT", chart: c0, fund: f0, edgarRows: holed
 assert.equal(gap.annual[0].year, 2019, "history starts after the gap");
 
 console.log("All checks passed.");
+
+// CSU screenshot case: 12% required, 18x exit, price 3,492, FCF/share 188.57.
+near(impliedGrowth(3492, 188.57, 0.12, 18, 10, 0), 0.1232, 0.0005, "no dividend");
+near(impliedGrowth(3492, 188.57, 0.12, 18, 10, 0.03), 0.1213, 0.0006, "actual 3% payout");
+console.log("Payout checks passed.");

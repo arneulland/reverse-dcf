@@ -179,6 +179,7 @@ footer a{color:inherit}
       <p class="big" id="aBig"></p>
       <p class="tail" id="aTail"></p>
       <p class="need" id="aNeed"></p>
+      <p class="need" id="aSplit"></p>
       <div class="ruler" id="ruler" aria-hidden="true"></div>
     </section>
 
@@ -189,7 +190,7 @@ footer a{color:inherit}
         <div class="ctl"><label for="rR"><span data-i18n="cReturn"></span><output id="oR"></output></label><input id="rR" type="range" min="4" max="20" step="0.5"></div>
         <div class="ctl"><label for="rM"><span id="cMultLab"></span><output id="oM"></output></label><input id="rM" type="range" min="5" max="50" step="1"><div class="note" id="mNote"></div></div>
         <div class="ctl"><label for="rN"><span data-i18n="cYears"></span><output id="oN"></output></label><input id="rN" type="range" min="3" max="15" step="1"></div>
-        <div class="ctl"><label for="rD"><span data-i18n="cPayout"></span><output id="oD"></output></label><input id="rD" type="range" min="0" max="100" step="5"><div class="note" data-i18n="cPayoutNote"></div></div>
+        <div class="ctl"><label for="rD"><span data-i18n="cPayout"></span><output id="oD"></output></label><input id="rD" type="range" min="0" max="100" step="1"><div class="note" data-i18n="cPayoutNote"></div></div>
       </div>
       <label class="check" id="sbcWrap"><input type="checkbox" id="cSbc"><span><span data-i18n="sbc"></span><small id="sbcNote"></small></span></label>
     </section>
@@ -293,6 +294,7 @@ en: {
   tail: "growth in free cash flow per share for {n} years, if you want {r} a year and the stock trades at {m} free cash flow in {y}.",
   needReinvest: "The company keeps about {k} of its cash flow. To grow that fast on retained cash alone, each unit reinvested has to earn roughly {roi} a year.",
   needAll: "All cash flow is paid out, so the growth has to come from pricing and volume alone.",
+  split: "How the {r} adds up: growth {g}, multiple going from {now} to {then} {m}, dividends {d}.",
   negF: "Free cash flow per share is zero or negative, so the price can't be explained by current cash flow. Enter a normalised figure for free cash flow per share to continue.",
   negG: "The price assumes cash flow per share shrinks. That is {g} a year for {n} years.",
   assumeH: "Your assumptions", assumeP: "Three numbers drive the answer. Move them and everything below updates.",
@@ -339,6 +341,7 @@ no: {
   tail: "vekst i fri kontantstrøm per aksje i {n} år, hvis du krever {r} per år og aksjen handles til {m} fri kontantstrøm i {y}.",
   needReinvest: "Selskapet beholder rundt {k} av kontantstrømmen. Skal veksten komme fra tilbakeholdt kapital alene, må hver reinvesterte krone gi omtrent {roi} per år.",
   needAll: "Hele kontantstrømmen deles ut, så veksten må komme fra pris og volum alene.",
+  split: "Slik blir det {r}: vekst {g}, multippel fra {now} til {then} {m}, utbytte {d}.",
   negF: "Fri kontantstrøm per aksje er null eller negativ, så kursen kan ikke forklares med dagens kontantstrøm. Legg inn et normalisert tall for fri kontantstrøm per aksje for å gå videre.",
   negG: "Kursen forutsetter at kontantstrømmen per aksje krymper, med {g} per år i {n} år.",
   assumeH: "Dine forutsetninger", assumeP: "Tre tall styrer svaret. Flytt på dem, så oppdateres alt under.",
@@ -501,7 +504,7 @@ function setData(data) {
   const dv = derive();
   S.f0 = dv.ttmPs;
   const t0 = data.ttm;
-  S.d = t0 && t0.dividends && t0.fcf > 0 ? clamp(Math.round((t0.dividends / t0.fcf) * 20) * 5, 0, 100) : 0;
+  S.d = t0 && t0.dividends && t0.fcf > 0 ? clamp(Math.round((t0.dividends / t0.fcf) * 100), 0, 100) : 0;
   setDefaults(S.f0 > 0 ? S.price / S.f0 : null, dv.hist);
   syncInputs(); show();
   try { history.replaceState(null, "", "?t=" + encodeURIComponent(data.symbol)); } catch (e) {}
@@ -581,6 +584,7 @@ function render() {
     $("aBig").textContent = "";
     $("aTail").textContent = t("negF");
     $("aNeed").textContent = "";
+    $("aSplit").textContent = "";
   } else {
     $("aBig").innerHTML = "";
     $("aBig").append(pct(g, 1));
@@ -588,6 +592,10 @@ function render() {
     $("aTail").textContent = g < 0
       ? t("negG", { g: pct(g, 1), n: S.n })
       : t("tail", { n: S.n, r: pct(r, r * 100 % 1 ? 1 : 0), m: mx(S.m), y });
+    const mEff = multNow ? Math.pow(S.m / multNow, 1 / S.n) - 1 : 0;
+    const dEff = r - ((1 + g) * (1 + mEff) - 1);
+    const sg = (v) => (v < -0.0005 ? "\u2212" : "+") + pct(Math.abs(v), 1);
+    $("aSplit").textContent = t("split", { r: pct(r, 1), g: pct(g, 1), m: sg(mEff), now: mx(multNow, 1), then: mx(S.m), d: sg(dEff) });
     $("aNeed").textContent = g <= 0 ? "" : pay >= 1 ? t("needAll") : t("needReinvest", { k: pct(1 - pay), roi: pct(g / (1 - pay), 0) });
   }
 
