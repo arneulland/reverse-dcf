@@ -298,3 +298,15 @@ console.log("Payout checks passed.");
   near(rows[1].margin, 0.11, 1e-12, "operating margin");
   console.log("Moat data checks passed.");
 }
+
+// --- attention fixes from live data ----------------------------------------------
+{
+  const A = await import("../lib/attention.js");
+  assert.equal(A.cleanName("The Coca-Cola Company"), "Coca-Cola");
+  assert.equal(A.titleMatches("First Look Media", "Topicus.com"), false, "wrong redirect is rejected");
+  assert.equal(A.titleMatches("Topicus", "Topicus.com"), true);
+  assert.equal(A.titleMatches("Nvidia", "NVIDIA"), true);
+  assert.equal(A.titleMatches("Roper Technologies", "Roper Technologies"), true);
+  assert.equal(A.titleMatches("Nestlé", "Nestle"), true, "accents ignored");
+  console.log("Attention fixes passed.");
+}
