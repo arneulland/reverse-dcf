@@ -179,14 +179,15 @@ console.log("Payout checks passed.");
   assert.equal(sm.maxAge, Math.floor((Date.UTC(2026, 11, 8) - now) / 1000), "monthly session ends with the grace week");
 
   assert.ok(A.isGated("/attention") && A.isGated("/attention/") && A.isGated("/compounding/index.html") && A.isGated("/api/attention"));
-  assert.ok(!A.isGated("/") && !A.isGated("/reverse-dcf") && !A.isGated("/api/search") && !A.isGated("/join") && !A.isGated("/attentionx"));
+  assert.ok(A.isGated("/reverse-dcf") && A.isGated("/api/company") && A.isGated("/api/search"));
+  assert.ok(!A.isGated("/") && !A.isGated("/api/health") && !A.isGated("/api/me") && !A.isGated("/join") && !A.isGated("/attentionx"));
 
   const env = { ACCESS_SECRET: S };
   const req = (p, cookie = "") => new Request("https://x.test" + p, { headers: { cookie } });
   const g1 = await A.gate(req("/attention?t=MSFT"), env);
   assert.equal(g1.status, 302); assert.equal(g1.headers.get("location"), "/join?next=%2Fattention%3Ft%3DMSFT");
   assert.equal((await A.gate(req("/api/attention?symbol=MSFT"), env)).status, 401);
-  assert.equal(await A.gate(req("/reverse-dcf"), env), null, "open page");
+  assert.equal(await A.gate(req("/"), env), null, "hub stays open");
   const live = await A.makeSession(S, ok);
   assert.equal(await A.gate(req("/attention", "a=1; tc_member=" + encodeURIComponent(live.value)), env), null, "member passes");
   assert.equal((await A.gate(req("/attention"), {})).status, 302, "fails closed without a secret");

@@ -4,7 +4,7 @@ import { next } from "@vercel/functions";
 import { gate } from "./lib/access.js";
 
 export const config = {
-  matcher: ["/attention", "/attention/:path*", "/compounding", "/compounding/:path*", "/api/attention"],
+  matcher: ["/reverse-dcf", "/reverse-dcf/:path*", "/api/company", "/api/search", "/attention", "/attention/:path*", "/compounding", "/compounding/:path*", "/api/attention"],
 };
 
 export default async function middleware(request) {
