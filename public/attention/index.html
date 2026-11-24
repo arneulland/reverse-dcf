@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention score | Torghatten Capital</title>
+<meta name="description" content="How much is a stock talked about right now? One score from 1 to 100.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/tc.css">
+<style>
+.card{margin-top:32px;padding-top:20px;border-top:3px solid var(--brand)}
+.card h2{font-size:24px}
+.card .sub{color:var(--muted);font-size:14px;margin-top:2px}
+.score{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-top:22px}
+.score .big{font-family:var(--display);font-weight:700;font-size:clamp(72px,22vw,120px);line-height:.85;letter-spacing:-.03em;color:var(--mark-text)}
+.score .big small{font-size:.22em;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:.15em}
+.score .verdict{padding-bottom:6px}
+.score .verdict b{display:block;font-family:var(--display);font-size:22px;font-weight:600}
+.score .verdict span{color:var(--muted);font-size:15px}
+.meter{position:relative;height:10px;border-radius:999px;background:var(--surface);margin-top:18px;overflow:hidden}
+.meter i{position:absolute;left:0;top:0;bottom:0;background:var(--brand);border-radius:999px;transition:width .4s}
+.meter::before,.meter::after{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--bg);z-index:1}
+.meter::before{left:33%}.meter::after{left:67%}
+.scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px}
+.scale span{flex:1;text-align:center}.scale span:first-child{text-align:left}.scale span:last-child{text-align:right}
+
+.src td:nth-child(2),.src th:nth-child(2){text-align:left;white-space:normal}
+.src td.pts{font-family:var(--display);font-weight:600;font-size:16px;width:64px}
+.src td.na{color:var(--muted)}
+.src .bar{display:inline-block;width:56px;height:6px;border-radius:999px;background:var(--surface);vertical-align:middle;margin-left:8px;position:relative;overflow:hidden}
+.src .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--ink)}
+.src a{color:var(--muted)}
+
+.trend{font-weight:600;white-space:nowrap}
+.trend.Rising{color:var(--up)}.trend.Falling{color:var(--down)}.trend.Steady{color:var(--muted)}
+
+#list td{vertical-align:middle}
+#list td:first-child{white-space:normal}
+#list td:first-child b{display:block;font-weight:600}
+#list td:first-child span{color:var(--muted);font-size:12.5px}
+#list tr[data-sym]{cursor:pointer}
+#list tr[data-sym]:hover td{background:var(--accent-soft)}
+#list .sc{font-family:var(--display);font-weight:700;font-size:18px}
+#list .mini{display:inline-block;width:48px;height:6px;border-radius:999px;background:var(--surface);margin-left:8px;vertical-align:middle;position:relative;overflow:hidden}
+#list .mini i{position:absolute;left:0;top:0;bottom:0;background:var(--brand)}
+#list button.x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px}
+#list button.x:hover{color:var(--ink)}
+.empty{color:var(--muted);font-size:14px;padding:12px 0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+</style>
+</head>
+<body>
+<main>
+  <div id="tc-top" data-nav></div>
+  <script src="/assets/tc.js"></script>
+
+  <header class="intro">
+    <h1>How much is a stock talked about?</h1>
+    <p>One score from 1 to 100 for how much attention a stock gets right now, from Wikipedia, the news, Reddit and StockTwits. High attention isn't good or bad. It tells you how crowded the conversation is.</p>
+  </header>
+
+  <div class="search">
+    <input id="q" type="search" placeholder="Company name or ticker, for example NVDA" autocomplete="off" autocapitalize="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list">
+    <ul class="suggest" id="suggest" role="listbox" hidden></ul>
+  </div>
+  <div class="quick">
+    <span>Try</span>
+    <button class="chip" type="button" data-sym="NVDA" data-name="NVIDIA Corporation">NVDA</button>
+    <button class="chip" type="button" data-sym="CSU.TO" data-name="Constellation Software Inc.">CSU.TO</button>
+    <button class="chip" type="button" data-sym="KOG.OL" data-name="Kongsberg Gruppen ASA">KOG.OL</button>
+  </div>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+
+  <section class="card" id="card" hidden aria-live="polite">
+    <h2 id="cName"></h2>
+    <div class="sub" id="cSub"></div>
+    <div class="score">
+      <div class="big" id="sBig"></div>
+      <div class="verdict"><b id="sLevel"></b><span id="sTrend"></span></div>
+    </div>
+    <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+    <div class="scale" aria-hidden="true"><span>Low</span><span>Medium</span><span>High</span></div>
+    <div class="notice" id="warn" hidden></div>
+
+    <section class="block" style="margin-top:32px">
+      <h3>Where the score comes from</h3>
+      <p class="hint">Each source gets 0 to 100 points. The score is a weighted average of the sources that answered.</p>
+      <div class="scroll"><table class="src" id="src">
+        <thead><tr><th>Source</th><th>Measure</th><th>Points</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+  </section>
+
+  <section class="block">
+    <h3>Your list</h3>
+    <p class="hint">Every stock you look up lands here, so you can compare them. The list stays in this browser.</p>
+    <div class="scroll"><table id="list">
+      <thead><tr><th>Stock</th><th>Score</th><th>Level</th><th>Trend</th><th><span class="sr" hidden>Remove</span></th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="refresh">Refresh all</button>
+      <button class="btn ghost" type="button" id="clear">Clear list</button>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>How it works</h3>
+    <p class="hint" style="max-width:64ch">Each source is scored on a log scale, because attention is lopsided: a few stocks get almost all of it. Wikipedia earns 0 points at 10 daily views and 100 at 20,000. News earns 100 at 100 stories a week, which is also the most the Google News feed returns. Reddit earns 100 at 1,000 mentions a day across stock forums, and StockTwits at a million watchers. Reddit and StockTwits weigh most, since the question is how much people talk about the stock. They only cover US listings, so stocks listed elsewhere are scored on Wikipedia and news alone.</p>
+    <p class="hint" style="max-width:64ch;margin-top:10px">Trend compares the last 30 days of Wikipedia views with the past year, this week's news with the last 90 days, and today's Reddit mentions with yesterday's. Rising means at least 25% above normal, and Falling at least 20% below.</p>
+  </section>
+
+  <footer>
+    <p>From <a href="https://substack.com/@torghattencapital">Torghatten Capital</a>. Sources: Wikimedia page views, Google News, ApeWisdom (Reddit) and StockTwits. Results are cached for up to six hours.</p>
+    <p>This is a measure of attention, not investment advice.</p>
+  </footer>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmt = (v, dp = 0) => new Intl.NumberFormat("en-US", { maximumFractionDigits: dp, minimumFractionDigits: dp }).format(v);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const LIST_KEY = "tc-attention-list";
+let list = [];
+try { list = JSON.parse(localStorage.getItem(LIST_KEY) || "[]"); } catch (e) {}
+const saveList = () => { try { localStorage.setItem(LIST_KEY, JSON.stringify(list)); } catch (e) {} };
+
+async function api(path) {
+  const res = await fetch(path, { headers: { Accept: "application/json" } });
+  if (!(res.headers.get("content-type") || "").includes("json")) throw new Error("api_down");
+  const body = await res.json();
+  if (!res.ok) { const e = new Error(body.error || "error"); e.status = res.status; throw e; }
+  return body;
+}
+
+// ---- search box -------------------------------------------------------------
+let hits = [], active = -1, st;
+function closeSuggest() { $("suggest").hidden = true; $("q").setAttribute("aria-expanded", "false"); active = -1; }
+function showSuggest() {
+  const ul = $("suggest"); ul.innerHTML = "";
+  hits.forEach((h, i) => {
+    const li = document.createElement("li");
+    li.setAttribute("role", "option"); li.id = "opt" + i; li.setAttribute("aria-selected", String(i === active));
+    li.innerHTML = `<span><span class="sym">${esc(h.symbol)}</span> ${esc(h.name)}</span><span class="ex">${esc(h.exchange)}</span>`;
+    li.onmousedown = (e) => { e.preventDefault(); look(h.symbol, h.name); };
+    ul.append(li);
+  });
+  ul.hidden = !hits.length; $("q").setAttribute("aria-expanded", String(!!hits.length));
+}
+$("q").addEventListener("input", () => {
+  clearTimeout(st);
+  const q = $("q").value.trim();
+  if (!q) { hits = []; closeSuggest(); return; }
+  st = setTimeout(async () => {
+    try { hits = (await api("/api/search?q=" + encodeURIComponent(q))).results || []; active = -1; showSuggest(); }
+    catch (e) { hits = []; closeSuggest(); }
+  }, 200);
+});
+$("q").addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown" && hits.length) { active = (active + 1) % hits.length; showSuggest(); e.preventDefault(); }
+  else if (e.key === "ArrowUp" && hits.length) { active = (active - 1 + hits.length) % hits.length; showSuggest(); e.preventDefault(); }
+  else if (e.key === "Escape") closeSuggest();
+  else if (e.key === "Enter") {
+    e.preventDefault();
+    const h = hits[active >= 0 ? active : 0];
+    if (h) look(h.symbol, h.name);
+    else if ($("q").value.trim()) look($("q").value.trim().toUpperCase(), "");
+  }
+});
+$("q").addEventListener("blur", () => setTimeout(closeSuggest, 100));
+document.querySelectorAll(".chip").forEach((b) => (b.onclick = () => look(b.dataset.sym, b.dataset.name)));
+
+// ---- lookup -----------------------------------------------------------------
+let seq = 0;
+async function fetchOne(sym, name) {
+  return api("/api/attention?symbol=" + encodeURIComponent(sym) + (name ? "&name=" + encodeURIComponent(name) : ""));
+}
+async function look(sym, name) {
+  const my = ++seq;
+  closeSuggest(); $("q").value = sym;
+  $("status").textContent = "Checking Wikipedia, news, Reddit and StockTwits for " + sym + "…";
+  try {
+    const d = await fetchOne(sym, name);
+    if (my !== seq) return;
+    $("status").textContent = "";
+    if (d.score == null) { $("status").textContent = "None of the sources answered for " + sym + ". Try again in a few minutes."; return; }
+    showCard(d); remember(d);
+    try { history.replaceState(null, "", "?t=" + encodeURIComponent(d.symbol)); } catch (e) {}
+  } catch (e) {
+    if (my !== seq) return;
+    $("status").textContent = e.status === 404 || e.status === 400
+      ? "No listed company matches “" + sym + "”. Pick one from the suggestions."
+      : "The lookup isn't reachable right now. Try again in a minute.";
+  }
+}
+
+function trendText(tr) {
+  if (!tr) return "Not enough history to call a trend.";
+  const d = Math.round((tr.ratio - 1) * 100);
+  if (tr.label === "Steady") return "Steady, close to its normal level.";
+  return tr.label + ", " + Math.abs(d) + "% " + (d > 0 ? "above" : "below") + " its normal level.";
+}
+
+function showCard(d) {
+  $("card").hidden = false;
+  $("cName").textContent = d.name || d.symbol;
+  $("cSub").textContent = [d.symbol, d.us ? "US listing" : "Listed outside the US", "updated " + new Date(d.asOf).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })].join(", ");
+  $("sBig").innerHTML = d.score + "<small>/ 100</small>";
+  $("sLevel").textContent = d.level + " attention";
+  const tr = $("sTrend"); tr.textContent = trendText(d.trend);
+  $("meter").style.width = d.score + "%";
+
+  const S = d.sources, P = d.points, rows = [];
+  const pts = (k) => P[k] == null ? `<td class="pts na">–</td>` : `<td class="pts">${Math.round(P[k])}<span class="bar"><i style="width:${P[k]}%"></i></span></td>`;
+  const why = (s, naText) => s.status === "not_applicable" ? naText : s.status === "no_data" ? "No data found" : "Didn't respond";
+  // Wikipedia
+  rows.push(`<tr><td>Wikipedia</td><td>${S.wiki.status === "ok"
+    ? `${fmt(S.wiki.data.avg30)} views a day, last 30 days. <a href="${esc(S.wiki.data.url)}" target="_blank" rel="noopener">${esc(S.wiki.data.title)}</a>`
+    : `<span class="na">${why(S.wiki)}</span>`}</td>${pts("wiki")}</tr>`);
+  // News
+  rows.push(`<tr><td>News</td><td>${S.news.status === "ok"
+    ? `${S.news.data.capped ? "100 or more" : fmt(S.news.data.week)} ${S.news.data.week === 1 ? "story" : "stories"} in the last 7 days, searching “${esc(S.news.data.query)}”`
+    : `<span class="na">${why(S.news)}</span>`}</td>${pts("news")}</tr>`);
+  // Reddit
+  rows.push(`<tr><td>Reddit</td><td>${S.reddit.status === "ok"
+    ? (S.reddit.data.mentions ? `${fmt(S.reddit.data.mentions)} mentions in the last 24 hours` + (S.reddit.data.rank ? `, number ${fmt(S.reddit.data.rank)} on stock forums` : "") : "Too few mentions to rank on stock forums")
+    : `<span class="na">${why(S.reddit, "Covers US listings only")}</span>`}</td>${pts("reddit")}</tr>`);
+  // StockTwits
+  rows.push(`<tr><td>StockTwits</td><td>${S.stocktwits.status === "ok"
+    ? `${fmt(S.stocktwits.data.watchers)} people watching`
+    : `<span class="na">${why(S.stocktwits, "Covers US listings only")}</span>`}</td>${pts("stocktwits")}</tr>`);
+  $("src").tBodies[0].innerHTML = rows.join("");
+
+  const missing = ["wiki", "news", "reddit", "stocktwits"].filter((k) => S[k].status === "unavailable" || S[k].status === "no_data");
+  const w = $("warn");
+  w.hidden = !missing.length && d.us;
+  w.textContent = !d.us
+    ? "Reddit and StockTwits only cover US listings, so this score rests on Wikipedia and news. It isn't directly comparable with a US stock's score."
+    : "Some sources didn't answer, so the score uses the rest.";
+  if (!d.us && missing.length) w.textContent += " Some sources didn't answer either.";
+}
+
+// ---- list -------------------------------------------------------------------
+function remember(d) {
+  list = list.filter((x) => x.symbol !== d.symbol);
+  list.unshift({ symbol: d.symbol, name: d.name, score: d.score, level: d.level, trend: d.trend ? d.trend.label : null, ratio: d.trend ? d.trend.ratio : null, us: d.us, at: d.asOf });
+  list = list.slice(0, 40);
+  saveList(); drawList();
+}
+function drawList() {
+  const tb = $("list").tBodies[0];
+  if (!list.length) { tb.innerHTML = `<tr><td colspan="5" class="empty">Look up a stock to start your list.</td></tr>`; return; }
+  tb.innerHTML = list.slice().sort((a, b) => b.score - a.score).map((x) => `
+    <tr data-sym="${esc(x.symbol)}" data-name="${esc(x.name)}">
+      <td><b>${esc(x.symbol)}</b><span>${esc(x.name)}</span></td>
+      <td><span class="sc">${x.score}</span><span class="mini"><i style="width:${x.score}%"></i></span></td>
+      <td>${esc(x.level)}${x.us ? "" : " <span title=\"Wikipedia and news only\" style=\"color:var(--muted)\">*</span>"}</td>
+      <td><span class="trend ${esc(x.trend || "")}">${x.trend ? (x.trend === "Rising" ? "↑ " : x.trend === "Falling" ? "↓ " : "→ ") + x.trend : "–"}</span></td>
+      <td><button class="x" type="button" aria-label="Remove ${esc(x.symbol)}" data-rm="${esc(x.symbol)}">×</button></td>
+    </tr>`).join("") + (list.some((x) => !x.us) ? `<tr><td colspan="5" class="empty">* Listed outside the US, scored on Wikipedia and news only.</td></tr>` : "");
+}
+$("list").addEventListener("click", (e) => {
+  const rm = e.target.dataset && e.target.dataset.rm;
+  if (rm) { list = list.filter((x) => x.symbol !== rm); saveList(); drawList(); return; }
+  const tr = e.target.closest("tr[data-sym]");
+  if (tr) { look(tr.dataset.sym, tr.dataset.name); scrollTo({ top: 0, behavior: "smooth" }); }
+});
+$("clear").onclick = () => { list = []; saveList(); drawList(); };
+$("refresh").onclick = async () => {
+  const b = $("refresh"); b.disabled = true;
+  for (let i = 0; i < list.length; i++) {
+    b.textContent = "Refreshing " + (i + 1) + " of " + list.length + "…";
+    try { const d = await fetchOne(list[i].symbol, list[i].name); if (d.score != null) Object.assign(list[i], { score: d.score, level: d.level, trend: d.trend ? d.trend.label : null, ratio: d.trend ? d.trend.ratio : null, at: d.asOf }); } catch (e) {}
+  }
+  saveList(); drawList(); b.textContent = "Refresh all"; b.disabled = false;
+};
+
+drawList();
+const start = new URLSearchParams(location.search).get("t");
+if (start) look(start.toUpperCase(), (list.find((x) => x.symbol === start.toUpperCase()) || {}).name || "");
+</script>
+</body>
+</html>

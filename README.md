@@ -1,14 +1,42 @@
+# Members' Corner
+
+Torghatten Capital's tool platform. Each tool is one page under `public/`:
+
+| Page | Tool |
+|---|---|
+| `/` | Hub with links to every tool. Old reverse DCF links (`/?t=CSU.TO`) redirect to `/reverse-dcf`. |
+| `/reverse-dcf` | Works backwards from a share price to the free cash flow growth it assumes |
+| `/attention` | Attention score: how much a stock is talked about, 1 to 100 |
+| `/compounding` | Compounding calculator, the web version of `Compounding.xlsx` |
+
+Shared look and header live in `public/assets/tc.css` and `public/assets/tc.js`.
+To add a tool, add `public/<name>/index.html`, load those two files, and add a
+link in `TOOLS` in `tc.js` and a card in `public/index.html`.
+
+## Attention score
+
+`api/attention.js` and `lib/attention.js`. Free sources, no keys:
+
+- **Wikipedia** page views (Wikimedia API), average of the last 30 days.
+- **Google News** RSS, stories in the last 7 days. The feed caps at 100 items.
+- **Reddit** mentions in the last 24 hours, from ApeWisdom. US tickers only.
+- **StockTwits** watcher count. US tickers only, and it can block cloud servers.
+
+Each source gets 0 to 100 points on a log scale (`ANCHORS`), and the score is a
+weighted average (`WEIGHTS`) of the sources that answered. Sources that fail are
+shown as unavailable rather than breaking the score.
+
 # Reverse DCF
 
-A small web app that works backwards from a share price to the growth in free
-cash flow per share the price already assumes. Readers search for a company,
-and the app fetches the price and cash flow history and does the rest.
+Works backwards from a share price to the growth in free cash flow per share
+the price already assumes. Readers search for a company, and the app fetches
+the price and cash flow history and does the rest.
 
 ## What's in here
 
 | Path | What it does |
 |---|---|
-| `public/index.html` | The whole page: layout, model, charts, English and Norwegian text |
+| `public/reverse-dcf/index.html` | The whole page: layout, model, charts, English and Norwegian text |
 | `api/search.js` | Company and ticker search |
 | `api/company.js` | Price, cash flow history, share count, and exchange rate for one ticker |
 | `api/health.js` | Shows which data sources respond. Open it after you deploy |
@@ -29,10 +57,10 @@ There are no dependencies and no build step.
    `"ok": true`.
 
 Link to a specific company from a post with `?t=`, for example
-`https://<your-project>.vercel.app/?t=CSU.TO`.
+`https://<your-project>.vercel.app/reverse-dcf?t=CSU.TO`.
 
 To show a link back to your Substack, set `SUBSTACK_URL` near the top of the
-second script in `public/index.html`.
+second script in `public/reverse-dcf/index.html`.
 
 ## Run it locally
 

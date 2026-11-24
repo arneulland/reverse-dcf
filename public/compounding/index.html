@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compounding calculator | Torghatten Capital</title>
+<meta name="description" content="See what a starting amount, a yearly contribution and a steady return add up to over time.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/tc.css">
+<style>
+.inputs{display:grid;gap:18px 32px;margin-top:28px}
+@media(min-width:560px){.inputs{grid-template-columns:1fr 1fr}}
+.field label{display:flex;justify-content:space-between;font-size:14px}
+.field output{font-weight:600;font-family:var(--display);font-size:16px}
+.field .money{display:flex;align-items:baseline;gap:6px;border-bottom:1.5px dashed var(--muted);margin-top:4px}
+.field .money input{flex:1;min-width:0;border:0;background:transparent;font-family:var(--display);font-size:22px;font-weight:600;padding:2px 0}
+.field .money span{color:var(--muted);font-size:13px}
+.field input[type=range]{width:100%;accent-color:var(--brand);margin:8px 0 0;height:24px}
+.field .note{font-size:12.5px;color:var(--muted);margin-top:2px}
+.field select{border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:6px 8px;margin-top:6px}
+.row2{display:flex;gap:20px}
+.row2>div{flex:1}
+.row2 input[type=number]{width:100%;border:0;border-bottom:1.5px dashed var(--muted);background:transparent;font-family:var(--display);font-size:22px;font-weight:600;padding:2px 0;margin-top:4px;-moz-appearance:textfield}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-top:4px}
+.check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--brand);flex:none}
+.check small{display:block;color:var(--muted);font-size:12.5px}
+
+.answer{margin-top:40px;padding-top:20px;border-top:3px solid var(--brand)}
+.answer .lead{font-family:var(--display);font-size:19px;font-weight:500}
+.answer .big{font-family:var(--display);font-weight:700;font-size:clamp(44px,13vw,84px);line-height:1;letter-spacing:-.02em;color:var(--mark-text);margin:8px 0 10px;word-break:break-word}
+.answer .tail{font-size:17px;max-width:52ch}
+.answer .need{margin-top:10px;color:var(--muted);font-size:15px;max-width:58ch}
+
+.legend{display:flex;gap:16px;font-size:13px;color:var(--muted);margin:0 0 10px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+td input{width:96px;text-align:right;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:4px 6px}
+td input:focus{border-color:var(--ink)}
+td input.set{border-color:var(--brand)}
+tr.milestone td{font-weight:600}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+  <div id="tc-top" data-nav></div>
+  <script src="/assets/tc.js"></script>
+
+  <header class="intro">
+    <h1>What does steady compounding add up to?</h1>
+    <p>Pick a starting amount, what you add each year and the return you expect. The calculator adds a year of growth and your contribution at the end of every year.</p>
+  </header>
+
+  <div class="inputs">
+    <div class="field">
+      <label for="inStart">Starting amount</label>
+      <div class="money"><input id="inStart" inputmode="decimal" autocomplete="off"><span class="cur"></span></div>
+    </div>
+    <div class="field">
+      <label for="inAdd">Added each year</label>
+      <div class="money"><input id="inAdd" inputmode="decimal" autocomplete="off"><span class="cur"></span></div>
+      <div class="note">Use the table below for one-off deposits or withdrawals.</div>
+    </div>
+    <div class="field">
+      <label for="rRate"><span>Annual return</span><output id="oRate"></output></label>
+      <input id="rRate" type="range" min="0" max="25" step="0.5">
+      <div class="note" id="rateNote"></div>
+    </div>
+    <div class="field">
+      <label for="rYears"><span>Years</span><output id="oYears"></output></label>
+      <input id="rYears" type="range" min="1" max="60" step="1">
+    </div>
+    <div class="field">
+      <div class="row2">
+        <div><label for="inAge">Your age today</label><input id="inAge" type="number" min="0" max="110" placeholder="Optional"></div>
+        <div><label for="inYear">Start year</label><input id="inYear" type="number" min="1900" max="2200"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="selCur">Currency</label>
+      <select id="selCur">
+        <option>USD</option><option>EUR</option><option>GBP</option><option>NOK</option><option>SEK</option><option>DKK</option><option>CAD</option><option>CHF</option>
+      </select>
+      <label class="check" for="cReal"><input type="checkbox" id="cReal"><span>Show in today's money<small id="realNote">Takes inflation out, so the numbers show what the money would buy today.</small></span></label>
+      <div id="infWrap" hidden>
+        <label for="rInf"><span>Inflation</span><output id="oInf"></output></label>
+        <input id="rInf" type="range" min="0" max="8" step="0.25">
+      </div>
+    </div>
+  </div>
+
+  <section class="answer" aria-live="polite">
+    <p class="lead" id="aLead"></p>
+    <p class="big" id="aBig"></p>
+    <p class="tail" id="aTail"></p>
+    <p class="need" id="aCross"></p>
+    <p class="need" id="aExtra"></p>
+    <dl class="facts">
+      <div class="fact"><dt>You put in</dt><dd id="fIn"></dd></div>
+      <div class="fact"><dt>Growth</dt><dd id="fGrowth"></dd></div>
+      <div class="fact"><dt>Growth share of the end balance</dt><dd id="fShare"></dd></div>
+      <div class="fact"><dt>Money doubles every</dt><dd id="fDouble"></dd></div>
+    </dl>
+  </section>
+
+  <section class="block">
+    <h3>Year by year</h3>
+    <p class="hint">The orange part of each bar is growth. The dark part is money you put in yourself.</p>
+    <div class="legend"><span style="--c:var(--ink)">Put in</span><span style="--c:var(--brand)">Growth</span></div>
+    <div class="chartwrap" id="chartwrap"><svg id="chart" role="img" aria-label="Balance by year, split into money put in and growth"></svg><div class="tip" id="tip" hidden></div></div>
+  </section>
+
+  <section class="block">
+    <h3>The numbers</h3>
+    <p class="hint">Type an amount in “Extra in or out” to add a one-off deposit that year, or a minus sign for a withdrawal.</p>
+    <div class="scroll"><table id="tbl"></table></div>
+    <div class="actions">
+      <button class="btn" type="button" id="copyLink">Copy link</button>
+      <button class="btn ghost" type="button" id="copyCsv">Copy table</button>
+      <button class="btn ghost" type="button" id="reset">Reset</button>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>How it works</h3>
+    <p class="hint" style="max-width:64ch">The first row is today: your starting amount plus any extra you enter for this year. Each following year, the balance grows by the annual return, and then the yearly addition and any extra are added at year end. A real portfolio won't earn the same return every year, and the order of good and bad years matters once you add or withdraw money. Treat the result as a direction, not a forecast.</p>
+  </section>
+
+  <footer>
+    <p>From <a href="https://substack.com/@torghattencapital">Torghatten Capital</a>. Taxes, fees and currency moves aren't included.</p>
+    <p>This is a calculator, not investment advice.</p>
+  </footer>
+</main>
+
+<script id="model">
+// ---- Compounding model (pure; tested in test/run.js) ------------------------
+// Row 0 is today: start + extra[0]. Year t: balance(t-1) grows by rate, then the
+// yearly addition and extra[t] are added at year end. Same as the spreadsheet.
+function project(start, rate, add, years, extras) {
+  const rows = [];
+  let bal = start + (extras[0] || 0), put = bal, base = start;
+  rows.push({ t: 0, extra: extras[0] || 0, earned: 0, put, bal, base });
+  for (let t = 1; t <= years; t++) {
+    const e = extras[t] || 0;
+    const earned = bal * rate;
+    bal = bal + earned + add + e;
+    put += add + e;
+    base = base * (1 + rate) + add;
+    rows.push({ t, extra: e, earned, put, bal, base });
+  }
+  return rows;
+}
+// First year in which one year's growth is bigger than the yearly addition.
+function crossover(rows, add) {
+  if (!(add > 0)) return null;
+  const r = rows.find((x) => x.t > 0 && x.earned > add);
+  return r ? r.t : null;
+}
+function doublingYears(rate) { return rate > 0 ? Math.log(2) / Math.log(1 + rate) : null; }
+if (typeof module !== "undefined") module.exports = { project, crossover, doublingYears };
+</script>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const THIS_YEAR = new Date().getFullYear();
+const DEFAULTS = { start: 10000, add: 6000, rate: 8, years: 30, age: null, year: THIS_YEAR, cur: "USD", real: false, inf: 2.5, extras: {} };
+let S = JSON.parse(JSON.stringify(DEFAULTS));
+
+const fmt = (v, dp = 0) => new Intl.NumberFormat("en-US", { maximumFractionDigits: dp, minimumFractionDigits: dp }).format(v);
+function money(v, compact) {
+  if (v == null || !isFinite(v)) return "n/a";
+  try {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: S.cur, maximumFractionDigits: compact ? 1 : 0, notation: compact ? "compact" : "standard" }).format(v);
+  } catch (e) { return fmt(v) + " " + S.cur; }
+}
+const pct = (v, dp = 0) => fmt(v * 100, dp) + "%";
+const parse = (s) => { const v = parseFloat(String(s).replace(/[\s,]/g, "")); return isFinite(v) ? v : null; };
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+// ---- state in the URL -------------------------------------------------------
+function readUrl() {
+  const q = new URLSearchParams(location.search);
+  const n = (k, lo, hi) => { const v = parse(q.get(k)); return v == null ? null : clamp(v, lo, hi); };
+  if (n("s", 0, 1e13) != null) S.start = n("s", 0, 1e13);
+  if (n("a", -1e12, 1e12) != null) S.add = n("a", -1e12, 1e12);
+  if (n("r", 0, 25) != null) S.rate = n("r", 0, 25);
+  if (n("y", 1, 60) != null) S.years = Math.round(n("y", 1, 60));
+  if (n("age", 0, 110) != null) S.age = Math.round(n("age", 0, 110));
+  if (n("from", 1900, 2200) != null) S.year = Math.round(n("from", 1900, 2200));
+  if (q.get("cur") && /^[A-Z]{3}$/.test(q.get("cur"))) S.cur = q.get("cur");
+  if (q.get("real") === "1") S.real = true;
+  if (n("inf", 0, 8) != null) S.inf = n("inf", 0, 8);
+  const x = q.get("x");
+  if (x) x.split("_").forEach((p) => { const [t, v] = p.split("~"); const tv = parseInt(t, 10), vv = parse(v); if (tv >= 0 && tv <= 60 && vv) S.extras[tv] = vv; });
+}
+function urlFor() {
+  const q = new URLSearchParams({ s: S.start, a: S.add, r: S.rate, y: S.years, from: S.year, cur: S.cur });
+  if (S.age != null) q.set("age", S.age);
+  if (S.real) { q.set("real", "1"); q.set("inf", S.inf); }
+  const x = Object.entries(S.extras).filter(([, v]) => v).map(([t, v]) => t + "~" + v).join("_");
+  if (x) q.set("x", x);
+  return location.origin + location.pathname + "?" + q.toString();
+}
+
+// ---- inputs -----------------------------------------------------------------
+function syncInputs() {
+  $("inStart").value = fmt(S.start);
+  $("inAdd").value = fmt(S.add);
+  $("rRate").value = S.rate; $("rYears").value = S.years; $("rInf").value = S.inf;
+  $("inAge").value = S.age ?? ""; $("inYear").value = S.year;
+  $("selCur").value = S.cur; $("cReal").checked = S.real;
+}
+function bind() {
+  const money = (id, key) => {
+    const el = $(id);
+    el.addEventListener("input", () => { const v = parse(el.value); if (v != null) { S[key] = v; render(); } });
+    el.addEventListener("blur", () => (el.value = fmt(S[key])));
+  };
+  money("inStart", "start"); money("inAdd", "add");
+  $("rRate").addEventListener("input", (e) => { S.rate = +e.target.value; render(); });
+  $("rYears").addEventListener("input", (e) => { S.years = +e.target.value; render(); });
+  $("rInf").addEventListener("input", (e) => { S.inf = +e.target.value; render(); });
+  $("inAge").addEventListener("input", (e) => { const v = parse(e.target.value); S.age = v == null ? null : clamp(Math.round(v), 0, 110); render(); });
+  $("inYear").addEventListener("input", (e) => { const v = parse(e.target.value); if (v >= 1900 && v <= 2200) { S.year = Math.round(v); render(); } });
+  $("selCur").addEventListener("change", (e) => { S.cur = e.target.value; render(); });
+  $("cReal").addEventListener("change", (e) => { S.real = e.target.checked; render(); });
+  $("tbl").addEventListener("input", (e) => {
+    const t = e.target.dataset.t; if (t == null) return;
+    const v = parse(e.target.value);
+    if (v) S.extras[t] = v; else delete S.extras[t];
+    e.target.classList.toggle("set", !!v);
+    render(true);
+  });
+  $("copyLink").addEventListener("click", () => copy(urlFor(), $("copyLink")));
+  $("copyCsv").addEventListener("click", () => copy(tableText(), $("copyCsv")));
+  $("reset").addEventListener("click", () => { S = JSON.parse(JSON.stringify(DEFAULTS)); syncInputs(); render(); });
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => render(true), 120); });
+}
+async function copy(text, btn) {
+  try { await navigator.clipboard.writeText(text); } catch (e) {
+    const ta = document.createElement("textarea"); ta.value = text; document.body.append(ta); ta.select(); document.execCommand("copy"); ta.remove();
+  }
+  const old = btn.textContent; btn.textContent = "Copied"; setTimeout(() => (btn.textContent = old), 1400);
+}
+
+// ---- render -----------------------------------------------------------------
+let rows = [];
+function view() {
+  // nominal rows, plus a deflated copy for "today's money"
+  const nom = project(S.start, S.rate / 100, S.add, S.years, S.extras);
+  if (!S.real) return nom;
+  const i = S.inf / 100;
+  return nom.map((r) => {
+    const d = Math.pow(1 + i, r.t);
+    return { ...r, earned: r.earned / d, put: r.put / d, bal: r.bal / d, base: r.base / d, extraShown: r.extra / d };
+  });
+}
+function render(keepTable) {
+  rows = view();
+  const last = rows[rows.length - 1];
+  const endYear = S.year + S.years;
+  document.querySelectorAll(".cur").forEach((el) => (el.textContent = S.cur));
+  $("oRate").textContent = pct(S.rate / 100, S.rate % 1 ? 1 : 0);
+  $("oYears").textContent = S.years;
+  $("oInf").textContent = pct(S.inf / 100, 2).replace(/\.?0+%$/, "%");
+  $("infWrap").hidden = !S.real;
+  const realRate = (1 + S.rate / 100) / (1 + S.inf / 100) - 1;
+  $("rateNote").textContent = S.real ? "After inflation that's about " + pct(realRate, 1) + " a year." : "Before taxes and fees.";
+
+  $("aLead").textContent = "In " + endYear + (S.age != null ? ", at age " + (S.age + S.years) : "") + ", you'd have";
+  $("aBig").textContent = money(last.bal);
+  const growth = last.bal - last.put;
+  $("aTail").textContent = last.bal > 0
+    ? (S.real ? "in today's money. " : "") + "Of that, " + money(last.put) + " is money you put in and " + money(growth) + " is growth."
+    : "The withdrawals use up the whole balance.";
+  const cx = crossover(project(S.start, S.rate / 100, S.add, S.years, S.extras), S.add);
+  $("aCross").textContent = S.add > 0
+    ? cx ? "From " + (S.year + cx) + (S.age != null ? " (age " + (S.age + cx) + ")" : "") + ", one year of growth adds more than the " + money(S.add) + " you put in yourself."
+         : "Within " + S.years + " years, a year's growth never catches up with the " + money(S.add) + " you add each year."
+    : "";
+  const hasX = Object.keys(S.extras).length > 0;
+  $("aExtra").textContent = hasX ? "The extra deposits and withdrawals change the end balance by " + (last.bal - last.base >= 0 ? "+" : "−") + money(Math.abs(last.bal - last.base)) + "." : "";
+  $("fIn").textContent = money(last.put, last.put >= 1e6);
+  $("fGrowth").textContent = money(growth, Math.abs(growth) >= 1e6);
+  $("fShare").textContent = last.bal > 0 ? pct(Math.max(0, growth) / last.bal) : "n/a";
+  const dy = doublingYears(S.rate / 100);
+  $("fDouble").textContent = dy ? fmt(dy, 1) + " years" : "never";
+
+  drawChart();
+  if (!keepTable || !$("tbl").rows.length || $("tbl").rows.length !== rows.length + 1) drawTable();
+  else updateTable();
+  try { history.replaceState(null, "", urlFor()); } catch (e) {}
+}
+
+function drawTable() {
+  const tb = $("tbl");
+  const age = S.age != null;
+  let h = "<thead><tr><th>Year</th>" + (age ? "<th>Age</th>" : "") + "<th>Extra in or out</th><th>Put in so far</th><th>Growth that year</th><th>Growth so far</th><th>Balance</th></tr></thead><tbody>";
+  rows.forEach((r) => {
+    const x = S.extras[r.t];
+    h += `<tr data-t="${r.t}"><td>${S.year + r.t}</td>` + (age ? `<td>${S.age + r.t}</td>` : "") +
+      `<td><input inputmode="decimal" data-t="${r.t}" aria-label="Extra in or out, ${S.year + r.t}" value="${x ? fmt(x) : ""}" class="${x ? "set" : ""}"></td>` +
+      `<td class="c-put"></td><td class="c-earn"></td><td class="c-gs"></td><td class="c-bal"></td></tr>`;
+  });
+  tb.innerHTML = h + "</tbody>";
+  updateTable();
+}
+function updateTable() {
+  const trs = $("tbl").tBodies[0].rows;
+  rows.forEach((r, i) => {
+    const tr = trs[i]; if (!tr) return;
+    tr.querySelector(".c-put").textContent = money(r.put);
+    tr.querySelector(".c-earn").textContent = r.t ? money(r.earned) : "";
+    tr.querySelector(".c-gs").textContent = money(r.bal - r.put);
+    tr.querySelector(".c-bal").textContent = money(r.bal);
+    tr.classList.toggle("milestone", r.t > 0 && r.t % 10 === 0);
+  });
+}
+function tableText() {
+  const age = S.age != null;
+  const head = ["Year"].concat(age ? ["Age"] : [], ["Extra in or out", "Put in so far", "Growth that year", "Growth so far", "Balance"]);
+  const lines = [head.join("\t")];
+  rows.forEach((r) => lines.push([S.year + r.t].concat(age ? [S.age + r.t] : [], [Math.round(S.extras[r.t] || 0), Math.round(r.put), Math.round(r.earned), Math.round(r.bal - r.put), Math.round(r.bal)]).join("\t")));
+  return lines.join("\n");
+}
+
+function drawChart() {
+  const svg = $("chart"), wrap = $("chartwrap"), tip = $("tip");
+  const W = Math.max(280, wrap.clientWidth - 20), H = 240, L = 54, R = 6, T = 10, B = 24;
+  const css = getComputedStyle(document.documentElement), c = (n) => css.getPropertyValue(n).trim();
+  const max = Math.max(1, ...rows.map((r) => Math.max(r.bal, r.put)));
+  const min = Math.min(0, ...rows.map((r) => Math.min(r.bal, r.put)));
+  const span = max - min;
+  const y = (v) => T + ((max - v) / span) * (H - T - B);
+  const bw = (W - L - R) / rows.length, w = Math.max(2, Math.min(26, bw - (bw > 8 ? 2 : 1)));
+  const nice = (v) => { const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v / p; return (f >= 5 ? 5 : f >= 2 ? 2 : 1) * p; };
+  const step = nice(span / 4);
+  let h = "";
+  for (let v = Math.ceil(min / step) * step; v <= max + 1e-9; v += step) {
+    h += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${c("--line")}" stroke-width="${Math.abs(v) < 1e-9 ? 1.5 : 1}"/>`;
+    h += `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${money(v, true)}</text>`;
+  }
+  const every = Math.ceil(rows.length / Math.floor((W - L) / 40));
+  rows.forEach((r, i) => {
+    const x = L + i * bw + (bw - w) / 2;
+    const put = Math.max(0, Math.min(r.put, r.bal)), grow = Math.max(0, r.bal - put);
+    h += `<rect x="${x}" y="${y(put)}" width="${w}" height="${Math.max(0, y(0) - y(put))}" fill="${c("--ink")}" rx="1"/>`;
+    if (grow > 0) h += `<rect x="${x}" y="${y(put + grow)}" width="${w}" height="${Math.max(0, y(put) - y(put + grow))}" fill="${c("--brand")}" rx="1"/>`;
+    if (r.bal < 0) h += `<rect x="${x}" y="${y(0)}" width="${w}" height="${y(r.bal) - y(0)}" fill="${c("--neg")}" rx="1"/>`;
+    if (i % every === 0 || i === rows.length - 1) h += `<text x="${x + w / 2}" y="${H - 6}" text-anchor="middle">${S.year + r.t}</text>`;
+    h += `<rect x="${L + i * bw}" y="${T}" width="${bw}" height="${H - T - B}" fill="transparent" data-i="${i}"/>`;
+  });
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = h;
+  svg.onmousemove = (e) => {
+    const i = e.target.dataset && e.target.dataset.i; if (i == null) { tip.hidden = true; return; }
+    const r = rows[i];
+    tip.hidden = false;
+    tip.textContent = (S.year + r.t) + (S.age != null ? ", age " + (S.age + r.t) : "") + ": " + money(r.bal) + " (" + money(Math.max(0, r.bal - r.put)) + " growth)";
+    const box = wrap.getBoundingClientRect();
+    tip.style.left = clamp(e.clientX - box.left, 90, box.width - 90) + "px";
+    tip.style.top = (e.clientY - box.top - 8) + "px";
+  };
+  svg.onmouseleave = () => (tip.hidden = true);
+}
+
+readUrl(); syncInputs(); bind(); render();
+</script>
+</body>
+</html>

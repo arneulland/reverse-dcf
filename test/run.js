@@ -10,7 +10,7 @@ const { history } = await import("../lib/edgar.js");
 const { buildCompany } = await import("../lib/build.js");
 
 // --- the model, taken straight from the page --------------------------------
-const html = readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
+const html = readFileSync(new URL("../public/reverse-dcf/index.html", import.meta.url), "utf8");
 const src = html.match(/<script id="model">([\s\S]*?)<\/script>/)[1];
 const mod = { exports: {} };
 vm.runInNewContext(src, { module: mod, Math, isFinite });
@@ -73,3 +73,76 @@ console.log("All checks passed.");
 near(impliedGrowth(3492, 188.57, 0.12, 18, 10, 0), 0.1232, 0.0005, "no dividend");
 near(impliedGrowth(3492, 188.57, 0.12, 18, 10, 0.03), 0.1213, 0.0006, "actual 3% payout");
 console.log("Payout checks passed.");
+
+// --- attention score ---------------------------------------------------------
+{
+  const A = await import("../lib/attention.js");
+  assert.equal(A.cleanName("Constellation Software Inc."), "Constellation Software");
+  assert.equal(A.cleanName("Microsoft Corporation"), "Microsoft");
+  assert.equal(A.cleanName("Kongsberg Gruppen ASA"), "Kongsberg Gruppen");
+  assert.equal(A.cleanName("Atlas Copco AB Class A"), "Atlas Copco");
+  assert.equal(A.usSymbol("BRK-B"), "BRK.B");
+  assert.equal(A.usSymbol("MSFT"), "MSFT");
+  assert.equal(A.usSymbol("CSU.TO"), null);
+  assert.equal(A.usSymbol("KOG.OL"), null);
+  assert.equal(A.logPoints(10, [10, 20000]), 0);
+  assert.equal(A.logPoints(20000, [10, 20000]), 100);
+  near(A.logPoints(Math.sqrt(10 * 20000), [10, 20000]), 50, 1e-9, "log midpoint");
+  assert.equal(A.logPoints(0, [1, 100]), 0);
+  assert.equal(A.logPoints(1e9, [1, 100]), 100);
+
+  // only the sources that answered count, re-weighted
+  const only = A.scoreAll({ wiki: { avg30: 20000, ratio: 1 }, news: { week: 1, quarter: 13 } });
+  assert.equal(only.score, 50, "wiki 100 + news 0 at equal weight");
+  assert.equal(A.scoreAll({}).score, null, "no sources, no score");
+  assert.equal(A.scoreAll({ news: { week: 0, quarter: 0 } }).score, 1, "floor is 1");
+
+  // trend: capped news and thin Reddit counts are left out
+  assert.deepEqual(A.trend({ news: { week: 100, quarter: 100 } }), null);
+  assert.deepEqual(A.trend({ reddit: { mentions: 3, prev: 1 } }), null);
+  assert.equal(A.trend({ wiki: { ratio: 1.5 } }).label, "Rising");
+  assert.equal(A.trend({ wiki: { ratio: 0.7 } }).label, "Falling");
+  const tr = A.trend({ wiki: { ratio: 2 }, reddit: { mentions: 50, prev: 100 } });
+  near(tr.ratio, 1, 1e-9, "geometric mean of 2 and 0.5");
+
+  const msft = await A.attention("MSFT", "Microsoft Corporation");
+  assert.equal(msft.sources.wiki.status, "ok");
+  assert.equal(msft.sources.reddit.data.mentions, 240);
+  assert.equal(msft.sources.stocktwits.data.watchers, 520000);
+  assert.ok(msft.score >= 60 && msft.score <= 100, "MSFT scores high: " + msft.score);
+  assert.equal(msft.trend.label, "Rising", "wiki 1.4x and Reddit 1.5x");
+
+  const csuA = await A.attention("CSU.TO", "Constellation Software Inc.");
+  assert.equal(csuA.sources.reddit.status, "not_applicable");
+  assert.equal(csuA.sources.stocktwits.status, "not_applicable");
+  assert.ok(csuA.score > 0 && csuA.score < msft.score, "CSU below MSFT: " + csuA.score);
+
+  const none = await A.attention("ZZZZ", "Nothing Known");
+  assert.equal(none.sources.wiki.status, "no_data");
+  assert.equal(none.sources.stocktwits.status, "unavailable");
+  console.log("Attention checks passed. MSFT", msft.score, msft.trend.label, "| CSU.TO", csuA.score, csuA.trend?.label);
+}
+
+// --- compounding -------------------------------------------------------------
+{
+  const html2 = readFileSync(new URL("../public/compounding/index.html", import.meta.url), "utf8");
+  const m2 = { exports: {} };
+  vm.runInNewContext(html2.match(/<script id="model">([\s\S]*?)<\/script>/)[1], { module: m2, Math });
+  const { project, crossover, doublingYears } = m2.exports;
+  // Same inputs as the original spreadsheet: 1,436,639 start, 12%, 35,000 a year.
+  const rows = project(1436639, 0.12, 35000, 30, {});
+  assert.equal(rows[0].bal, 1436639);
+  near(rows[1].bal, 1436639 * 1.12 + 35000, 1e-6, "year 1 balance");
+  near(rows[1].earned, 1436639 * 0.12, 1e-6, "year 1 growth");
+  near(rows[2].bal, rows[1].bal * 1.12 + 35000, 1e-6, "year 2 balance");
+  near(rows[30].put, 1436639 + 30 * 35000, 1e-6, "contributions");
+  // closed form: S(1+r)^n + A((1+r)^n - 1)/r
+  near(rows[30].bal, 1436639 * Math.pow(1.12, 30) + 35000 * (Math.pow(1.12, 30) - 1) / 0.12, 1e-3, "closed form");
+  // extras behave like the sheet's extra column
+  const x = project(1000, 0.1, 100, 3, { 0: 500, 2: -200 });
+  assert.equal(x[0].bal, 1500); near(x[1].bal, 1750, 1e-9, "x1"); near(x[2].bal, 1825, 1e-9, "x2"); near(x[3].bal, 2107.5, 1e-9, "x3");
+  near(x[3].base, 1000 * 1.331 + 100 * 3.31, 1e-9, "balance without extras");
+  assert.equal(crossover(project(10000, 0.08, 6000, 30, {}), 6000), 9, "growth beats contributions in year 9");
+  near(doublingYears(0.072), 9.97, 0.01, "doubling at 7.2%");
+  console.log("Compounding checks passed.");
+}

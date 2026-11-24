@@ -18,6 +18,7 @@ export const routes = {
     { symbol: "CNSWF", longname: "Constellation Software Inc.", exchDisp: "OTC Markets", quoteType: "EQUITY" },
     { symbol: "STZ", longname: "Constellation Brands, Inc.", exchDisp: "NYSE", quoteType: "EQUITY" },
     { symbol: "X-USD", shortname: "noise", quoteType: "CRYPTOCURRENCY" } ] },
+  "search?q=microsoft": { quotes: [{ symbol: "MSFT", longname: "Microsoft Corporation", exchDisp: "NASDAQ", quoteType: "EQUITY" }] },
   "chart/CSU.TO": chartJson({ currency: "CAD", symbol: "CSU.TO", longName: "Constellation Software Inc.", fullExchangeName: "Toronto", regularMarketPrice: 3385, regularMarketTime: ts("2026-11-12T21:00:00Z") }, months(2016, "2026-11-01", 550, 3385)),
   "chart/USDCAD=X": chartJson({ currency: "CAD", symbol: "USDCAD=X", regularMarketPrice: 1.418 }, months(2016, "2026-11-01", 1.33, 1.418)),
   "timeseries/CSU.TO": { timeseries: { result: [
@@ -59,7 +60,24 @@ export const edgar = {
 export function mockFetch(url) {
   const u = String(url);
   const json = (body, status = 200) => Promise.resolve(new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } }));
-  if (u.includes("/v1/finance/search")) return json(/q=const/i.test(u) ? routes["search?q=constellation"] : { quotes: [] });
+  if (u.includes("/v1/finance/search")) return json(/q=const/i.test(u) ? routes["search?q=constellation"] : /q=(micro|msft)/i.test(u) ? routes["search?q=microsoft"] : { quotes: [] });
+  // attention sources
+  if (u.includes("en.wikipedia.org/w/api.php")) {
+    const q = decodeURIComponent((u.match(/search=([^&]+)/) || [])[1] || "");
+    if (u.includes("list=search")) return json({ query: { search: [] } });
+    return json([q, /^(Microsoft|Constellation Software)$/.test(q) ? [q] : []]);
+  }
+  if (u.includes("wikimedia.org/api/rest_v1/metrics/pageviews")) {
+    const big = u.includes("/Microsoft/");
+    return json({ items: Array.from({ length: 365 }, (_, i) => ({ views: (big ? 9000 : 700) * (i >= 335 ? 1.5 : 1) })) });
+  }
+  if (u.includes("news.google.com/rss")) {
+    const big = u.includes("Microsoft"), wk = u.includes("when:7d");
+    const n = big ? 100 : wk ? 9 : 60;
+    return Promise.resolve(new Response("<rss><channel>" + "<item><title>x</title></item>".repeat(n) + "</channel></rss>", { status: 200 }));
+  }
+  if (u.includes("apewisdom.io")) return json({ pages: 1, results: [{ ticker: "MSFT", mentions: "240", mentions_24h_ago: "160", rank: 8 }, { ticker: "NVDA", mentions: "1900", mentions_24h_ago: "2100", rank: 1 }] });
+  if (u.includes("api.stocktwits.com")) return u.includes("MSFT") ? json({ symbol: { symbol: "MSFT", watchlist_count: 520000 } }) : json({}, 403);
   if (u.includes("company_tickers.json")) return json(routes["company_tickers.json"]);
   let m = u.match(/companyconcept\/CIK\d+\/us-gaap\/(\w+)\.json/);
   if (m) return edgar[m[1]] ? json(edgar[m[1]]) : json({}, 404);
