@@ -292,12 +292,13 @@ en: {
   openExample: "Open the example",
   notFound: "No data found for {s}. Check the ticker, including the exchange suffix (for example .TO or .OL).",
   price: "Share price", fcfps: "Free cash flow per share", multiple: "Price to free cash flow", yield: "Free cash flow yield",
-  priceAsOf: "as of {d}", edited: "edited", ttm: "last 12 months to {d}", lastFy: "fiscal year to {d}", yourNumber: "your number",
+  priceAsOf: "as of {d}", edited: "edited", ttm: "last 12 months to {d}", lastFy: "fiscal year to {d}", yourNumber: "your own figure in {cur}, for example owner earnings",
   converted: "{fin} converted to {cur} at {fx}",
   lead: "{price} a share already assumes",
   perYear: "a year",
   tail: "growth in free cash flow per share for {n} years, if you want {r} a year and the stock trades at {m} free cash flow in {y}.",
-  needReinvest: "The company keeps about {k} of its cash flow. To grow that fast on retained cash alone, each unit reinvested has to earn roughly {roi} a year.",
+  needReinvest: "The company keeps about {k} of its cash flow and pays out the rest. For {g} growth to come from what it keeps, every {in} it reinvests has to add about {out} to cash flow every year after. That's a {roi} return on new investment.",
+  roiHigh: "Few businesses earn that for long, so part of the growth would have to come from things that need little new capital, such as higher prices or better margins.",
   needAll: "All cash flow is paid out, so the growth has to come from pricing and volume alone.",
   split: "How the {r} adds up: growth {g}, multiple going from {now} to {then} {m}, dividends {d}.",
   negF: "Free cash flow per share is zero or negative, so the price can't be explained by current cash flow. Enter a normalised figure for free cash flow per share to continue.",
@@ -339,12 +340,13 @@ no: {
   openExample: "Åpne eksempelet",
   notFound: "Fant ingen data for {s}. Sjekk tickeren, inkludert børssuffiks (for eksempel .TO eller .OL).",
   price: "Aksjekurs", fcfps: "Fri kontantstrøm per aksje", multiple: "Kurs / fri kontantstrøm", yield: "Kontantstrømavkastning",
-  priceAsOf: "per {d}", edited: "endret", ttm: "siste 12 måneder til {d}", lastFy: "regnskapsår til {d}", yourNumber: "ditt tall",
+  priceAsOf: "per {d}", edited: "endret", ttm: "siste 12 måneder til {d}", lastFy: "regnskapsår til {d}", yourNumber: "ditt eget tall i {cur}, for eksempel eierinntjening",
   converted: "{fin} omregnet til {cur} med kurs {fx}",
   lead: "{price} per aksje forutsetter allerede",
   perYear: "per år",
   tail: "vekst i fri kontantstrøm per aksje i {n} år, hvis du krever {r} per år og aksjen handles til {m} fri kontantstrøm i {y}.",
-  needReinvest: "Selskapet beholder rundt {k} av kontantstrømmen. Skal veksten komme fra tilbakeholdt kapital alene, må hver reinvesterte krone gi omtrent {roi} per år.",
+  needReinvest: "Selskapet beholder rundt {k} av kontantstrømmen og deler ut resten. Skal veksten på {g} komme fra det som beholdes, må hver {in} som reinvesteres, gi rundt {out} mer i kontantstrøm hvert år etterpå. Det er {roi} avkastning på ny kapital.",
+  roiHigh: "Få selskaper klarer det over tid, så noe av veksten må komme fra ting som krever lite ny kapital, som høyere priser eller bedre marginer.",
   needAll: "Hele kontantstrømmen deles ut, så veksten må komme fra pris og volum alene.",
   split: "Slik blir det {r}: vekst {g}, multippel fra {now} til {then} {m}, utbytte {d}.",
   negF: "Fri kontantstrøm per aksje er null eller negativ, så kursen kan ikke forklares med dagens kontantstrøm. Legg inn et normalisert tall for fri kontantstrøm per aksje for å gå videre.",
@@ -404,6 +406,10 @@ function money(v, cur) {
   try { return new Intl.NumberFormat(loc(), { style: "currency", currency: cur || S.cur, maximumFractionDigits: dp, minimumFractionDigits: dp }).format(v); }
   catch (e) { return v.toFixed(dp) + " " + (cur || S.cur); }
 }
+function money0(v) {
+  try { return new Intl.NumberFormat(loc(), { style: "currency", currency: S.cur, maximumFractionDigits: 0 }).format(v); }
+  catch (e) { return Math.round(v) + " " + S.cur; }
+}
 function big(v, cur) {
   if (!isFinite(v) || v == null) return t("na");
   try { return new Intl.NumberFormat(loc(), { style: "currency", currency: cur, notation: "compact", maximumFractionDigits: 1 }).format(v); }
@@ -453,6 +459,7 @@ function derive() {
 
 // ---- loading ---------------------------------------------------------------
 let seq = 0;
+let PENDING_F = null; // own figure from a shared link, applied once data loads
 async function api(path) {
   const res = await fetch(path, { headers: { Accept: "application/json" } });
   const ct = res.headers.get("content-type") || "";
@@ -512,7 +519,8 @@ function setData(data) {
   S.d = t0 && t0.dividends && t0.fcf > 0 ? clamp(Math.round((t0.dividends / t0.fcf) * 100), 0, 100) : 0;
   setDefaults(S.f0 > 0 ? S.price / S.f0 : null, dv.hist);
   syncInputs(); show();
-  try { history.replaceState(null, "", "?t=" + encodeURIComponent(data.symbol)); } catch (e) {}
+  if (PENDING_F > 0) { S.f0 = PENDING_F; S.f0Manual = true; PENDING_F = null; setDefaults(S.price / S.f0, dv.hist); syncInputs(); render(); }
+  try { history.replaceState(null, "", shareUrl().replace(location.origin + location.pathname, "")); } catch (e) {}
 }
 function loadExample() {
   seq++;
@@ -562,7 +570,7 @@ function render() {
   $("cName").textContent = d ? d.name : ex ? ex.name : t("manualName");
   $("cSub").textContent = d ? [d.symbol, d.exchange, d.currency].filter(Boolean).join(", ") : ex ? [ex.symbol, ex.exchange, ex.currency].join(", ") + ". " + t(ex.note) : "";
   $("priceNote").textContent = S.priceManual && d ? t("edited") : d && d.priceTime ? t("priceAsOf", { d: dateFmt(d.priceTime) }) : S.cur;
-  let f0n = t("yourNumber");
+  let f0n = t("yourNumber", { cur: S.cur });
   if (d && d.ttm && !S.f0Manual) {
     f0n = t(d.ttm.isAnnual ? "lastFy" : "ttm", { d: dateFmt(d.ttm.asOf) });
     if (d.finCurrency !== d.currency && !d.warnings.includes("fx_unavailable")) f0n += ". " + t("converted", { fin: d.finCurrency, cur: d.currency, fx: num(d.fx, 3) });
@@ -603,7 +611,7 @@ function render() {
     const dEff = r - priceOnly;
     const sg = (v) => (v < -0.0005 ? "\u2212" : "+") + pct(Math.abs(v), 1);
     $("aSplit").textContent = t("split", { r: pct(r, 1), g: pct(g, 1), m: sg(mEff), now: mx(multNow, 1), then: mx(S.m), d: sg(dEff) });
-    $("aNeed").textContent = g <= 0 ? "" : pay >= 1 ? t("needAll") : t("needReinvest", { k: pct(1 - pay), roi: pct(g / (1 - pay), 0) });
+    $("aNeed").textContent = g <= 0 ? "" : pay >= 1 ? t("needAll") : t("needReinvest", { k: pct(1 - pay), g: pct(g, 1), in: money0(100), out: money0(100 * g / (1 - pay)), roi: pct(g / (1 - pay), 0) }) + (g / (1 - pay) > 0.3 ? " " + t("roiHigh") : "");
   }
 
   // controls
@@ -816,7 +824,7 @@ $("q").addEventListener("blur", () => setTimeout(closeSuggest, 150));
 document.querySelectorAll(".chip").forEach((b) => (b.onclick = () => loadSymbol(b.dataset.sym)));
 $("manualBtn").onclick = loadManual;
 $("inPrice").addEventListener("input", () => { const v = parse($("inPrice").value); if (v != null) { S.price = v; S.priceManual = true; render(); } });
-$("inF0").addEventListener("input", () => { const v = parse($("inF0").value); if (v != null) { S.f0 = v; S.f0Manual = true; render(); } });
+$("inF0").addEventListener("input", () => { const v = parse($("inF0").value); if (v != null) { S.f0 = v; S.f0Manual = true; render(); try { history.replaceState(null, "", shareUrl().replace(location.origin + location.pathname, "")); } catch (e) {} } });
 [["rR", "r"], ["rM", "m"], ["rN", "n"], ["rD", "d"]].forEach(([id, k]) => $(id).addEventListener("input", () => { S[k] = parseFloat($(id).value); render(); }));
 $("cSbc").addEventListener("change", () => {
   S.sbc = $("cSbc").checked; S.f0Manual = false;
@@ -835,12 +843,20 @@ function copy(btn, text) {
   try { navigator.clipboard.writeText(text).then(done, () => {}); } catch (e) {}
 }
 $("copySum").onclick = () => copy($("copySum"), $("summary").textContent);
-$("copyLink").onclick = () => copy($("copyLink"), location.origin + location.pathname + (S.data ? "?t=" + encodeURIComponent(S.data.symbol) : ""));
+// The link keeps the ticker and, if you typed one, your own cash flow figure.
+function shareUrl() {
+  if (!S.data) return location.origin + location.pathname;
+  const q = new URLSearchParams({ t: S.data.symbol });
+  if (S.f0Manual && S.f0 > 0) q.set("f", String(+S.f0.toFixed(4)));
+  return location.origin + location.pathname + "?" + q.toString();
+}
+$("copyLink").onclick = () => copy($("copyLink"), shareUrl());
 let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(render, 120); });
 
 render();
 (function boot() {
   let sym = null;
+  try { const f = parse(new URLSearchParams(location.search).get("f") || ""); if (f > 0) PENDING_F = f; } catch (e) {}
   try { sym = new URLSearchParams(location.search).get("t") || (location.hash.length > 1 ? decodeURIComponent(location.hash.slice(1)) : null); } catch (e) {}
   if (sym && /^[A-Za-z0-9][A-Za-z0-9.\-]{0,14}$/.test(sym)) loadSymbol(sym.toUpperCase());
 })();
