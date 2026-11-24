@@ -5,21 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Member access | Torghatten Capital</title>
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#03060E">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/tc.css">
 <style>
 main{max-width:520px}
 form{margin-top:28px;display:grid;gap:18px}
 label{display:block;font-size:14px;margin-bottom:6px}
-.inp{width:100%;padding:13px 14px;border:1.5px solid var(--ink);border-radius:10px;background:var(--bg);font-size:17px}
+.inp{width:100%;padding:14px 16px;border:1px solid rgba(var(--glow-rgb),.4);border-radius:12px;background:rgba(5,10,22,.7);font-size:17px}
+.inp:focus{outline:0;border-color:var(--glow);box-shadow:0 0 0 4px rgba(var(--glow-rgb),.15)}
 #code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase}
 .btn{width:100%;padding:13px 16px;font-size:16px}
 .btn[disabled]{opacity:.6;cursor:default}
 .err{color:var(--down);font-size:14px;min-height:1.5em}
-.ok{margin-top:28px;padding:20px;background:var(--surface);border-radius:12px}
+.ok{margin-top:28px;padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:18px}
 .ok h2{font-size:22px}
 .ok p{margin-top:8px;color:var(--muted)}
 .ok .btn{margin-top:16px;display:inline-block;text-align:center;text-decoration:none}
@@ -33,7 +35,8 @@ label{display:block;font-size:14px;margin-bottom:6px}
   <script src="/assets/tc.js"></script>
 
   <header class="intro">
-    <h1>Member access</h1>
+    <span class="eyebrow">Members’ Corner</span>
+    <h1>Welcome <em>in.</em></h1>
     <p id="lead">The member tools are for Torghatten Capital members. Enter your email and the access code you received.</p>
   </header>
 

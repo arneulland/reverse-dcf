@@ -4,25 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Reverse DCF | Torghatten Capital</title>
+<meta name="theme-color" content="#03060E">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20160%20160%22%3E%3Crect%20width%3D%22160%22%20height%3D%22160%22%20rx%3D%2230%22%20fill%3D%22%2314202B%22/%3E%3Cg%20transform%3D%22translate%2820%2052%29%22%3E%3Cg%20transform%3D%22translate%280.0%200.0%29%20scale%281.0%29%20translate%280%20-28.0%29%22%3E%3Cpath%20d%3D%22M6%2076%20C10%2072%2018%2062%2026%2054%20C32%2047%2040%2040%2050%2036%20C58%2033%2070%2032%2078%2036%20C85%2040%2090%2046%2095%2052%20C100%2058%20108%2067%20114%2076%20Z%20M52%2054%20a8%208%200%201%200%2016%200%20a8%208%200%201%200%20-16%200%20Z%22%20fill%3D%22%23FFFFFF%22%20fill-rule%3D%22evenodd%22/%3E%3Crect%20x%3D%222%22%20y%3D%2280.5%22%20width%3D%22116%22%20height%3D%223%22%20fill%3D%22%23E8913A%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
 <meta name="description" content="Work backwards from today's share price to the growth it already assumes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#FFFFFF; --surface:#F6F1E8; --ink:#14202B; --muted:#5A6570; --line:#E2DCCF;
-  --accent:#14202B; --accent-soft:#EFE8DA; --brand:#E8913A; --mark:#E8913A; --mark-text:#BD650F; --neg:#A9B0B6;
+  color-scheme:dark;
+  --night:#03060E; --navy:#0A1630;
+  --bg:#050A16; --surface:rgba(157,200,255,.06); --ink:#F4EEE2; --muted:#98A3B5; --line:rgba(244,238,226,.13);
+  --accent:#F4EEE2; --accent-soft:rgba(157,200,255,.12); --glow:#9DC8FF; --glow-rgb:157,200,255;
+  --brand:var(--glow); --mark:var(--glow); --mark-text:var(--glow); --neg:#4A5668;
   --display:"Source Serif 4",Georgia,"Times New Roman",serif;
   --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
 }
-@media (prefers-color-scheme:dark){
-  :root{--bg:#14202B; --surface:#1C2B39; --ink:#F6F1E8; --muted:#A3ADB5; --line:#2D3E4E;
-    --accent:#F6F1E8; --accent-soft:#26394A; --brand:#E8913A; --mark:#E8913A; --mark-text:#E8913A; --neg:#5B6B79;}
-}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(120% 70% at 80% 105%,rgba(var(--glow-rgb),.22),transparent 60%),
+  radial-gradient(90% 60% at 10% -10%,rgba(var(--glow-rgb),.07),transparent 60%),
+  linear-gradient(180deg,var(--night) 0%,var(--navy) 100%)}
+#tc-sky{position:fixed;inset:0;z-index:-1;pointer-events:none;width:100%;height:100%}
+.brand svg rect{fill:currentColor}
+.eyebrow{display:block;margin-bottom:18px;font:600 12px/1 var(--body);letter-spacing:.32em;text-transform:uppercase;color:var(--glow)}
+.intro h1 em{font-style:italic;color:var(--glow)}
+.intro.compact .eyebrow{display:none}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);font-variant-numeric:tabular-nums}
+body{margin:0;min-height:100vh;background:var(--night);color:var(--ink);font:400 16px/1.5 var(--body);font-variant-numeric:tabular-nums}
 main{max-width:720px;margin:0 auto;padding:20px 16px 64px}
 h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.15;margin:0;letter-spacing:-.01em}
 p{margin:0}
@@ -39,7 +48,7 @@ button,input,select{font:inherit;color:inherit}
 @media(max-width:420px){.corner{display:none}}
 .lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .lang button{border:0;background:transparent;padding:4px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
-.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:#050A16}
 
 .intro h1{font-size:clamp(30px,8vw,46px);max-width:14ch}
 .intro p{color:var(--muted);margin-top:12px;max-width:52ch}
@@ -47,9 +56,10 @@ button,input,select{font:inherit;color:inherit}
 .intro.compact p{display:none}
 
 .search{position:relative;margin-top:20px}
-.search input{width:100%;padding:14px 16px;border:1.5px solid var(--ink);border-radius:10px;background:var(--bg);font-size:17px}
+.search input{width:100%;padding:15px 18px;border:1px solid rgba(var(--glow-rgb),.45);border-radius:12px;background:rgba(5,10,22,.7);font-size:17px}
+.search input:focus{outline:0;border-color:var(--glow);box-shadow:0 0 0 4px rgba(var(--glow-rgb),.15),0 0 32px rgba(var(--glow-rgb),.18)}
 .search input::placeholder{color:var(--muted)}
-.suggest{position:absolute;z-index:5;left:0;right:0;top:calc(100% + 4px);background:var(--bg);border:1px solid var(--line);border-radius:10px;margin:0;padding:4px;list-style:none;box-shadow:0 12px 28px rgba(16,38,46,.16)}
+.suggest{position:absolute;z-index:5;left:0;right:0;top:calc(100% + 4px);background:#0B1426;border:1px solid var(--line);border-radius:10px;margin:0;padding:4px;list-style:none;box-shadow:0 12px 28px rgba(16,38,46,.16)}
 .suggest li{padding:10px 12px;border-radius:7px;cursor:pointer;display:flex;justify-content:space-between;gap:12px}
 .suggest li[aria-selected="true"],.suggest li:hover{background:var(--accent-soft)}
 .suggest .sym{font-weight:600}
@@ -61,7 +71,7 @@ button,input,select{font:inherit;color:inherit}
 .notice{margin-top:14px;padding:12px 14px;border-left:3px solid var(--mark);background:var(--surface);border-radius:0 8px 8px 0;font-size:14px}
 .status{margin-top:16px;color:var(--muted);font-size:14px}
 
-.company{margin-top:32px;padding-top:20px;border-top:3px solid var(--brand)}
+.company{margin-top:32px;padding:24px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015))}
 .company h2{font-size:24px}
 .company .sub{color:var(--muted);font-size:14px;margin-top:2px}
 .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 20px;margin-top:18px}
@@ -73,7 +83,7 @@ button,input,select{font:inherit;color:inherit}
 
 .answer{margin-top:36px}
 .answer .lead{font-family:var(--display);font-size:19px;font-weight:500}
-.answer .big{font-family:var(--display);font-weight:700;font-size:clamp(56px,19vw,104px);line-height:.95;letter-spacing:-.02em;color:var(--mark-text);margin:6px 0 8px}
+.answer .big{font-family:var(--display);font-weight:700;font-size:clamp(56px,19vw,112px);line-height:.95;letter-spacing:-.02em;color:#fff;text-shadow:0 0 18px rgba(var(--glow-rgb),.85),0 0 60px rgba(var(--glow-rgb),.45);margin:6px 0 8px}
 .answer .big small{font-size:.3em;letter-spacing:-.01em;font-weight:600;color:var(--ink);margin-left:.25em}
 .answer .tail{font-size:17px;max-width:46ch}
 .answer .need{margin-top:10px;color:var(--muted);font-size:15px;max-width:54ch}
@@ -107,10 +117,10 @@ section.block>.hint{color:var(--muted);font-size:14px;margin-bottom:16px;max-wid
 .check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--brand);flex:none}
 .check span small{display:block;color:var(--muted);font-size:12.5px}
 
-.chartwrap{position:relative;background:var(--surface);border-radius:12px;padding:14px 10px 6px}
+.chartwrap{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 10px 6px}
 .chartwrap svg{display:block;width:100%}
 .chartwrap text{font-family:var(--body);fill:var(--muted);font-size:11px}
-.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-100%);z-index:3}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:#050A16;font-size:12.5px;padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-100%);z-index:3}
 .record{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:16px}
 details{margin-top:10px;font-size:14px}
 summary{cursor:pointer;text-decoration:underline}
@@ -127,8 +137,9 @@ td.ret{font-family:var(--display);font-weight:600;font-size:16px}
 @media(max-width:480px){#scen{font-size:13px}#scen th,#scen td{padding:8px 4px}#scen td input{width:44px;padding:5px 4px}td.ret{font-size:14px}}
 
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.btn{border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:500}
-.btn.ghost{background:transparent;color:var(--ink)}
+.btn{border:1px solid var(--ink);background:var(--ink);color:#050A16;border-radius:999px;padding:10px 20px;cursor:pointer;font-weight:600}
+.btn:hover{box-shadow:0 0 24px rgba(var(--glow-rgb),.35)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
 .summary{margin-top:14px;padding:14px 16px;background:var(--surface);border-radius:12px;font-size:15px;white-space:pre-wrap}
 footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
 footer p+p{margin-top:8px}
@@ -148,7 +159,8 @@ footer a{color:inherit}
   </div>
 
   <header class="intro" id="intro">
-    <h1 data-i18n="h1"></h1>
+    <span class="eyebrow">Valuation · Tool</span>
+    <h1 data-i18n-html="h1"></h1>
     <p data-i18n="introP"></p>
   </header>
 
@@ -242,6 +254,7 @@ footer a{color:inherit}
     <p id="footLink" hidden></p>
   </footer>
 </main>
+<script src="/assets/tc.js"></script>
 
 <script id="model">
 // ---- Valuation model (pure functions; unit-tested in test/run.js) ------------
@@ -283,7 +296,7 @@ const SUBSTACK_URL = "https://substack.com/@torghattencapital";
 
 const I18N = {
 en: {
-  h1: "What does the price already assume?",
+  h1: "What is the price <em>really assuming?</em>",
   introP: "Instead of guessing what a company is worth, work backwards from today's share price to the growth it takes for granted. Then decide if you believe it.",
   ph: "Company name or ticker, for example CSU.TO",
   try: "Try", manual: "Enter the numbers yourself",
@@ -331,7 +344,7 @@ en: {
   manualName: "Your own numbers",
 },
 no: {
-  h1: "Hva forutsetter kursen allerede?",
+  h1: "Hva forutsetter <em>kursen egentlig?</em>",
   introP: "I stedet for å gjette hva et selskap er verdt, kan du regne baklengs fra dagens kurs til veksten markedet tar for gitt. Så avgjør du om du tror på den.",
   ph: "Selskapsnavn eller ticker, for eksempel CSU.TO",
   try: "Prøv", manual: "Legg inn tallene selv",
@@ -562,6 +575,7 @@ function render() {
   const y = endYear();
   document.documentElement.lang = S.lang === "no" ? "nb" : "en";
   document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll("[data-i18n-html]").forEach((el) => (el.innerHTML = t(el.dataset.i18nHtml)));
   document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === S.lang)));
   $("q").placeholder = t("ph");
   if (S.apiDown && !$("notice").hidden) showApiDown();

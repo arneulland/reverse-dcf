@@ -8,6 +8,7 @@
     { href: "/compounding", label: "Compounding", members: true }
   ];
   var LOCK = '<svg class="tc-lock" viewBox="0 0 12 14" aria-label="Members only" role="img"><rect x="1" y="6" width="10" height="7.5" rx="1.5" fill="currentColor"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+  sky();
   var el = document.getElementById("tc-top");
   if (!el) return;
   var here = location.pathname.replace(/\/index\.html$/, "").replace(/\/$/, "") || "/";
@@ -26,4 +27,58 @@
     if (a && me.member) { a.href = "/api/logout"; a.textContent = "Sign out"; a.title = me.email ? "Signed in as " + me.email : "Signed in"; }
   }).catch(function () {});
   window.TC_LOCK = LOCK;
+
+  // Night sky from the covers: a dotted wave landscape and drifting bokeh,
+  // tinted by the page's accent colour. Draws once if motion is reduced.
+  function sky() {
+    if (document.getElementById("tc-sky")) return;
+    var c = document.createElement("canvas");
+    c.id = "tc-sky"; c.setAttribute("aria-hidden", "true");
+    document.body.prepend(c);
+    var ctx = c.getContext("2d");
+    if (!ctx) return;
+    var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var rgb = (getComputedStyle(document.body).getPropertyValue("--glow-rgb") || "157,200,255").trim();
+    var W, H, dpr, bokeh = [], t0 = performance.now(), last = 0;
+    function size() {
+      dpr = Math.min(1.5, window.devicePixelRatio || 1);
+      W = innerWidth; H = innerHeight;
+      c.width = W * dpr; c.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      bokeh = [];
+      var n = Math.round(Math.min(22, W / 60));
+      for (var i = 0; i < n; i++) bokeh.push({ x: Math.random() * W, y: Math.random() * H * 0.85, r: 2 + Math.random() * 9, a: 0.05 + Math.random() * 0.16, s: 0.05 + Math.random() * 0.18, p: Math.random() * 6.28 });
+    }
+    function frame(now) {
+      if (!still) requestAnimationFrame(frame);
+      if (document.hidden || now - last < 33) return;
+      last = now;
+      var t = (now - t0) / 1000;
+      ctx.clearRect(0, 0, W, H);
+      // bokeh
+      for (var i = 0; i < bokeh.length; i++) {
+        var b = bokeh[i], y = (b.y - t * b.s * 10 + H) % H, x = b.x + Math.sin(t * 0.2 + b.p) * 12;
+        var g = ctx.createRadialGradient(x, y, 0, x, y, b.r * 2.2);
+        g.addColorStop(0, "rgba(" + rgb + "," + b.a + ")"); g.addColorStop(1, "rgba(" + rgb + ",0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, b.r * 2.2, 0, 6.283); ctx.fill();
+      }
+      // dotted wave landscape
+      var rows = 30, horizon = H * 0.7;
+      for (var r = 0; r < rows; r++) {
+        var z = r / (rows - 1), persp = 0.35 + z * 1.4;
+        var yBase = horizon + Math.pow(z, 1.6) * H * 0.42;
+        var gap = 7 + z * 9, cols = Math.ceil(W * 1.6 / gap);
+        ctx.fillStyle = "rgba(" + rgb + "," + (0.05 + z * 0.33).toFixed(3) + ")";
+        var sz = 0.6 + z * 1.1;
+        for (var k = 0; k < cols; k++) {
+          var xw = -W * 0.3 + k * gap;
+          var y = yBase + (Math.sin(xw * 0.006 + t * 0.35 + z * 4) * 14 + Math.sin(xw * 0.013 - t * 0.22 + z * 7) * 7) * persp;
+          ctx.fillRect(xw, y, sz, sz);
+        }
+      }
+    }
+    size();
+    addEventListener("resize", function () { size(); if (still) frame(performance.now() + 99); });
+    requestAnimationFrame(frame);
+  }
 })();

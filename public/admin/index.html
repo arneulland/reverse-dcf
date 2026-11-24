@@ -5,19 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Access codes | Members' Corner</title>
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#03060E">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/tc.css">
 <style>
 main{max-width:600px}
 form{display:grid;gap:16px;margin-top:24px}
 label{display:block;font-size:14px;margin-bottom:6px}
-.inp{width:100%;padding:12px 14px;border:1.5px solid var(--ink);border-radius:10px;background:var(--bg);font-size:16px}
+.inp{width:100%;padding:12px 14px;border:1px solid rgba(var(--glow-rgb),.4);border-radius:12px;background:rgba(5,10,22,.7);font-size:16px}
 select.inp{appearance:auto}
 .row{display:grid;grid-template-columns:2fr 1fr;gap:12px}
 .err{color:var(--down);font-size:14px;min-height:1.4em}
 .out{margin-top:28px;padding:18px;background:var(--surface);border-radius:12px}
 .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:600;letter-spacing:.04em;margin:6px 0}
-textarea{width:100%;min-height:210px;border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:10px;font:14px/1.5 var(--body);margin-top:8px}
+textarea{width:100%;min-height:210px;border:1px solid var(--line);border-radius:8px;background:rgba(5,10,22,.7);padding:10px;font:14px/1.5 var(--body);margin-top:8px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 .muted{color:var(--muted);font-size:13.5px}
 table{margin-top:8px}

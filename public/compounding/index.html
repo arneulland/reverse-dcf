@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Compounding calculator | Torghatten Capital</title>
 <meta name="description" content="See what a starting amount, a yearly contribution and a steady return add up to over time.">
+<meta name="theme-color" content="#03060E">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/tc.css">
 <style>
 .inputs{display:grid;gap:18px 32px;margin-top:28px}
@@ -20,7 +21,7 @@
 .field .money span{color:var(--muted);font-size:13px}
 .field input[type=range]{width:100%;accent-color:var(--brand);margin:8px 0 0;height:24px}
 .field .note{font-size:12.5px;color:var(--muted);margin-top:2px}
-.field select{border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:6px 8px;margin-top:6px}
+.field select{border:1px solid var(--line);border-radius:8px;background:#0B1426;padding:6px 8px;margin-top:6px}
 .row2{display:flex;gap:20px}
 .row2>div{flex:1}
 .row2 input[type=number]{width:100%;border:0;border-bottom:1.5px dashed var(--muted);background:transparent;font-family:var(--display);font-size:22px;font-weight:600;padding:2px 0;margin-top:4px;-moz-appearance:textfield}
@@ -28,28 +29,29 @@
 .check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--brand);flex:none}
 .check small{display:block;color:var(--muted);font-size:12.5px}
 
-.answer{margin-top:40px;padding-top:20px;border-top:3px solid var(--brand)}
+.answer{margin-top:40px;padding:26px 24px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015))}
 .answer .lead{font-family:var(--display);font-size:19px;font-weight:500}
-.answer .big{font-family:var(--display);font-weight:700;font-size:clamp(44px,13vw,84px);line-height:1;letter-spacing:-.02em;color:var(--mark-text);margin:8px 0 10px;word-break:break-word}
+.answer .big{font-family:var(--display);font-weight:700;font-size:clamp(44px,13vw,88px);line-height:1;letter-spacing:-.02em;color:#fff;text-shadow:0 0 18px rgba(var(--glow-rgb),.8),0 0 56px rgba(var(--glow-rgb),.4);margin:8px 0 10px;word-break:break-word}
 .answer .tail{font-size:17px;max-width:52ch}
 .answer .need{margin-top:10px;color:var(--muted);font-size:15px;max-width:58ch}
 
 .legend{display:flex;gap:16px;font-size:13px;color:var(--muted);margin:0 0 10px}
 .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;background:var(--c)}
-td input{width:96px;text-align:right;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:4px 6px}
+td input{width:96px;text-align:right;border:1px solid var(--line);border-radius:6px;background:transparent;padding:4px 6px}
 td input:focus{border-color:var(--ink)}
 td input.set{border-color:var(--brand)}
 tr.milestone td{font-weight:600}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
 </style>
 </head>
-<body>
+<body data-accent="coral">
 <main>
   <div id="tc-top" data-nav></div>
   <script src="/assets/tc.js"></script>
 
   <header class="intro">
-    <h1>What does steady compounding add up to?</h1>
+    <span class="eyebrow">Planning · Tool</span>
+    <h1>Let time do <em>the work.</em></h1>
     <p>Pick a starting amount, what you add each year and the return you expect. The calculator adds a year of growth and your contribution at the end of every year.</p>
   </header>
 
@@ -107,8 +109,8 @@ tr.milestone td{font-weight:600}
 
   <section class="block">
     <h3>Year by year</h3>
-    <p class="hint">The orange part of each bar is growth. The dark part is money you put in yourself.</p>
-    <div class="legend"><span style="--c:var(--ink)">Put in</span><span style="--c:var(--brand)">Growth</span></div>
+    <p class="hint">The glowing part of each bar is growth. The light part is money you put in yourself.</p>
+    <div class="legend"><span style="--c:var(--ink)">Put in</span><span style="--c:var(--glow)">Growth</span></div>
     <div class="chartwrap" id="chartwrap"><svg id="chart" role="img" aria-label="Balance by year, split into money put in and growth"></svg><div class="tip" id="tip" hidden></div></div>
   </section>
 
@@ -329,7 +331,7 @@ function tableText() {
 function drawChart() {
   const svg = $("chart"), wrap = $("chartwrap"), tip = $("tip");
   const W = Math.max(280, wrap.clientWidth - 20), H = 240, L = 54, R = 6, T = 10, B = 24;
-  const css = getComputedStyle(document.documentElement), c = (n) => css.getPropertyValue(n).trim();
+  const css = getComputedStyle(document.body), c = (n) => css.getPropertyValue(n).trim();
   const max = Math.max(1, ...rows.map((r) => Math.max(r.bal, r.put)));
   const min = Math.min(0, ...rows.map((r) => Math.min(r.bal, r.put)));
   const span = max - min;
