@@ -1,4 +1,4 @@
-import { checkCode, makeSession, setCookie, revokedList, isAdminEmail, normEmail, same } from "../lib/access.js";
+import { checkCode, makeSession, setCookie, revokedList, isAdminEmail, normEmail, normCode, same } from "../lib/access.js";
 
 const MSG = {
   not_configured: "Member access isn't set up yet.",
@@ -15,10 +15,13 @@ export default async function handler(req, res) {
   if (typeof body === "string") { try { body = JSON.parse(body); } catch { body = {}; } }
   const env = process.env;
   // Admin sign-in: the admin email with ADMIN_KEY as password gives a 30-day admin session.
-  if (body?.admin) {
+  // Also treat it as admin sign-in when the admin email is used with something that isn't an access code,
+  // so signing in from /join works too.
+  const adminTry = body?.admin || (isAdminEmail(body?.email, env) && !normCode(body?.code));
+  if (adminTry) {
     const email = normEmail(body?.email);
     if (!env.ACCESS_SECRET || !env.ADMIN_KEY || !env.ADMIN_EMAIL) return res.status(503).json({ error: "not_configured", message: "Set ACCESS_SECRET, ADMIN_KEY and ADMIN_EMAIL in Vercel first." });
-    if (!isAdminEmail(email, env) || !same(String(body?.code || ""), env.ADMIN_KEY)) {
+    if (!isAdminEmail(email, env) || !same(String(body?.code || "").trim(), String(env.ADMIN_KEY).trim())) {
       await new Promise((r) => setTimeout(r, 1200)); // slows down guessing
       return res.status(401).json({ error: "bad_admin", message: "Wrong email or password." });
     }

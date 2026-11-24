@@ -19,6 +19,9 @@ export default async function handler(req, res) {
     probe(async () => reddit("MSFT")),
     probe(async () => stocktwits("MSFT")),
   ]);
+  // Says whether member access is configured, without revealing any values.
+  const env = process.env;
+  const access = { ACCESS_SECRET: !!env.ACCESS_SECRET, ADMIN_KEY: !!env.ADMIN_KEY, ADMIN_EMAIL: !!env.ADMIN_EMAIL, adminEmails: String(env.ADMIN_EMAIL || "").split(/[\s,;]+/).filter(Boolean).length };
   res.setHeader("Cache-Control", "no-store");
-  res.status(200).json({ yahooSearch: s, yahooChart: c, yahooFundamentals: f, secEdgar: e, wikipedia: aw, googleNews: an, reddit: ar, stocktwits: as });
+  res.status(200).json({ yahooSearch: s, yahooChart: c, yahooFundamentals: f, access, secEdgar: e, wikipedia: aw, googleNews: an, reddit: ar, stocktwits: as });
 }
