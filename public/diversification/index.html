@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How many stocks? | Torghatten Capital</title>
+<meta name="description" content="Simulate concentration against diversification, and see how much edge it takes to justify owning few stocks.">
+<meta name="theme-color" content="#03060E">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/tc.css">
+<style>
+main{max-width:860px}
+.controls{display:grid;gap:20px 32px;margin-top:30px}
+@media(min-width:620px){.controls{grid-template-columns:1fr 1fr}}
+.ctl label{display:flex;justify-content:space-between;font-size:14px;gap:10px}
+.ctl output{font-weight:600;font-family:var(--display);font-size:17px}
+.ctl input[type=range]{width:100%;accent-color:var(--glow);margin:8px 0 0;height:24px}
+.ctl .note{font-size:12.5px;color:var(--muted);margin-top:2px}
+.ctl select{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:#0B1426;padding:9px 10px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-top:4px}
+.check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--glow);flex:none}
+.check small{display:block;color:var(--muted);font-size:12.5px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;align-items:center;font-size:14px;color:var(--muted)}
+
+.answer{margin-top:36px;padding:26px 24px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015))}
+.answer .lead{font-family:var(--display);font-size:19px}
+.answer .big{font-family:var(--display);font-weight:700;font-size:clamp(64px,18vw,112px);line-height:.95;letter-spacing:-.02em;color:#fff;margin:8px 0 6px;
+  text-shadow:0 0 18px rgba(var(--glow-rgb),.85),0 0 60px rgba(var(--glow-rgb),.45)}
+.answer .big small{font-size:.26em;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:.2em}
+.answer .tail{font-size:17px;max-width:56ch}
+.answer .need{margin-top:10px;color:var(--muted);font-size:15px;max-width:60ch}
+.answer .need b{color:var(--ink);font-weight:600}
+.busy{opacity:.55;transition:opacity .15s}
+
+table.sc td:first-child b{display:block;font-weight:600}
+table.sc td:first-child span{color:var(--muted);font-size:12.5px}
+table.sc td.hl{font-family:var(--display);font-weight:600;font-size:16px;color:var(--glow)}
+table.sc tr.on td{background:var(--accent-soft)}
+
+.gurus{display:grid;gap:12px;margin-top:6px}
+@media(min-width:620px){.gurus{grid-template-columns:1fr 1fr}}
+.guru{padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.02);cursor:pointer;transition:border-color .2s}
+.guru:hover{border-color:rgba(var(--glow-rgb),.55)}
+.guru .n{font:600 11px/1 var(--body);letter-spacing:.22em;text-transform:uppercase;color:var(--glow)}
+.guru h4{font:600 19px/1.2 var(--display);margin:8px 0 6px}
+.guru p{color:var(--muted);font-size:14px}
+.guru q{font-style:italic;color:var(--ink)}
+.guru .src{display:block;margin-top:8px;font-size:12px;color:#6F7A8C}
+.guru.tc{border-color:rgba(var(--glow-rgb),.5);background:var(--accent-soft)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);margin:0 0 10px}
+.legend span::before{content:"";display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+</style>
+</head>
+<body data-accent="gold">
+<main>
+  <div id="tc-top" data-nav></div>
+  <script src="/assets/tc.js"></script>
+
+  <header class="intro">
+    <span class="eyebrow">Portfolio · Tool</span>
+    <h1>How many stocks <em>should you own?</em></h1>
+    <p>Concentration only pays if you're better than average at picking. This simulator runs thousands of decades for a portfolio you describe, and shows how much edge it takes to justify owning few stocks.</p>
+  </header>
+
+  <div class="controls">
+    <div class="ctl"><label for="rN"><span>Positions</span><output id="oN"></output></label><input id="rN" type="range" min="1" max="50" step="1"><div class="note" id="nNote"></div></div>
+    <div class="ctl"><label for="selW"><span>Position sizes</span></label>
+      <select id="selW"><option value="equal">Equal weight</option><option value="conviction">Conviction: top 3 at double weight</option><option value="bigbet">One big bet: largest at 25%</option></select>
+      <div class="note" id="wNote"></div></div>
+    <div class="ctl"><label for="rA"><span>Your edge per year</span><output id="oA"></output></label><input id="rA" type="range" min="0" max="6" step="0.5"><div class="note">How much better your picks do than a random stock, on average. Be honest: most professionals have none after fees.</div></div>
+    <div class="ctl"><label for="rY"><span>Years</span><output id="oY"></output></label><input id="rY" type="range" min="3" max="20" step="1"></div>
+    <div class="ctl"><label for="selV"><span>Kind of stocks</span></label>
+      <select id="selV"><option value="0.22">Steady quality compounders</option><option value="0.32" selected>Typical listed stocks</option><option value="0.45">Small and speculative</option></select>
+      <div class="note">Sets how far each stock can swing on its own, apart from the market.</div></div>
+    <div class="ctl"><label class="check" for="cRb"><input type="checkbox" id="cRb"><span>Rebalance once a year<small>Off means you let winners run, as most long-term owners do.</small></span></label></div>
+  </div>
+  <div class="presets">
+    <span>Try</span>
+    <button class="chip" type="button" data-p="munger">Munger: 3 stocks</button>
+    <button class="chip" type="button" data-p="tc">Torghatten Capital: 15, by conviction</button>
+    <button class="chip" type="button" data-p="statman">Statman: 40 stocks</button>
+  </div>
+
+  <section class="answer" id="answer" aria-live="polite">
+    <p class="lead" id="aLead"></p>
+    <p class="big" id="aBig"></p>
+    <p class="tail" id="aTail"></p>
+    <p class="need" id="aEdge"></p>
+    <p class="need" id="aRisk"></p>
+    <dl class="facts">
+      <div class="fact"><dt>Your median return a year</dt><dd id="fMed"></dd></div>
+      <div class="fact"><dt>Worst 10% of outcomes</dt><dd id="fBad"></dd></div>
+      <div class="fact"><dt>Best 10% of outcomes</dt><dd id="fGood"></dd></div>
+      <div class="fact"><dt>Typical worst fall</dt><dd id="fDD"></dd></div>
+    </dl>
+  </section>
+
+  <section class="block">
+    <h3>Three markets</h3>
+    <p class="hint">The same portfolio in a weak, a normal and a strong decade. Your edge stays the same; only the market changes.</p>
+    <div class="scroll"><table class="sc" id="scen">
+      <thead><tr><th>Market</th><th>Your median</th><th>Index median</th><th>Chance you beat it</th><th>Worst 10%</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section class="block">
+    <h3>Fewer stocks, wider spread</h3>
+    <p class="hint">How far your yearly return can land from the index's, by number of positions (along the bottom), with your current settings. The dot is where you are.</p>
+    <div class="legend"><span style="--c:rgba(var(--glow-rgb),.22)">80% of outcomes</span><span style="--c:rgba(var(--glow-rgb),.45)">Middle half</span><span style="--c:var(--glow)">Median</span></div>
+    <div class="chartwrap" id="fw"><svg id="frontier" role="img" aria-label="Spread of returns against the index by number of positions"></svg><div class="tip" id="tip" hidden></div></div>
+  </section>
+
+  <section class="block">
+    <h3>What the investors and the research say</h3>
+    <p class="hint">Select one to load it into the simulator.</p>
+    <div class="gurus" id="gurus"></div>
+  </section>
+
+  <section class="block">
+    <h3>How it works</h3>
+    <p class="hint" style="max-width:66ch">Each run draws ten years (or however many you choose) of quarterly returns. The market moves first, with 16% yearly volatility around the expected return for the scenario. Every stock follows the market and adds its own random swing. That swing is lopsided over time: a few stocks compound into giants while most lag, which is the pattern Bessembinder found in real markets. Your edge is added to the expected return of every stock you own. The index is the market itself. Each result is 2,500 runs; the chart uses 1,200 per point.</p>
+    <p class="hint" style="max-width:66ch;margin-top:10px">What it leaves out: fees and taxes, the fact that your picks may be correlated with each other (several software stocks move together), and that edge isn't steady from year to year. All three make concentration riskier than shown here.</p>
+  </section>
+
+  <footer>
+    <p>From <a href="https://torghattencapital.substack.com">Torghatten Capital</a>. A simulation shows a range of outcomes under simple assumptions, not a forecast.</p>
+    <p>This is a calculator, not investment advice.</p>
+  </footer>
+</main>
+
+<script id="model">
+// ---- Simulation model (pure; tested in test/run.js) -------------------------
+function rng(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function normals(R) {
+  let spare = null;
+  return function () {
+    if (spare !== null) { const s = spare; spare = null; return s; }
+    let u = 0, v = 0;
+    while (u === 0) u = R();
+    v = R();
+    const m = Math.sqrt(-2 * Math.log(u));
+    spare = m * Math.sin(2 * Math.PI * v);
+    return m * Math.cos(2 * Math.PI * v);
+  };
+}
+function weights(n, scheme) {
+  let w = new Array(n).fill(1);
+  if (scheme === "conviction" && n > 3) { w[0] = w[1] = w[2] = 2; }
+  if (scheme === "bigbet" && n > 1) {
+    const big = Math.max(0.25, 1 / n);
+    const s = w.reduce((a, b) => a + b, 0);
+    w = w.map((_, i) => (i === 0 ? big : (1 - big) / (n - 1)));
+    return w;
+  }
+  const s = w.reduce((a, b) => a + b, 0);
+  return w.map((x) => x / s);
+}
+// opts: n, scheme, alpha (yearly edge), idio (yearly stock-specific vol), mu (expected
+// yearly market return), years, rebalance, paths, seed, marketVol
+function simulate(o) {
+  const R = rng(o.seed || 1), g = normals(R);
+  const Q = o.years * 4, sm = (o.marketVol ?? 0.16) / 2, si = o.idio / 2;
+  const m = Math.log(1 + o.mu) / 4 - (sm * sm) / 2;
+  const a = Math.log(1 + o.alpha) / 4 - (si * si) / 2;
+  const w = weights(o.n, o.scheme), n = o.n;
+  const port = new Float64Array(o.paths), idx = new Float64Array(o.paths), rel = new Float64Array(o.paths), dd = new Float64Array(o.paths), idd = new Float64Array(o.paths);
+  let bagger = 0;
+  const v = new Float64Array(n), gr = new Float64Array(n);
+  for (let p = 0; p < o.paths; p++) {
+    for (let i = 0; i < n; i++) { v[i] = w[i]; gr[i] = 1; }
+    let total = 1, peak = 1, worst = 0, ix = 1, ipeak = 1, iworst = 0;
+    for (let q = 0; q < Q; q++) {
+      const mr = m + sm * g();
+      ix *= Math.exp(mr);
+      total = 0;
+      for (let i = 0; i < n; i++) {
+        const f = Math.exp(mr + a + si * g());
+        v[i] *= f; gr[i] *= f; total += v[i];
+      }
+      if (o.rebalance && q % 4 === 3) for (let i = 0; i < n; i++) v[i] = total * w[i];
+      if (total > peak) peak = total; else if (1 - total / peak > worst) worst = 1 - total / peak;
+      if (ix > ipeak) ipeak = ix; else if (1 - ix / ipeak > iworst) iworst = 1 - ix / ipeak;
+    }
+    port[p] = Math.pow(total, 1 / o.years) - 1;
+    idx[p] = Math.pow(ix, 1 / o.years) - 1;
+    rel[p] = port[p] - idx[p];
+    dd[p] = worst; idd[p] = iworst;
+    for (let i = 0; i < n; i++) if (gr[i] >= 10) { bagger++; break; }
+  }
+  return { port, idx, rel, dd, idd, bagger: bagger / o.paths, w };
+}
+function quantile(arr, q) {
+  const s = Float64Array.from(arr).sort();
+  const pos = (s.length - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
+  return s[lo] + (s[hi] - s[lo]) * (pos - lo);
+}
+const share = (arr, fn) => { let c = 0; for (const x of arr) if (fn(x)) c++; return c / arr.length; };
+// Smallest yearly edge that gives at least `target` chance of beating the index.
+function requiredEdge(o, target) {
+  const pBeat = (alpha) => share(simulate({ ...o, alpha, paths: 600, seed: 7 }).rel, (x) => x > 0);
+  if (pBeat(0) >= target) return 0;
+  let lo = 0, hi = 0.2;
+  if (pBeat(hi) < target) return null;
+  for (let k = 0; k < 9; k++) { const mid = (lo + hi) / 2; if (pBeat(mid) >= target) hi = mid; else lo = mid; }
+  return hi;
+}
+if (typeof module !== "undefined") module.exports = { rng, weights, simulate, quantile, share, requiredEdge };
+</script>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmt = (v, dp = 0) => new Intl.NumberFormat("en-US", { maximumFractionDigits: dp, minimumFractionDigits: dp }).format(v);
+const pct = (v, dp = 1) => (v == null || !isFinite(v) ? "n/a" : (v < 0 ? "−" : "") + fmt(Math.abs(v) * 100, dp) + "%");
+const spct = (v, dp = 1) => (v >= 0 ? "+" : "−") + fmt(Math.abs(v) * 100, dp) + "%";
+const chance = (p) => p >= 0.995 ? "almost certain" : p <= 0.005 ? "almost no chance" : Math.round(p * 100) + "%";
+const MARKETS = [
+  { key: "weak", label: "Weak decade", mu: 0.04, sub: "Index expected 4% a year" },
+  { key: "normal", label: "Normal decade", mu: 0.08, sub: "Index expected 8% a year" },
+  { key: "strong", label: "Strong decade", mu: 0.12, sub: "Index expected 12% a year" },
+];
+const S = { n: 15, scheme: "conviction", alpha: 0, years: 10, idio: 0.32, rebalance: false };
+
+const GURUS = [
+  { n: 3, name: "Charlie Munger", short: "Munger", range: "3 stocks", text: "Said his family owned essentially three stocks, and called owning 100 instead of four or five", quote: "absolute insanity.", src: "Daily Journal annual meetings", preset: { n: 3, scheme: "equal" } },
+  { n: 5, name: "Warren Buffett", short: "Buffett", range: "A handful", text: "For people who can value businesses, owning many stocks makes little sense. For everyone else, an index fund.", quote: "Diversification is a protection against ignorance.", src: "Berkshire Hathaway annual meeting, 1996", preset: { n: 5, scheme: "conviction" } },
+  { n: 8, name: "Joel Greenblatt", short: "Greenblatt", range: "6 to 8 stocks", text: "Eight stocks remove about 81% of the risk specific to owning one stock, 16 remove 93%, and 32 remove 96%.", src: "You Can Be a Stock Market Genius, 1997", preset: { n: 8, scheme: "equal" } },
+  { n: 10, name: "Evans and Archer", short: "Evans & Archer", range: "About 10 stocks", text: "Found that most of the benefit of diversification is gone by about ten stocks. This became the textbook answer.", src: "Journal of Finance, 1968", preset: { n: 10, scheme: "equal" } },
+  { n: 15, name: "Torghatten Capital", short: "Torghatten", range: "10 to 20, by conviction", text: "Few enough to know every business well, enough that one mistake can't sink the portfolio. Sized by conviction, no leverage.", src: "Torghatten Capital strategy manual", tc: true, preset: { n: 15, scheme: "conviction" } },
+  { n: 35, name: "Meir Statman", short: "Statman", range: "30 to 40 stocks", text: "Disputed the ten-stock rule: a well-diversified portfolio of randomly chosen stocks needs at least 30, or 40 for an investor who doesn't borrow.", src: "Journal of Financial and Quantitative Analysis, 1987", preset: { n: 40, scheme: "equal" } },
+  { n: 50, name: "Hendrik Bessembinder", short: "Bessembinder", range: "Own the market", text: "The best-performing 4% of US-listed companies explain the stock market's entire gain over Treasury bills since 1926. Miss those, and you likely lag.", src: "Journal of Financial Economics, 2018", preset: { n: 50, scheme: "equal" } },
+];
+
+// ---- inputs -----------------------------------------------------------------
+function sync() {
+  $("rN").value = S.n; $("selW").value = S.scheme; $("rA").value = S.alpha * 100; $("rY").value = S.years;
+  $("selV").value = String(S.idio); $("cRb").checked = S.rebalance;
+}
+function readUrl() {
+  const q = new URLSearchParams(location.search), num = (k) => { const v = parseFloat(q.get(k)); return isFinite(v) ? v : null; };
+  if (num("n")) S.n = Math.min(50, Math.max(1, Math.round(num("n"))));
+  if (["equal", "conviction", "bigbet"].includes(q.get("w"))) S.scheme = q.get("w");
+  if (num("e") != null) S.alpha = Math.min(0.06, Math.max(0, num("e") / 100));
+  if (num("y")) S.years = Math.min(20, Math.max(3, Math.round(num("y"))));
+  if (["0.22", "0.32", "0.45"].includes(q.get("v"))) S.idio = +q.get("v");
+  if (q.get("rb") === "1") S.rebalance = true;
+}
+function writeUrl() {
+  const q = new URLSearchParams({ n: S.n, w: S.scheme, e: S.alpha * 100, y: S.years, v: S.idio });
+  if (S.rebalance) q.set("rb", "1");
+  try { history.replaceState(null, "", "?" + q); } catch (e) {}
+}
+$("rN").oninput = (e) => { S.n = +e.target.value; schedule(); };
+$("selW").onchange = (e) => { S.scheme = e.target.value; schedule(); };
+$("rA").oninput = (e) => { S.alpha = +e.target.value / 100; schedule(); };
+$("rY").oninput = (e) => { S.years = +e.target.value; schedule(); };
+$("selV").onchange = (e) => { S.idio = +e.target.value; schedule(); };
+$("cRb").onchange = (e) => { S.rebalance = e.target.checked; schedule(); };
+const PRESETS = { munger: { n: 3, scheme: "equal" }, tc: { n: 15, scheme: "conviction" }, statman: { n: 40, scheme: "equal" } };
+document.querySelectorAll("[data-p]").forEach((b) => (b.onclick = () => { Object.assign(S, PRESETS[b.dataset.p]); sync(); schedule(true); }));
+
+let timer;
+function schedule(now) {
+  labels();
+  $("answer").classList.add("busy");
+  clearTimeout(timer);
+  timer = setTimeout(run, now ? 0 : 160);
+}
+function labels() {
+  $("oN").textContent = S.n; $("oA").textContent = S.alpha ? spct(S.alpha, 1) : "None"; $("oY").textContent = S.years;
+  const w = weights(S.n, S.scheme), max = Math.max(...w), min = Math.min(...w);
+  $("wNote").textContent = S.n === 1 ? "Everything in one stock." : max - min < 1e-9 ? fmt(max * 100, 1) + "% in each." : "Largest " + fmt(max * 100, 1) + "%, smallest " + fmt(min * 100, 1) + "%.";
+  const removed = 1 - w.reduce((a, x) => a + x * x, 0);
+  $("nNote").textContent = S.n === 1 ? "All the risk of a single company." : "Removes about " + Math.round(removed * 100) + "% of the stock-specific risk of owning one stock.";
+}
+
+// ---- run ----------------------------------------------------------------------
+let runId = 0;
+const later = () => new Promise((r) => setTimeout(r, 0));
+async function run() {
+  const my = ++runId;
+  const base = { n: S.n, scheme: S.scheme, alpha: S.alpha, idio: S.idio, years: S.years, rebalance: S.rebalance, paths: 2500, seed: 11 };
+  const normal = simulate({ ...base, mu: 0.08 });
+  const pBeat = share(normal.rel, (x) => x > 0), pLag = share(normal.rel, (x) => x < -0.03);
+  const medRel = quantile(normal.rel, 0.5);
+
+  $("aLead").textContent = "With " + S.n + (S.n === 1 ? " stock" : " stocks") + (S.alpha ? " and an edge of " + spct(S.alpha, 1) + " a year" : " and no edge") + ", your chance of beating the index over " + S.years + " years is";
+  $("aBig").innerHTML = Math.round(pBeat * 100) + "<small>%</small>";
+  $("aTail").textContent = "In a normal decade. The typical outcome is " + spct(medRel, 1) + " a year against the index, and there is a " + chance(pLag) + (pLag > 0.005 && pLag < 0.995 ? " chance" : "") + " of trailing it by more than 3% a year.";
+
+  $("aRisk").textContent = "In " + Math.round(normal.bagger * 100) + "% of runs at least one holding rose tenfold. Typical worst fall along the way: " + pct(quantile(normal.dd, 0.5), 0) + " for you, " + pct(quantile(normal.idd, 0.5), 0) + " for the index.";
+  $("fMed").textContent = pct(quantile(normal.port, 0.5));
+  $("fBad").textContent = pct(quantile(normal.port, 0.1));
+  $("fGood").textContent = pct(quantile(normal.port, 0.9));
+  $("fDD").textContent = pct(quantile(normal.dd, 0.5), 0);
+  $("answer").classList.remove("busy");
+  writeUrl();
+  $("aEdge").textContent = "Working out the edge you'd need…";
+
+  await later(); if (my !== runId) return;
+  const res = MARKETS.map((mk) => ({ mk, r: mk.mu === 0.08 ? normal : simulate({ ...base, mu: mk.mu }) }));
+  $("scen").tBodies[0].innerHTML = res.map(({ mk, r }) => `
+    <tr class="${mk.key === "normal" ? "on" : ""}"><td><b>${mk.label}</b><span>${mk.sub}</span></td>
+    <td class="hl">${pct(quantile(r.port, 0.5))}</td><td>${pct(quantile(r.idx, 0.5))}</td>
+    <td>${Math.round(share(r.rel, (x) => x > 0) * 100)}%</td><td>${pct(quantile(r.port, 0.1))}</td></tr>`).join("");
+
+  await later(); if (my !== runId) return;
+  const need = requiredEdge({ ...base, mu: 0.08 }, 2 / 3);
+  $("aEdge").innerHTML = need === null ? "Even a 20% yearly edge isn't enough for a 2 in 3 chance of beating the index with these settings."
+    : need === 0 ? "With these settings you already have at least a 2 in 3 chance of beating the index."
+    : "To have a <b>2 in 3 chance</b> of beating the index with " + S.n + (S.n === 1 ? " stock" : " stocks") + ", you'd need an edge of about <b>" + spct(need, 1) + " a year</b>. That's the bar your stock picking has to clear.";
+
+  await later(); if (my !== runId) return;
+  YOU = medRel;
+  drawFrontier(base);
+}
+let YOU = 0;
+
+// ---- frontier chart ------------------------------------------------------------
+const NS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50];
+let lastF = null;
+function frontier(base) {
+  const key = JSON.stringify({ ...base, n: 0 });
+  if (lastF && lastF.key === key) return lastF.pts;
+  const pts = NS.map((n) => {
+    const r = simulate({ ...base, n, mu: 0.08, paths: 1200, seed: 23 }).rel;
+    return { n, p10: quantile(r, 0.1), p25: quantile(r, 0.25), p50: quantile(r, 0.5), p75: quantile(r, 0.75), p90: quantile(r, 0.9) };
+  });
+  lastF = { key, pts };
+  return pts;
+}
+function drawFrontier(base) {
+  const pts = frontier(base);
+  const svg = $("frontier"), wrap = $("fw");
+  const W = Math.max(300, wrap.clientWidth - 20), H = 300, L = 48, R = 12, T = 12, B = 62;
+  const css = getComputedStyle(document.body), c = (n) => css.getPropertyValue(n).trim(), glow = c("--glow-rgb");
+  const lo = Math.min(-0.1, ...pts.map((p) => p.p10)), hi = Math.max(0.1, ...pts.map((p) => p.p90));
+  const x = (n) => L + (Math.log(n) / Math.log(50)) * (W - L - R);
+  const y = (v) => T + ((hi - v) / (hi - lo)) * (H - T - B);
+  const area = (a, b) => "M" + pts.map((p) => x(p.n) + "," + y(p[a])).join("L") + "L" + pts.slice().reverse().map((p) => x(p.n) + "," + y(p[b])).join("L") + "Z";
+  let h = "";
+  const step = (hi - lo) > 0.3 ? 0.1 : 0.05;
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) {
+    h += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${c("--line")}" stroke-width="${Math.abs(v) < 1e-9 ? 1.6 : 1}"/>`;
+    h += `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${Math.abs(v) < 1e-9 ? "Index" : spct(v, 0)}</text>`;
+  }
+  h += `<path d="${area("p90", "p10")}" fill="rgba(${glow},.16)"/>`;
+  h += `<path d="${area("p75", "p25")}" fill="rgba(${glow},.32)"/>`;
+  h += `<path d="M${pts.map((p) => x(p.n) + "," + y(p.p50)).join("L")}" fill="none" stroke="${c("--glow")}" stroke-width="2"/>`;
+  [1, 2, 3, 5, 10, 20, 30, 50].forEach((n) => (h += `<text x="${x(n)}" y="${H - B + 16}" text-anchor="middle">${n}</text>`));
+  // guru markers
+  const rows = [];
+  GURUS.forEach((gu) => {
+    const gx = x(gu.n), label = gu.short;
+    const wlab = label.length * 6.2 + 10;
+    const anchor = gx + wlab / 2 > W - R ? "end" : "middle";
+    const left = anchor === "end" ? gx - wlab : gx - wlab / 2;
+    let row = 0; while (rows[row] != null && rows[row] > left) row++;
+    rows[row] = anchor === "end" ? gx : gx + wlab / 2;
+    const gy = H - B + 36 + row * 13;
+    h += `<line x1="${gx}" x2="${gx}" y1="${T}" y2="${H - B}" stroke="rgba(${glow},${gu.tc ? .55 : .18})" stroke-dasharray="${gu.tc ? "" : "2 4"}"/>`;
+    h += `<text x="${gx}" y="${gy}" text-anchor="${anchor}" style="fill:${gu.tc ? c("--glow") : c("--muted")};font-size:10.5px">${label}</text>`;
+  });
+  // you
+  h += `<circle cx="${x(S.n)}" cy="${y(YOU)}" r="6.5" fill="#fff" style="filter:drop-shadow(0 0 8px rgba(${glow},.9))"/>`;
+  pts.forEach((p, i) => (h += `<rect x="${x(p.n) - 9}" y="${T}" width="18" height="${H - T - B}" fill="transparent" data-i="${i}"/>`));
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = h;
+  const tip = $("tip");
+  svg.onmousemove = (e) => {
+    const i = e.target.dataset && e.target.dataset.i; if (i == null) { tip.hidden = true; return; }
+    const p = pts[i], box = wrap.getBoundingClientRect();
+    tip.hidden = false;
+    tip.textContent = p.n + (p.n === 1 ? " stock" : " stocks") + ": median " + spct(p.p50) + ", 80% between " + spct(p.p10) + " and " + spct(p.p90) + " a year";
+    tip.style.left = Math.min(box.width - 150, Math.max(150, e.clientX - box.left)) + "px";
+    tip.style.top = (e.clientY - box.top - 10) + "px";
+  };
+  svg.onmouseleave = () => (tip.hidden = true);
+}
+
+function drawGurus() {
+  $("gurus").innerHTML = GURUS.map((g, i) => `
+    <div class="guru${g.tc ? " tc" : ""}" role="button" tabindex="0" data-g="${i}">
+      <span class="n">${g.range}</span><h4>${g.name}</h4>
+      <p>${g.text}${g.quote ? ` <q>${g.quote}</q>` : ""}</p>
+      <span class="src">${g.src}</span>
+    </div>`).join("");
+}
+$("gurus").addEventListener("click", (e) => {
+  const el = e.target.closest("[data-g]"); if (!el) return;
+  Object.assign(S, GURUS[+el.dataset.g].preset); sync(); schedule(true);
+  scrollTo({ top: 0, behavior: "smooth" });
+});
+$("gurus").addEventListener("keydown", (e) => { if (e.key === "Enter") e.target.click(); });
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => drawFrontier({ n: S.n, scheme: S.scheme, alpha: S.alpha, idio: S.idio, years: S.years, rebalance: S.rebalance, paths: 4000, seed: 11 }), 150); });
+
+readUrl(); sync(); drawGurus(); schedule(true);
+</script>
+</body>
+</html>

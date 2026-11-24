@@ -212,3 +212,32 @@ console.log("Payout checks passed.");
   assert.equal((await A.gate(req("/admin", admin), { ACCESS_SECRET: S })).status, 302, "no ADMIN_EMAIL set, no admin");
   console.log("Admin checks passed.");
 }
+
+// --- diversification simulator ----------------------------------------------
+{
+  const html3 = readFileSync(new URL("../public/diversification/index.html", import.meta.url), "utf8");
+  const m3 = { exports: {} };
+  vm.runInNewContext(html3.match(/<script id="model">([\s\S]*?)<\/script>/)[1], { module: m3, Math, Float64Array, Array });
+  const { weights, simulate, quantile, share, requiredEdge } = m3.exports;
+  const sum = (w) => w.reduce((a, b) => a + b, 0);
+  near(sum(weights(15, "conviction")), 1, 1e-12, "weights sum to 1");
+  near(weights(15, "conviction")[0], 2 / 18, 1e-12, "top 3 double weight");
+  near(weights(10, "bigbet")[0], 0.25, 1e-12, "big bet 25%");
+  near(weights(1, "bigbet")[0], 1, 1e-12, "one stock");
+  const base = { scheme: "equal", alpha: 0, idio: 0.32, mu: 0.08, years: 10, rebalance: false, paths: 3000, seed: 3 };
+  const t0 = Date.now();
+  const one = simulate({ ...base, n: 1 }), many = simulate({ ...base, n: 50 });
+  const spread = (r) => quantile(r.rel, 0.9) - quantile(r.rel, 0.1);
+  assert.ok(spread(one) > 3 * spread(many), "one stock spreads far wider than fifty");
+  // skew: a single random stock usually lags the index (Bessembinder)
+  assert.ok(share(one.rel, (x) => x > 0) < 0.42, "single stock beats index well under half the time: " + share(one.rel, (x) => x > 0));
+  // mean wealth is preserved: average of growth factors ~ index average
+  const avg = (a) => a.reduce((s, x) => s + x, 0) / a.length;
+  const mw = (r) => avg(Array.from(r.port, (c) => Math.pow(1 + c, 10))), iw = (r) => avg(Array.from(r.idx, (c) => Math.pow(1 + c, 10)));
+  near(mw(many) / iw(many), 1, 0.03, "no edge: expected wealth equals the index");
+  const edge = simulate({ ...base, n: 10, alpha: 0.04 });
+  assert.ok(share(edge.rel, (x) => x > 0) > 0.7, "a 4% edge with 10 stocks usually wins");
+  const need = requiredEdge({ ...base, n: 10 }, 2 / 3);
+  assert.ok(need > 0.005 && need < 0.06, "required edge for 10 stocks is a few percent: " + need);
+  console.log("Diversification checks passed. Edge needed for 10 stocks:", (need * 100).toFixed(1) + "%", "in", Date.now() - t0, "ms");
+}

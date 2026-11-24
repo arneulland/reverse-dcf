@@ -7,6 +7,7 @@ Torghatten Capital's tool platform. Each tool is one page under `public/`:
 | `/` | Hub with links to every tool. Old reverse DCF links (`/?t=CSU.TO`) redirect to `/reverse-dcf`. |
 | `/reverse-dcf` | Members only. Works backwards from a share price to the free cash flow growth it assumes |
 | `/attention` | Members only. Attention score: how much a stock is talked about, 1 to 100 |
+| `/diversification` | Members only. Diversification simulator: how much edge concentration needs |
 | `/compounding` | Members only. Compounding calculator, the web version of `Compounding.xlsx` |
 
 Shared look and header live in `public/assets/tc.css` and `public/assets/tc.js`.

@@ -35,11 +35,15 @@ main{max-width:1040px}
 .sec{display:flex;justify-content:space-between;align-items:baseline;margin:64px 0 18px;gap:12px}
 .sec h2{font-size:28px}
 .tools{display:grid;gap:18px}
-@media(min-width:760px){.tools{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:760px){.tools{grid-template-columns:repeat(2,1fr)}}
 .tool{--glow:#9DC8FF;--glow-rgb:157,200,255;position:relative;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:20px;overflow:hidden;text-decoration:none;color:var(--ink);
   background:linear-gradient(180deg,#0B1428,#070C1A);transition:transform .25s,border-color .25s,box-shadow .25s}
 .tool.coral{--glow:#FF8F6B;--glow-rgb:255,143,107}
 .tool.lavender{--glow:#B9A6FF;--glow-rgb:185,166,255}
+.tool.gold{--glow:#F2C46D;--glow-rgb:242,196,109}
+.tool .cover .dots{position:absolute;right:26px;top:30px;display:grid;grid-template-columns:repeat(5,14px);gap:9px}
+.tool .cover .dots i{width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 10px rgba(var(--glow-rgb),.9),0 0 26px rgba(var(--glow-rgb),.5)}
+.tool .cover .dots i.dim{background:rgba(var(--glow-rgb),.25);box-shadow:none}
 .tool:hover{border-color:rgba(var(--glow-rgb),.55);box-shadow:0 18px 60px rgba(var(--glow-rgb),.16)}
 @media (prefers-reduced-motion:no-preference){.tool:hover{transform:translateY(-4px)}}
 .tool .cover{position:relative;height:170px;overflow:hidden;
@@ -114,6 +118,15 @@ main{max-width:1040px}
         <span class="eyebrow">Planning</span>
         <h3>Let time do <em>the work.</em></h3>
         <p>Compounding calculator. See what steady saving and a steady return add up to, and the year growth starts out-earning you.</p>
+        <span class="go">Open</span>
+      </div>
+    </a>
+    <a class="tool gold" href="/diversification">
+      <div class="cover"><span class="lock">Members</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i><i class="dim"></i><i class="dim"></i><i></i><i></i><i class="dim"></i><i class="dim"></i><i class="dim"></i><i></i><i class="dim"></i><i class="dim"></i><i class="dim"></i><i class="dim"></i></span></div>
+      <div class="body">
+        <span class="eyebrow">Portfolio</span>
+        <h3>How many stocks <em>should you own?</em></h3>
+        <p>Diversification simulator. Thousands of simulated decades show how much edge it takes to justify a concentrated portfolio, next to what Buffett, Munger and the research say.</p>
         <span class="go">Open</span>
       </div>
     </a>

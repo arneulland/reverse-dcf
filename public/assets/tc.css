@@ -15,6 +15,7 @@
 }
 body{--brand:var(--glow);--mark:var(--glow);--mark-text:var(--glow)}
 body[data-accent="coral"]{--glow:#FF8F6B;--glow-rgb:255,143,107;--surface:rgba(255,143,107,.06);--surface-2:rgba(255,143,107,.1);--accent-soft:rgba(255,143,107,.12)}
+body[data-accent="gold"]{--glow:#F2C46D;--glow-rgb:242,196,109;--surface:rgba(242,196,109,.06);--surface-2:rgba(242,196,109,.1);--accent-soft:rgba(242,196,109,.12)}
 body[data-accent="lavender"]{--glow:#B9A6FF;--glow-rgb:185,166,255;--surface:rgba(185,166,255,.06);--surface-2:rgba(185,166,255,.1);--accent-soft:rgba(185,166,255,.12)}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
