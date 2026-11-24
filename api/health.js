@@ -1,4 +1,5 @@
 // Open /api/health after deploying to see which data sources respond.
+import { createHash } from "node:crypto";
 import { search, chart, fundamentals } from "../lib/yahoo.js";
 import { history as edgarHistory } from "../lib/edgar.js";
 import { wikipedia, news, reddit, stocktwits } from "../lib/attention.js";
@@ -21,7 +22,11 @@ export default async function handler(req, res) {
   ]);
   // Says whether member access is configured, without revealing any values.
   const env = process.env;
-  const access = { ACCESS_SECRET: !!env.ACCESS_SECRET, ADMIN_KEY: !!env.ADMIN_KEY, ADMIN_EMAIL: !!env.ADMIN_EMAIL, adminEmails: String(env.ADMIN_EMAIL || "").split(/[\s,;]+/).filter(Boolean).length };
+  const access = { ACCESS_SECRET: !!env.ACCESS_SECRET, ADMIN_KEY: !!env.ADMIN_KEY, ADMIN_EMAIL: !!env.ADMIN_EMAIL, adminEmails: String(env.ADMIN_EMAIL || "").split(/[\s,;]+/).filter(Boolean).length,
+    // TEMPORARY, for troubleshooting admin sign-in. Remove once it works.
+    adminEmailCheck: env.ADMIN_EMAIL ? createHash("sha256").update(String(env.ADMIN_EMAIL).trim().toLowerCase()).digest("hex").slice(0, 8) : null,
+    adminKeyLength: env.ADMIN_KEY ? String(env.ADMIN_KEY).trim().length : 0,
+    adminKeyRawLength: env.ADMIN_KEY ? String(env.ADMIN_KEY).length : 0 };
   res.setHeader("Cache-Control", "no-store");
   res.status(200).json({ yahooSearch: s, yahooChart: c, yahooFundamentals: f, access, secEdgar: e, wikipedia: aw, googleNews: an, reddit: ar, stocktwits: as });
 }
