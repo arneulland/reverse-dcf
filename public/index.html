@@ -41,6 +41,8 @@ main{max-width:1040px}
 .tool.coral{--glow:#FF8F6B;--glow-rgb:255,143,107}
 .tool.lavender{--glow:#B9A6FF;--glow-rgb:185,166,255}
 .tool.gold{--glow:#F2C46D;--glow-rgb:242,196,109}
+.tool.rose{--glow:#FF8FA3;--glow-rgb:255,143,163}
+.tool.teal{--glow:#7FDCC8;--glow-rgb:127,220,200}
 .tool .cover .dots{position:absolute;right:26px;top:30px;display:grid;grid-template-columns:repeat(5,14px);gap:9px}
 .tool .cover .dots i{width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 10px rgba(var(--glow-rgb),.9),0 0 26px rgba(var(--glow-rgb),.5)}
 .tool .cover .dots i.dim{background:rgba(var(--glow-rgb),.25);box-shadow:none}
@@ -127,6 +129,32 @@ main{max-width:1040px}
         <span class="eyebrow">Portfolio</span>
         <h3>How many stocks <em>should you own?</em></h3>
         <p>Diversification simulator. Thousands of simulated decades show how much edge it takes to justify a concentrated portfolio, next to what Buffett, Munger and the research say.</p>
+        <span class="go">Open</span>
+      </div>
+    </a>
+    <a class="tool rose" href="/held">
+      <div class="cover"><span class="lock">Members</span><span class="big">&minus;94%</span></div>
+      <div class="body">
+        <span class="eyebrow">Behaviour</span>
+        <h3>Would you <em>have held?</em></h3>
+        <p>The best stocks of all time fell hard on the way up. See every big fall, how long it lasted, and what selling at the wrong moment would have cost.</p>
+        <span class="go">Open</span>
+      </div>
+    </a>
+    <a class="tool teal" href="/moat">
+      <div class="cover"><span class="lock">Members</span>
+        <svg viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs><filter id="gl2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          <path d="M175 118 C182 108 196 92 210 80 C220 71 232 64 246 62 C258 61 270 66 279 76 C286 84 293 100 300 118 Z" fill="#fff" filter="url(#gl2)" opacity=".95"/>
+          <circle cx="248" cy="88" r="9" fill="#0B1730"/>
+          <path d="M150 128 Q225 112 300 128" fill="none" stroke="#fff" stroke-width="2" opacity=".7" filter="url(#gl2)"/>
+          <path d="M135 140 Q225 122 300 140" fill="none" stroke="#fff" stroke-width="1.4" opacity=".45" filter="url(#gl2)"/>
+        </svg>
+      </div>
+      <div class="body">
+        <span class="eyebrow">Analysis</span>
+        <h3>Does it have <em>a moat?</em></h3>
+        <p>Moat test and checklist. Three steps from Dorsey and 7 Powers classify the moat as wide, narrow or none, then twelve questions to answer before you buy.</p>
         <span class="go">Open</span>
       </div>
     </a>

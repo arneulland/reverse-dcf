@@ -241,3 +241,43 @@ console.log("Payout checks passed.");
   assert.ok(need > 0.005 && need < 0.06, "required edge for 10 stocks is a few percent: " + need);
   console.log("Diversification checks passed. Edge needed for 10 stocks:", (need * 100).toFixed(1) + "%", "in", Date.now() - t0, "ms");
 }
+
+// --- would you have held -------------------------------------------------------
+{
+  const html4 = readFileSync(new URL("../public/held/index.html", import.meta.url), "utf8");
+  const m4 = { exports: {} };
+  vm.runInNewContext(html4.match(/<script id="model">([\s\S]*?)<\/script>/)[1], { module: m4, Math });
+  const { underwater, falls, panic } = m4.exports;
+  const P = [100, 120, 60, 50, 90, 130, 110, 140, 70, 75].map((p, i) => [`20${10 + i}-01-01`, p]);
+  const F = falls(P, 0.3);
+  assert.equal(F.length, 2, "two falls over 30%");
+  near(F[0].depth, 50 / 120 - 1, 1e-12, "first fall from 120 to 50");
+  assert.equal(F[0].peakI, 1); assert.equal(F[0].troughI, 3); assert.equal(F[0].recoverI, 5);
+  near(F[1].depth, 70 / 140 - 1, 1e-12, "second fall, not yet recovered");
+  assert.equal(F[1].recoverI, null);
+  assert.equal(falls(P, 0.6).length, 0, "nothing over 60%");
+  near(underwater(P)[3], 50 / 120 - 1, 1e-12, "underwater at the bottom");
+  // sell at -40%: sells at 60 (from 120), buys back above 120 at 130, sells again at 70 (from 140)
+  const s = panic(P, 0.4, "high");
+  assert.equal(s.sells, 2); assert.equal(s.out, true);
+  near(s.value, 10000 / 100 * 60 / 130 * 70, 1e-9, "panic path value");
+  near(panic(P, 0.4, "never").value, 6000, 1e-9, "sold once, never back");
+  console.log("Held checks passed.");
+}
+
+// --- moat test -------------------------------------------------------------------
+{
+  const html5 = readFileSync(new URL("../public/moat/index.html", import.meta.url), "utf8");
+  const m5 = { exports: {} };
+  vm.runInNewContext(html5.match(/<script id="model">([\s\S]*?)<\/script>/)[1], { module: m5, Object });
+  const { classify } = m5.exports;
+  const pw = { switching: { on: true, benefit: "b", barrier: "c" } };
+  assert.equal(classify({}).verdict, null);
+  assert.equal(classify({ proof: "no", change: "no" }).verdict, "none", "no record, no change");
+  assert.equal(classify({ proof: "yes", powers: {} }).verdict, null, "needs a power");
+  assert.equal(classify({ proof: "yes", powers: pw, dur: "wide" }).verdict, "wide");
+  assert.equal(classify({ proof: "yes", powers: pw, dur: "wide", gov: "yes" }).verdict, "narrow", "regulator caps at narrow");
+  assert.equal(classify({ proof: "yes", powers: pw, dur: "narrow" }).verdict, "narrow");
+  assert.equal(classify({ proof: "no", change: "yes", powers: pw, dur: "wide" }).verdict, "narrow", "no record can't be wide");
+  console.log("Moat checks passed.");
+}

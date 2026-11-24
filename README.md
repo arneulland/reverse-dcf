@@ -8,6 +8,8 @@ Torghatten Capital's tool platform. Each tool is one page under `public/`:
 | `/reverse-dcf` | Members only. Works backwards from a share price to the free cash flow growth it assumes |
 | `/attention` | Members only. Attention score: how much a stock is talked about, 1 to 100 |
 | `/diversification` | Members only. Diversification simulator: how much edge concentration needs |
+| `/held` | Members only. Would you have held: every big fall in a stock's history, and what selling cost |
+| `/moat` | Members only. Moat test (Dorsey, 7 Powers) and 12-question checklist, saved in the browser |
 | `/compounding` | Members only. Compounding calculator, the web version of `Compounding.xlsx` |
 
 Shared look and header live in `public/assets/tc.css` and `public/assets/tc.js`.

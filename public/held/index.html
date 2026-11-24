@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Would you have held? | Torghatten Capital</title>
+<meta name="description" content="The best stocks of all time fell hard along the way. See every big fall, and what selling would have cost.">
+<meta name="theme-color" content="#03060E">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/tc.css">
+<style>
+main{max-width:860px}
+.card{margin-top:32px;padding:26px 24px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015))}
+.card h2{font-size:24px}
+.card .sub{color:var(--muted);font-size:14px;margin-top:2px}
+.headline{margin-top:20px;font-family:var(--display);font-size:clamp(22px,4.6vw,30px);line-height:1.25;max-width:30ch}
+.headline .g{color:#fff;font-weight:700;text-shadow:0 0 16px rgba(var(--glow-rgb),.8),0 0 44px rgba(var(--glow-rgb),.4)}
+.ctlrow{display:grid;gap:18px 28px;margin-top:22px}
+@media(min-width:620px){.ctlrow{grid-template-columns:1fr 1fr}}
+.ctl label{display:flex;justify-content:space-between;font-size:14px}
+.ctl output{font-weight:600;font-family:var(--display);font-size:17px}
+.ctl input[type=range]{width:100%;accent-color:var(--glow);margin:8px 0 0;height:24px}
+.ctl select{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:#0B1426;padding:9px 10px}
+.ctl .note{font-size:12.5px;color:var(--muted);margin-top:2px}
+.versus{display:grid;gap:12px;margin-top:20px}
+@media(min-width:620px){.versus{grid-template-columns:1fr 1fr}}
+.vs{padding:18px;border:1px solid var(--line);border-radius:16px}
+.vs.win{border-color:rgba(var(--glow-rgb),.55);background:var(--accent-soft)}
+.vs dt{font-size:13px;color:var(--muted)}
+.vs dd{margin:4px 0 0;font:700 32px/1.1 var(--display)}
+.vs small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+#falls td{vertical-align:top}
+#falls td.d{font-family:var(--display);font-weight:600;font-size:16px;color:var(--glow)}
+#falls tr.worst td{background:var(--accent-soft)}
+.empty{color:var(--muted);font-size:14px;padding:12px 0}
+</style>
+</head>
+<body data-accent="rose">
+<main>
+  <div id="tc-top" data-nav></div>
+  <script src="/assets/tc.js"></script>
+
+  <header class="intro">
+    <span class="eyebrow">Behaviour · Tool</span>
+    <h1>Would you <em>have held?</em></h1>
+    <p>The best stocks of all time fell hard on the way up. Pick one and see every big fall, how long it took to recover, and what selling at the wrong moment would have cost.</p>
+  </header>
+
+  <div class="search">
+    <input id="q" type="search" placeholder="Company name or ticker, for example AMZN" autocomplete="off" autocapitalize="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list">
+    <ul class="suggest" id="suggest" role="listbox" hidden></ul>
+  </div>
+  <div class="quick">
+    <span>Try</span>
+    <button class="chip" type="button" data-sym="AMZN">AMZN</button>
+    <button class="chip" type="button" data-sym="NFLX">NFLX</button>
+    <button class="chip" type="button" data-sym="CSU.TO">CSU.TO</button>
+    <button class="chip" type="button" data-sym="NVO">NVO</button>
+    <button class="chip" type="button" data-sym="MSFT">MSFT</button>
+  </div>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+
+  <section class="card" id="card" hidden aria-live="polite">
+    <h2 id="cName"></h2>
+    <div class="sub" id="cSub"></div>
+    <p class="headline" id="hl"></p>
+
+    <div class="ctlrow">
+      <div class="ctl"><label for="rT"><span>Count falls bigger than</span><output id="oT"></output></label><input id="rT" type="range" min="20" max="70" step="5"></div>
+      <div class="ctl"><label for="rFrom"><span>Start year</span><output id="oFrom"></output></label><input id="rFrom" type="range" step="1"></div>
+    </div>
+
+    <section class="block" style="margin-top:30px">
+      <h3>The ride</h3>
+      <p class="hint">Share price on a log scale, so equal steps are equal percentage moves. Shaded areas are the falls you're counting. Below: how far the stock sat under its previous high.</p>
+      <div class="chartwrap" id="cw"><svg id="chart" role="img" aria-label="Share price and drawdowns"></svg><div class="tip" id="tip" hidden></div></div>
+    </section>
+
+    <section class="block">
+      <h3>What selling would have cost</h3>
+      <p class="hint">Start with 10,000 at the first price. One investor holds through everything. The other sells after a fall and buys back only when the stock is above the old high again, which is how most people who sell actually behave.</p>
+      <div class="ctlrow">
+        <div class="ctl"><label for="rS"><span>Sell after a fall of</span><output id="oS"></output></label><input id="rS" type="range" min="15" max="60" step="5"></div>
+        <div class="ctl"><label for="selB"><span>Buy back</span></label>
+          <select id="selB"><option value="high">When it beats the old high</option><option value="never">Never</option><option value="12">12 months later</option></select></div>
+      </div>
+      <dl class="versus">
+        <div class="vs" id="vHold"><dt>Held through everything</dt><dd id="dHold"></dd><small id="sHold"></small></div>
+        <div class="vs" id="vSell"><dt id="tSell"></dt><dd id="dSell"></dd><small id="sSell"></small></div>
+      </dl>
+    </section>
+
+    <section class="block">
+      <h3>Every fall</h3>
+      <p class="hint" id="fallsHint"></p>
+      <div class="scroll"><table id="falls">
+        <thead><tr><th>Peak</th><th>Fall</th><th>Bottom</th><th>Back to the old high</th><th>Under water</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+  </section>
+
+  <section class="block">
+    <h3>How it works</h3>
+    <p class="hint" style="max-width:64ch">Monthly closing prices from Yahoo Finance, adjusted for splits. Dividends aren't included, so the real return for dividend payers was higher. A fall is measured from the highest monthly close before it to the lowest after it. Monthly data smooths out the worst days, so the actual lows were a little deeper than shown.</p>
+  </section>
+
+  <footer>
+    <p>From <a href="https://torghattencapital.substack.com">Torghatten Capital</a>. Past falls say nothing certain about future ones.</p>
+    <p>This is a calculator, not investment advice.</p>
+  </footer>
+</main>
+
+<script id="model">
+// ---- Drawdown model (pure; tested in test/run.js) ---------------------------
+// pts: [[isoDate, price], ...] oldest first.
+function underwater(pts) {
+  let peak = -Infinity;
+  return pts.map(([, p]) => { if (p > peak) peak = p; return p / peak - 1; });
+}
+// Episodes where the price fell more than `threshold` (e.g. 0.3) from a peak.
+function falls(pts, threshold) {
+  const out = [];
+  let peakI = 0, cur = null;
+  for (let i = 1; i < pts.length; i++) {
+    const p = pts[i][1];
+    if (p >= pts[peakI][1]) {
+      if (cur) { cur.recoverI = i; out.push(cur); cur = null; }
+      peakI = i;
+      continue;
+    }
+    if (!cur && p / pts[peakI][1] - 1 <= -threshold) cur = { peakI, troughI: i, recoverI: null };
+    if (cur && p < pts[cur.troughI][1]) cur.troughI = i;
+  }
+  if (cur) out.push(cur);
+  return out.map((e) => ({ ...e, depth: pts[e.troughI][1] / pts[e.peakI][1] - 1 }));
+}
+// 10,000 invested at the start. Sells when the fall from the high since buying
+// reaches `sellAt`; buys back per `rebuy` ("high", "never", or months as a number).
+function panic(pts, sellAt, rebuy) {
+  let cash = 0, shares = 10000 / pts[0][1], high = pts[0][1], oldHigh = null, soldAt = null, sells = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const p = pts[i][1];
+    if (shares > 0) {
+      if (p > high) high = p;
+      if (p / high - 1 <= -sellAt) { cash = shares * p; shares = 0; oldHigh = high; soldAt = i; sells++; }
+    } else if (rebuy !== "never") {
+      const back = rebuy === "high" ? p > oldHigh : i - soldAt >= +rebuy;
+      if (back) { shares = cash / p; cash = 0; high = p; }
+    }
+  }
+  const last = pts[pts.length - 1][1];
+  return { value: cash + shares * last, sells, out: shares === 0 };
+}
+function cagr(a, b, years) { return years > 0 && a > 0 && b > 0 ? Math.pow(b / a, 1 / years) - 1 : null; }
+if (typeof module !== "undefined") module.exports = { underwater, falls, panic, cagr };
+</script>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmt = (v, dp = 0) => new Intl.NumberFormat("en-US", { maximumFractionDigits: dp, minimumFractionDigits: dp }).format(v);
+const pct = (v, dp = 0) => (v < 0 ? "−" : "") + fmt(Math.abs(v) * 100, dp) + "%";
+const mon = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { month: "short", year: "numeric", timeZone: "UTC" });
+const yrs = (a, b) => (Date.parse(b) - Date.parse(a)) / (365.25 * 864e5);
+const dur = (m) => m < 12 ? m + (m === 1 ? " month" : " months") : fmt(m / 12, m % 12 ? 1 : 0) + " years";
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+function money(v, cur) {
+  try { return new Intl.NumberFormat("en-US", { style: "currency", currency: cur, maximumFractionDigits: 0, notation: v >= 1e7 ? "compact" : "standard" }).format(v); }
+  catch (e) { return fmt(v) + " " + cur; }
+}
+const mult = (x) => x >= 10 ? fmt(x, 0) + "x" : fmt(x, 1) + "x";
+
+const S = { data: null, threshold: 0.3, from: null, sellAt: 0.4, rebuy: "high" };
+
+async function api(path) {
+  const res = await fetch(path, { headers: { Accept: "application/json" } });
+  if (!(res.headers.get("content-type") || "").includes("json")) throw new Error("api_down");
+  const body = await res.json();
+  if (!res.ok) { const e = new Error(body.error || "error"); e.status = res.status; throw e; }
+  return body;
+}
+
+// ---- search ---------------------------------------------------------------------
+let hits = [], active = -1, st;
+function closeSuggest() { $("suggest").hidden = true; $("q").setAttribute("aria-expanded", "false"); active = -1; }
+function showSuggest() {
+  const ul = $("suggest"); ul.innerHTML = "";
+  hits.forEach((h, i) => {
+    const li = document.createElement("li");
+    li.setAttribute("role", "option"); li.setAttribute("aria-selected", String(i === active));
+    li.innerHTML = `<span><span class="sym">${esc(h.symbol)}</span> ${esc(h.name)}</span><span class="ex">${esc(h.exchange)}</span>`;
+    li.onmousedown = (e) => { e.preventDefault(); load(h.symbol); };
+    ul.append(li);
+  });
+  ul.hidden = !hits.length; $("q").setAttribute("aria-expanded", String(!!hits.length));
+}
+$("q").addEventListener("input", () => {
+  clearTimeout(st);
+  const q = $("q").value.trim();
+  if (!q) { hits = []; closeSuggest(); return; }
+  st = setTimeout(async () => { try { hits = (await api("/api/search?q=" + encodeURIComponent(q))).results || []; active = -1; showSuggest(); } catch (e) { hits = []; closeSuggest(); } }, 200);
+});
+$("q").addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown" && hits.length) { active = (active + 1) % hits.length; showSuggest(); e.preventDefault(); }
+  else if (e.key === "ArrowUp" && hits.length) { active = (active - 1 + hits.length) % hits.length; showSuggest(); e.preventDefault(); }
+  else if (e.key === "Escape") closeSuggest();
+  else if (e.key === "Enter") { e.preventDefault(); const h = hits[active >= 0 ? active : 0]; load(h ? h.symbol : $("q").value.trim().toUpperCase()); }
+});
+$("q").addEventListener("blur", () => setTimeout(closeSuggest, 100));
+document.querySelectorAll(".chip").forEach((b) => (b.onclick = () => load(b.dataset.sym)));
+
+let seq = 0;
+async function load(sym) {
+  const my = ++seq;
+  closeSuggest(); $("q").value = sym;
+  $("status").textContent = "Fetching the price history for " + sym + "…";
+  try {
+    const d = await api("/api/history?symbol=" + encodeURIComponent(sym));
+    if (my !== seq) return;
+    $("status").textContent = "";
+    S.data = d;
+    const y0 = +d.points[0][0].slice(0, 4), y1 = +d.points[d.points.length - 1][0].slice(0, 4) - 2;
+    $("rFrom").min = y0; $("rFrom").max = Math.max(y0, y1);
+    S.from = y0; $("rFrom").value = y0;
+    $("card").hidden = false;
+    render();
+    try { history.replaceState(null, "", "?t=" + encodeURIComponent(d.symbol)); } catch (e) {}
+  } catch (e) {
+    if (my !== seq) return;
+    $("status").textContent = e.status === 404 || e.status === 400 ? "No price history found for “" + sym + "”. Check the ticker, including the exchange suffix (for example .TO or .OL)." : "The price history isn't reachable right now. Try again in a minute.";
+  }
+}
+
+// ---- render -----------------------------------------------------------------------
+function pts() { return S.data.points.filter(([d]) => +d.slice(0, 4) >= S.from); }
+function render() {
+  const d = S.data, P = pts(), cur = d.currency;
+  if (P.length < 13) return;
+  const first = P[0], last = P[P.length - 1], Y = yrs(first[0], last[0]);
+  const F = falls(P, S.threshold);
+  const worst = F.reduce((a, e) => (!a || e.depth < a.depth ? e : a), null);
+  $("oT").textContent = pct(S.threshold); $("oFrom").textContent = S.from; $("oS").textContent = pct(S.sellAt);
+  $("cName").textContent = d.name;
+  $("cSub").textContent = [d.symbol, d.exchange, cur, mon(first[0]) + " to " + mon(last[0])].filter(Boolean).join(", ");
+  const x = last[1] / first[1], c = cagr(first[1], last[1], Y);
+  $("hl").innerHTML = `Since ${first[0].slice(0, 4)} the share price ${x >= 1 ? "multiplied <span class='g'>" + mult(x) + "</span>" : "fell <span class='g'>" + pct(x - 1) + "</span>"}, ${pct(c, 1)} a year. ` +
+    (F.length ? `On the way it fell more than ${pct(S.threshold)} <span class="g">${F.length} ${F.length === 1 ? "time" : "times"}</span>, the worst <span class="g">${pct(worst.depth)}</span> from ${mon(P[worst.peakI][0])}.` : `It never fell more than ${pct(S.threshold)} along the way.`);
+
+  // selling
+  const hold = 10000 * x, sell = panic(P, S.sellAt, S.rebuy);
+  $("dHold").textContent = money(hold, cur);
+  $("sHold").textContent = mult(x) + " your money";
+  $("tSell").textContent = "Sold after a " + pct(S.sellAt) + " fall" + (S.rebuy === "high" ? ", bought back above the old high" : S.rebuy === "never" ? ", never bought back" : ", bought back a year later");
+  $("dSell").textContent = money(sell.value, cur);
+  $("sSell").textContent = sell.sells === 0 ? "Never sold: the stock never fell that far." : "Sold " + sell.sells + (sell.sells === 1 ? " time" : " times") + (sell.out ? ", still out today" : "") + ". " + (sell.value < hold ? "Cost of selling: " + money(hold - sell.value, cur) + "." : "Selling helped this time, by " + money(sell.value - hold, cur) + ".");
+  $("vHold").classList.toggle("win", hold >= sell.value);
+  $("vSell").classList.toggle("win", sell.value > hold);
+
+  // table
+  $("fallsHint").textContent = F.length ? "Every fall of more than " + pct(S.threshold) + " from a previous high, measured on monthly closes." : "";
+  $("falls").tBodies[0].innerHTML = F.length ? F.map((e) => {
+    const rec = e.recoverI != null ? mon(P[e.recoverI][0]) + " (" + dur(e.recoverI - e.troughI) + " after the bottom)" : "Not yet";
+    const under = (e.recoverI != null ? e.recoverI : P.length - 1) - e.peakI;
+    return `<tr class="${e === worst ? "worst" : ""}"><td>${mon(P[e.peakI][0])}</td><td class="d">${pct(e.depth)}</td><td>${mon(P[e.troughI][0])}</td><td>${rec}</td><td>${dur(under)}${e.recoverI == null ? " so far" : ""}</td></tr>`;
+  }).join("") : `<tr><td colspan="5" class="empty">No falls that big in this period. Try a lower threshold.</td></tr>`;
+
+  draw(P, F);
+}
+
+function draw(P, F) {
+  const svg = $("chart"), wrap = $("cw");
+  const W = Math.max(300, wrap.clientWidth - 20), H = 340, L = 56, R = 10, T = 10, mid = 230, B = 26;
+  const css = getComputedStyle(document.body), c = (n) => css.getPropertyValue(n).trim(), glow = c("--glow-rgb");
+  const uw = underwater(P);
+  const lp = P.map(([, p]) => Math.log(p)), lo = Math.min(...lp), hi = Math.max(...lp);
+  const t0 = Date.parse(P[0][0]), t1 = Date.parse(P[P.length - 1][0]);
+  const x = (i) => L + ((Date.parse(P[i][0]) - t0) / (t1 - t0)) * (W - L - R);
+  const y = (p) => T + ((hi - Math.log(p)) / (hi - lo || 1)) * (mid - T - 16);
+  const minU = Math.min(-0.2, ...uw), yu = (u) => mid + 10 + (u / minU) * (H - B - mid - 10);
+  let h = "";
+  // falls shading
+  F.forEach((e) => {
+    const end = e.recoverI != null ? e.recoverI : P.length - 1;
+    h += `<rect x="${x(e.peakI)}" y="${T}" width="${Math.max(1, x(end) - x(e.peakI))}" height="${H - B - T}" fill="rgba(${glow},.09)"/>`;
+  });
+  // price gridlines at powers of 10
+  for (let k = Math.ceil(lo / Math.LN10); k <= Math.floor(hi / Math.LN10); k++) {
+    const v = Math.pow(10, k);
+    h += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${c("--line")}"/>`;
+    h += `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v >= 1 ? fmt(v) : v}</text>`;
+  }
+  h += `<path d="M${P.map((p, i) => x(i) + "," + y(p[1])).join("L")}" fill="none" stroke="#fff" stroke-width="1.6" style="filter:drop-shadow(0 0 4px rgba(${glow},.8))"/>`;
+  // underwater
+  h += `<line x1="${L}" x2="${W - R}" y1="${yu(0)}" y2="${yu(0)}" stroke="${c("--line")}"/>`;
+  [-0.25, -0.5, -0.75].filter((u) => u >= minU).forEach((u) => (h += `<text x="${L - 6}" y="${yu(u) + 4}" text-anchor="end">${pct(u)}</text>`));
+  h += `<text x="${L - 6}" y="${yu(0) + 4}" text-anchor="end">0%</text>`;
+  h += `<path d="M${x(0)},${yu(0)}L${uw.map((u, i) => x(i) + "," + yu(u)).join("L")}L${x(P.length - 1)},${yu(0)}Z" fill="rgba(${glow},.55)"/>`;
+  // worst label
+  const worst = F.reduce((a, e) => (!a || e.depth < a.depth ? e : a), null);
+  if (worst) h += `<text x="${Math.min(W - R - 40, x(worst.troughI) + 6)}" y="${yu(worst.depth) - 4}" style="fill:${c("--glow")};font-weight:600">${pct(worst.depth)}</text>`;
+  // years
+  const y0 = +P[0][0].slice(0, 4), y1 = +P[P.length - 1][0].slice(0, 4), span = y1 - y0, step = span > 30 ? 10 : span > 14 ? 5 : span > 6 ? 2 : 1;
+  for (let yr = Math.ceil(y0 / step) * step; yr <= y1; yr += step) {
+    const tx = L + ((Date.UTC(yr, 0, 1) - t0) / (t1 - t0)) * (W - L - R);
+    if (tx >= L) h += `<text x="${tx}" y="${H - 8}" text-anchor="middle">${yr}</text>`;
+  }
+  // hover
+  const n = P.length, bw = (W - L - R) / n;
+  for (let i = 0; i < n; i += Math.max(1, Math.floor(n / 240))) h += `<rect x="${x(i) - bw}" y="${T}" width="${Math.max(2, bw * 2 * Math.max(1, Math.floor(n / 240)))}" height="${H - B - T}" fill="transparent" data-i="${i}"/>`;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = h;
+  const tip = $("tip");
+  svg.onmousemove = (e) => {
+    const i = e.target.dataset && e.target.dataset.i; if (i == null) { tip.hidden = true; return; }
+    const box = wrap.getBoundingClientRect();
+    tip.hidden = false;
+    tip.textContent = mon(P[i][0]) + ": " + fmt(P[i][1], P[i][1] < 100 ? 2 : 0) + " " + S.data.currency + (uw[i] < -0.005 ? ", " + pct(uw[i]) + " from the high" : ", at a high");
+    tip.style.left = Math.min(box.width - 120, Math.max(120, e.clientX - box.left)) + "px";
+    tip.style.top = (e.clientY - box.top - 10) + "px";
+  };
+  svg.onmouseleave = () => (tip.hidden = true);
+}
+
+$("rT").value = S.threshold * 100; $("rS").value = S.sellAt * 100;
+$("rT").oninput = (e) => { S.threshold = +e.target.value / 100; render(); };
+$("rS").oninput = (e) => { S.sellAt = +e.target.value / 100; render(); };
+$("selB").onchange = (e) => { S.rebuy = e.target.value; render(); };
+$("rFrom").oninput = (e) => { S.from = +e.target.value; render(); };
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => S.data && render(), 150); });
+const start = new URLSearchParams(location.search).get("t");
+if (start && /^[A-Za-z0-9][A-Za-z0-9.\-]{0,14}$/.test(start)) load(start.toUpperCase());
+</script>
+</body>
+</html>
