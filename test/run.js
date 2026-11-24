@@ -281,3 +281,20 @@ console.log("Payout checks passed.");
   assert.equal(classify({ proof: "no", change: "yes", powers: pw, dur: "wide" }).verdict, "narrow", "no record can't be wide");
   console.log("Moat checks passed.");
 }
+
+// --- moat data -------------------------------------------------------------------
+{
+  const { roicRows } = await import("../lib/moat.js");
+  const s = (vals) => vals.map(([d, v]) => ({ date: d, value: v }));
+  const rows = roicRows({
+    annualEBIT: s([["2024-12-31", 100], ["2025-12-31", 120]]),
+    annualTaxRateForCalcs: s([["2024-12-31", 0.2], ["2025-12-31", 0.25]]),
+    annualInvestedCapital: s([["2024-12-31", 400], ["2025-12-31", 0]]),
+    annualTotalRevenue: s([["2024-12-31", 1000], ["2025-12-31", 1100]]),
+    annualOperatingIncome: s([["2024-12-31", 100], ["2025-12-31", 121]]),
+  });
+  near(rows[0].roic, 0.2, 1e-12, "ROIC = EBIT x (1 - t) / IC");
+  assert.equal(rows[1].roic, null, "no capital, no ROIC");
+  near(rows[1].margin, 0.11, 1e-12, "operating margin");
+  console.log("Moat data checks passed.");
+}

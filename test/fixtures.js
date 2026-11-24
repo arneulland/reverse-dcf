@@ -44,6 +44,13 @@ export const routes = {
     series("annualDilutedAverageShares", "USD", [["2022-12-31", 4.12e9], ["2023-12-31", 4.08e9], ["2024-12-31", 4.04e9], ["2025-12-31", 4.0e9]]),
     series("quarterlyOrdinarySharesNumber", "USD", [["2026-09-30", 3.97e9]], "3M"),
   ] } },
+  "timeseries/MSFT": { timeseries: { result: [
+    series("annualEBIT", "USD", [["2022-06-30", 8.3e10], ["2023-06-30", 8.9e10], ["2024-06-30", 1.1e11], ["2025-06-30", 1.29e11]]),
+    series("annualTaxRateForCalcs", "USD", [["2022-06-30", 0.13], ["2023-06-30", 0.19], ["2024-06-30", 0.18], ["2025-06-30", 0.18]]),
+    series("annualInvestedCapital", "USD", [["2022-06-30", 2.3e11], ["2023-06-30", 2.7e11], ["2024-06-30", 3.3e11], ["2025-06-30", 3.9e11]]),
+    series("annualTotalRevenue", "USD", [["2022-06-30", 1.98e11], ["2023-06-30", 2.12e11], ["2024-06-30", 2.45e11], ["2025-06-30", 2.82e11]]),
+    series("annualOperatingIncome", "USD", [["2022-06-30", 8.3e10], ["2023-06-30", 8.85e10], ["2024-06-30", 1.09e11], ["2025-06-30", 1.28e11]]),
+  ] } },
   "company_tickers.json": { 0: { cik_str: 1234, ticker: "SPLT", title: "Split Corp" } },
 };
 const fact = (y, val) => ({ start: `${y}-01-01`, end: `${y}-12-31`, val, fy: y, fp: "FY", form: "10-K", filed: `${y + 1}-02-15` });
