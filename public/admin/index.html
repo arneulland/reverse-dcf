@@ -29,10 +29,9 @@ td.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 <main>
   <div id="tc-top"></div>
   <script src="/assets/tc.js"></script>
-  <header class="intro"><h1>Access codes</h1><p>Make a personal code for a member and send it to them. Only you should see this page.</p></header>
+  <header class="intro"><h1>Access codes</h1><p>Make a personal code for a member and send it to them. <a href="/api/logout">Sign out</a></p></header>
 
   <form id="f">
-    <div><label for="key">Admin key</label><input class="inp" id="key" type="password" autocomplete="current-password"></div>
     <div class="row">
       <div><label for="email">Member email</label><input class="inp" id="email" type="email" placeholder="name@example.com"></div>
       <div><label for="months">Valid for</label>
@@ -57,7 +56,7 @@ td.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   <section class="block">
     <h3>Monthly code, for later</h3>
     <p class="hint">When paid subscriptions are on, you can put one shared code in a paid post or perk instead of sending personal codes. Each works during its month and the first week of the next. Don't share these before then.</p>
-    <table id="monthly"><tbody><tr><td class="muted">Enter the admin key and make a code to see them.</td></tr></tbody></table>
+    <table id="monthly"><tbody><tr><td class="muted">Make a code to see them.</td></tr></tbody></table>
   </section>
 
   <section class="block">
@@ -67,15 +66,13 @@ td.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
-try { $("key").value = sessionStorage.getItem("tc-admin") || ""; } catch (e) {}
 const monthName = (yymm) => new Date(Date.UTC(2000 + +yymm.slice(0, 2), +yymm.slice(2) - 1, 1)).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
 const dateFmt = (d) => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
 $("f").addEventListener("submit", async (e) => {
   e.preventDefault(); $("err").textContent = "";
-  try { sessionStorage.setItem("tc-admin", $("key").value); } catch (x) {}
   try {
-    const r = await fetch("/api/admin", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ key: $("key").value, email: $("email").value, months: $("months").value }) });
+    const r = await fetch("/api/admin", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: $("email").value, months: $("months").value }) });
     const b = await r.json();
     if (!r.ok) throw new Error(b.message || "Something went wrong.");
     $("monthly").tBodies[0].innerHTML = b.monthly.map((m) => `<tr><td>${monthName(m.month)}</td><td class="mono">${m.code}</td></tr>`).join("");

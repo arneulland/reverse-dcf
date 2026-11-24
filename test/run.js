@@ -193,3 +193,22 @@ console.log("Payout checks passed.");
   assert.equal((await A.gate(req("/attention"), {})).status, 302, "fails closed without a secret");
   console.log("Access checks passed.");
 }
+
+// --- admin -------------------------------------------------------------------
+{
+  const A = await import("../lib/access.js");
+  const S = "test-secret", env = { ACCESS_SECRET: S, ADMIN_EMAIL: "boss@example.com" };
+  const req = (p, v) => new Request("https://x.test" + p, { headers: { cookie: v ? "tc_member=" + encodeURIComponent(v) : "" } });
+  const member = (await A.makeSession(S, { kind: "member", email: "boss@example.com", exp: Date.now() + 864e5 })).value;
+  const adminOther = (await A.makeSession(S, { kind: "admin", email: "other@example.com", exp: Date.now() + 864e5 })).value;
+  const admin = (await A.makeSession(S, { kind: "admin", email: "boss@example.com", exp: Date.now() + 864e5 })).value;
+  assert.ok(A.isAdminPath("/admin") && A.isAdminPath("/admin/") && A.isAdminPath("/api/admin") && !A.isAdminPath("/administrator"));
+  assert.equal((await A.gate(req("/admin"), env)).headers.get("location"), "/join?next=%2Fadmin", "no session");
+  assert.equal((await A.gate(req("/admin", member), env)).status, 302, "a member code isn't enough, even with the admin email");
+  assert.equal((await A.gate(req("/admin", adminOther), env)).status, 302, "admin session for another email");
+  assert.equal((await A.gate(req("/api/admin", member), env)).status, 401);
+  assert.equal(await A.gate(req("/admin", admin), env), null, "admin passes");
+  assert.equal(await A.gate(req("/attention", admin), env), null, "admin can use the tools");
+  assert.equal((await A.gate(req("/admin", admin), { ACCESS_SECRET: S })).status, 302, "no ADMIN_EMAIL set, no admin");
+  console.log("Admin checks passed.");
+}

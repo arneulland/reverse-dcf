@@ -1,14 +1,16 @@
 // Issues access codes. Protected by ADMIN_KEY. Used by /admin.
-import { personalCode, monthlyCode, normEmail, yymmOf, addMonths, same } from "../lib/access.js";
+import { personalCode, monthlyCode, normEmail, yymmOf, addMonths, readSession, cookieValue, isAdminSession } from "../lib/access.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") return res.status(405).json({ error: "method" });
   let body = req.body;
   if (typeof body === "string") { try { body = JSON.parse(body); } catch { body = {}; } }
-  const { ACCESS_SECRET: secret, ADMIN_KEY: admin } = process.env;
-  if (!secret || !admin) return res.status(503).json({ error: "not_configured", message: "Set ACCESS_SECRET and ADMIN_KEY in Vercel first." });
-  if (!same(String(body?.key || ""), admin)) return res.status(401).json({ error: "bad_key", message: "Wrong admin key." });
+  const secret = process.env.ACCESS_SECRET;
+  if (!secret) return res.status(503).json({ error: "not_configured", message: "Set ACCESS_SECRET in Vercel first." });
+  // The middleware already checks this; checked again so the API is safe on its own.
+  const s = await readSession(secret, cookieValue(req.headers?.cookie));
+  if (!isAdminSession(s, process.env)) return res.status(401).json({ error: "not_admin", message: "Sign in as admin first." });
 
   const now = Date.now();
   const out = {

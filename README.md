@@ -96,3 +96,14 @@ they already show up as growth per share.
 
 Free cash flow is cash from operations minus capital expenditure. Acquisition
 spending isn't deducted.
+
+## Member access
+
+Set these in Vercel (Production and Preview), then redeploy:
+
+| Variable | What it is |
+|---|---|
+| `ACCESS_SECRET` | Long random string. Signs every code and session. Change it to cut all access. |
+| `ADMIN_EMAIL` | Your email. Only this address can open `/admin`. |
+| `ADMIN_KEY` | Your admin password. Sign in at `/admin` with `ADMIN_EMAIL` and this. |
+| `REVOKED_EMAILS` | Optional. Comma-separated emails that lose access. |

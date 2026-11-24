@@ -81,16 +81,28 @@ function done(me, fresh) {
   $("go").textContent = nextUrl === "/" ? "Go to Members’ Corner" : "Continue";
 }
 
-fetch("/api/me").then((r) => r.json()).then((me) => { if (me.member) done(me, false); }).catch(() => {});
+// Coming from /admin: sign in with the admin email and password instead of a code.
+const ADMIN = /^\/admin(\/|$|\?)/.test(nextUrl);
+if (ADMIN) {
+  document.querySelector(".intro h1").innerHTML = "Admin <em>sign-in.</em>";
+  $("lead").textContent = "For the site owner only.";
+  document.querySelector("label[for=code]").textContent = "Password";
+  const c = $("code");
+  c.type = "password"; c.placeholder = ""; c.style.textTransform = "none"; c.style.letterSpacing = "normal";
+  c.setAttribute("autocapitalize", "off"); c.setAttribute("autocomplete", "current-password");
+  document.querySelector(".side").hidden = true;
+}
+
+fetch("/api/me").then((r) => r.json()).then((me) => { if (me.member && (!ADMIN || me.kind === "admin")) done(me, false); }).catch(() => {});
 
 $("f").addEventListener("submit", async (e) => {
   e.preventDefault();
   $("err").textContent = "";
   const email = $("email").value.trim(), code = $("code").value.trim();
-  if (!code) { $("err").textContent = "Enter your access code."; return; }
+  if (!code) { $("err").textContent = ADMIN ? "Enter your password." : "Enter your access code."; return; }
   $("submit").disabled = true; $("submit").textContent = "Checking…";
   try {
-    const r = await fetch("/api/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email, code }) });
+    const r = await fetch("/api/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email, code, admin: ADMIN }) });
     const b = await r.json();
     if (!r.ok) throw new Error(b.message || "That didn't work. Try again.");
     if (nextUrl !== "/") { location.replace(nextUrl); return; }

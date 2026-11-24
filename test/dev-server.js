@@ -12,6 +12,7 @@ if (process.env.MOCK) globalThis.fetch = (await import("./fixtures.js")).mockFet
 // Local stand-ins for the Vercel environment variables.
 process.env.ACCESS_SECRET ??= "dev-secret-change-me";
 process.env.ADMIN_KEY ??= "dev-admin";
+process.env.ADMIN_EMAIL ??= "admin@example.com";
 const { gate } = await import("../lib/access.js");
 const port = Number(process.env.PORT || 3000);
 const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".json": "application/json" };

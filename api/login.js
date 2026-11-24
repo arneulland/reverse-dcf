@@ -1,4 +1,4 @@
-import { checkCode, makeSession, setCookie, revokedList } from "../lib/access.js";
+import { checkCode, makeSession, setCookie, revokedList, isAdminEmail, normEmail, same } from "../lib/access.js";
 
 const MSG = {
   not_configured: "Member access isn't set up yet.",
@@ -14,6 +14,18 @@ export default async function handler(req, res) {
   let body = req.body;
   if (typeof body === "string") { try { body = JSON.parse(body); } catch { body = {}; } }
   const env = process.env;
+  // Admin sign-in: the admin email with ADMIN_KEY as password gives a 30-day admin session.
+  if (body?.admin) {
+    const email = normEmail(body?.email);
+    if (!env.ACCESS_SECRET || !env.ADMIN_KEY || !env.ADMIN_EMAIL) return res.status(503).json({ error: "not_configured", message: "Set ACCESS_SECRET, ADMIN_KEY and ADMIN_EMAIL in Vercel first." });
+    if (!isAdminEmail(email, env) || !same(String(body?.code || ""), env.ADMIN_KEY)) {
+      await new Promise((r) => setTimeout(r, 1200)); // slows down guessing
+      return res.status(401).json({ error: "bad_admin", message: "Wrong email or password." });
+    }
+    const s = await makeSession(env.ACCESS_SECRET, { kind: "admin", email, exp: Date.now() + 30 * 864e5 });
+    res.setHeader("Set-Cookie", setCookie(s.value, s.maxAge));
+    return res.status(200).json({ ok: true, kind: "admin", email, until: new Date(Date.now() + s.maxAge * 1000).toISOString() });
+  }
   const r = await checkCode(env.ACCESS_SECRET, body?.email, body?.code);
   if (!r.error && r.email && revokedList(env.REVOKED_EMAILS).includes(r.email)) r.error = "revoked";
   if (r.error) return res.status(r.error === "not_configured" ? 503 : 401).json({ error: r.error, message: MSG[r.error] });
