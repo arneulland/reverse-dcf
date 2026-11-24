@@ -30,6 +30,8 @@ button,input,select{font:inherit;color:inherit}
 .tc-corner{font-size:13px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;white-space:nowrap}
 .tc-corner:hover{border-color:var(--ink);color:var(--ink)}
 .tc-nav{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:14px;font-size:14px}
+.tc-lock{width:9px;height:11px;margin-left:5px;vertical-align:-1px;opacity:.75}
+.tc-member .tc-lock{display:none}
 .tc-nav a{color:var(--muted);text-decoration:none;padding-bottom:2px;border-bottom:2px solid transparent}
 .tc-nav a:hover{color:var(--ink)}
 .tc-nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--brand)}

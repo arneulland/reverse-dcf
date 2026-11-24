@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Member access | Torghatten Capital</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/tc.css">
+<style>
+main{max-width:520px}
+form{margin-top:28px;display:grid;gap:18px}
+label{display:block;font-size:14px;margin-bottom:6px}
+.inp{width:100%;padding:13px 14px;border:1.5px solid var(--ink);border-radius:10px;background:var(--bg);font-size:17px}
+#code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase}
+.btn{width:100%;padding:13px 16px;font-size:16px}
+.btn[disabled]{opacity:.6;cursor:default}
+.err{color:var(--down);font-size:14px;min-height:1.5em}
+.ok{margin-top:28px;padding:20px;background:var(--surface);border-radius:12px}
+.ok h2{font-size:22px}
+.ok p{margin-top:8px;color:var(--muted)}
+.ok .btn{margin-top:16px;display:inline-block;text-align:center;text-decoration:none}
+.side{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.side p+p{margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+  <div id="tc-top"></div>
+  <script src="/assets/tc.js"></script>
+
+  <header class="intro">
+    <h1>Member access</h1>
+    <p id="lead">The member tools are for Torghatten Capital members. Enter your email and the access code you received.</p>
+  </header>
+
+  <div class="ok" id="done" hidden>
+    <h2 id="doneH">You're in</h2>
+    <p id="doneP"></p>
+    <a class="btn" id="go" href="/">Continue</a>
+    <p style="margin-top:14px"><a href="/api/logout">Sign out</a></p>
+  </div>
+
+  <form id="f" novalidate>
+    <div>
+      <label for="email">Email</label>
+      <input class="inp" id="email" type="email" autocomplete="email" inputmode="email" required>
+    </div>
+    <div>
+      <label for="code">Access code</label>
+      <input class="inp" id="code" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" placeholder="TC-0000-XXXX-XXXX-XXXX" required>
+    </div>
+    <div class="err" id="err" role="alert"></div>
+    <button class="btn" type="submit" id="submit">Unlock</button>
+  </form>
+
+  <div class="side">
+    <p>No code yet? Members get one when they join. <a href="https://substack.com/@torghattencapital">Become a member on Substack</a>, and the code follows by email.</p>
+    <p>Lost your code, or changed email? Reply to any Torghatten Capital email and I'll send a new one.</p>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const nextUrl = (() => {
+  const n = new URLSearchParams(location.search).get("next") || "/";
+  return /^\/(?!\/)/.test(n) ? n : "/"; // only local paths
+})();
+const dateFmt = (iso) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+function done(me, fresh) {
+  $("f").hidden = true; $("lead").hidden = true; $("done").hidden = false;
+  $("doneH").textContent = fresh ? "You're in" : "You're signed in";
+  $("doneP").textContent = (me.email ? "Signed in as " + me.email + ". " : "") + "Access on this device lasts until " + dateFmt(me.until) + ".";
+  $("go").href = nextUrl;
+  $("go").textContent = nextUrl === "/" ? "Go to Members’ Corner" : "Continue";
+}
+
+fetch("/api/me").then((r) => r.json()).then((me) => { if (me.member) done(me, false); }).catch(() => {});
+
+$("f").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  $("err").textContent = "";
+  const email = $("email").value.trim(), code = $("code").value.trim();
+  if (!code) { $("err").textContent = "Enter your access code."; return; }
+  $("submit").disabled = true; $("submit").textContent = "Checking…";
+  try {
+    const r = await fetch("/api/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email, code }) });
+    const b = await r.json();
+    if (!r.ok) throw new Error(b.message || "That didn't work. Try again.");
+    if (nextUrl !== "/") { location.replace(nextUrl); return; }
+    done(b, true);
+  } catch (x) {
+    $("err").textContent = x.message === "Failed to fetch" ? "Couldn't reach the server. Try again." : x.message;
+  } finally {
+    $("submit").disabled = false; $("submit").textContent = "Unlock";
+  }
+});
+</script>
+</body>
+</html>

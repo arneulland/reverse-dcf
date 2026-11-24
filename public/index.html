@@ -21,6 +21,8 @@ if (/[?&]t=/.test(location.search)) location.replace("/reverse-dcf" + location.s
 .tool{display:flex;flex-direction:column;gap:8px;padding:20px 20px 18px;border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:4px 4px 12px 12px;text-decoration:none;color:var(--ink);background:var(--bg);transition:border-color .15s,transform .15s}
 .tool:hover{border-color:var(--ink);border-top-color:var(--brand)}
 @media (prefers-reduced-motion:no-preference){.tool:hover{transform:translateY(-2px)}}
+.badge{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--ink);letter-spacing:.04em}
+.tc-member .badge{display:none}
 .tool .kicker{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .tool h2{font-size:23px}
 .tool p{color:var(--muted);font-size:15px}
@@ -37,7 +39,7 @@ if (/[?&]t=/.test(location.search)) location.replace("/reverse-dcf" + location.s
 
   <header class="intro">
     <h1>Members’ Corner</h1>
-    <p>Tools I use to think about businesses as an owner. They're free, they run in your browser, and they show their working.</p>
+    <p>Tools I use to think about businesses as an owner. They run in your browser and show their working. The reverse DCF is open to everyone. The rest are for members.</p>
   </header>
 
   <div class="tools">
@@ -48,13 +50,13 @@ if (/[?&]t=/.test(location.search)) location.replace("/reverse-dcf" + location.s
       <span class="go">Open</span>
     </a>
     <a class="tool" href="/attention">
-      <span class="kicker">Sentiment</span>
+      <span class="kicker">Sentiment <span class="badge">Members</span></span>
       <h2>Attention score</h2>
       <p>How much is a stock talked about right now? One score from 1 to 100, built from Wikipedia, news, Reddit and StockTwits.</p>
       <span class="go">Open</span>
     </a>
     <a class="tool" href="/compounding">
-      <span class="kicker">Planning</span>
+      <span class="kicker">Planning <span class="badge">Members</span></span>
       <h2>Compounding calculator</h2>
       <p>See what a starting amount, a yearly contribution and a steady return add up to, and when growth starts doing more work than you do.</p>
       <span class="go">Open</span>

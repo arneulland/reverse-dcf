@@ -146,3 +146,49 @@ console.log("Payout checks passed.");
   near(doublingYears(0.072), 9.97, 0.01, "doubling at 7.2%");
   console.log("Compounding checks passed.");
 }
+
+// --- member access -----------------------------------------------------------
+{
+  const A = await import("../lib/access.js");
+  const S = "test-secret", now = Date.UTC(2026, 10, 24, 12);
+  const code = await A.personalCode(S, "Arne@Example.com ", "2710");
+  assert.match(code, /^TC-2710-[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/);
+  assert.equal(A.normCode(code.toLowerCase().replace(/-/g, " ")), code, "codes forgive case and spaces");
+  const ok = await A.checkCode(S, "arne@example.com", code, now);
+  assert.equal(ok.kind, "member"); assert.equal(ok.exp, Date.UTC(2027, 10, 1), "valid through Oct 2027");
+  assert.equal((await A.checkCode(S, "someone@else.com", code, now)).error, "bad_code", "code is tied to the email");
+  assert.equal((await A.checkCode("other", "arne@example.com", code, now)).error, "bad_code", "other secret");
+  assert.equal((await A.checkCode(S, "arne@example.com", code, Date.UTC(2027, 10, 1))).error, "expired");
+  assert.equal((await A.checkCode(S, "arne@example.com", code.slice(0, -1) + (code.endsWith("A") ? "B" : "A"), now)).error, "bad_code");
+  assert.equal((await A.checkCode(undefined, "a@b.co", code, now)).error, "not_configured");
+
+  const m = await A.monthlyCode(S, "2611");
+  assert.equal((await A.checkCode(S, "", m, now)).kind, "monthly", "monthly needs no email");
+  assert.equal((await A.checkCode(S, "", m, Date.UTC(2026, 11, 7, 23))).kind, "monthly", "grace week");
+  assert.equal((await A.checkCode(S, "", m, Date.UTC(2026, 11, 8, 1))).error, "expired");
+  assert.equal((await A.checkCode(S, "", await A.monthlyCode(S, "2612"), now)).error, "bad_code", "next month's code isn't live yet");
+
+  const s = await A.makeSession(S, ok, now);
+  assert.equal(s.maxAge, 180 * 86400, "session capped at 180 days");
+  const r = await A.readSession(S, s.value, now);
+  assert.equal(r.email, "arne@example.com");
+  assert.equal(await A.readSession(S, s.value, now, ["arne@example.com"]), null, "revoked");
+  assert.equal(await A.readSession(S, s.value.replace(/^./, "x"), now), null, "tampered");
+  assert.equal(await A.readSession(S, s.value, now + 181 * 864e5), null, "expired session");
+  const sm = await A.makeSession(S, { kind: "monthly", email: null, exp: Date.UTC(2026, 11, 8) }, now);
+  assert.equal(sm.maxAge, Math.floor((Date.UTC(2026, 11, 8) - now) / 1000), "monthly session ends with the grace week");
+
+  assert.ok(A.isGated("/attention") && A.isGated("/attention/") && A.isGated("/compounding/index.html") && A.isGated("/api/attention"));
+  assert.ok(!A.isGated("/") && !A.isGated("/reverse-dcf") && !A.isGated("/api/search") && !A.isGated("/join") && !A.isGated("/attentionx"));
+
+  const env = { ACCESS_SECRET: S };
+  const req = (p, cookie = "") => new Request("https://x.test" + p, { headers: { cookie } });
+  const g1 = await A.gate(req("/attention?t=MSFT"), env);
+  assert.equal(g1.status, 302); assert.equal(g1.headers.get("location"), "/join?next=%2Fattention%3Ft%3DMSFT");
+  assert.equal((await A.gate(req("/api/attention?symbol=MSFT"), env)).status, 401);
+  assert.equal(await A.gate(req("/reverse-dcf"), env), null, "open page");
+  const live = await A.makeSession(S, ok);
+  assert.equal(await A.gate(req("/attention", "a=1; tc_member=" + encodeURIComponent(live.value)), env), null, "member passes");
+  assert.equal((await A.gate(req("/attention"), {})).status, 302, "fails closed without a secret");
+  console.log("Access checks passed.");
+}
