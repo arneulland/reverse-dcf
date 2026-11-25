@@ -81,6 +81,14 @@ table.mem td.n{white-space:normal}
   <div class="tools"><input class="inp" id="q" placeholder="Search name or email"><button class="sm" type="button" id="csv">Download as CSV</button></div>
   <div class="scroll"><table class="mem"><thead><tr><th>Name</th><th>Email</th><th>Code</th><th>Valid through</th><th>Status</th><th>Sent</th><th></th></tr></thead><tbody id="rows"><tr><td colspan="7" class="muted">Loading…</td></tr></tbody></table></div>
 
+  <h2 class="sx">Add many at once</h2>
+  <div class="card">
+    <p class="muted" style="margin-top:0">Paste one member per line: <b>email, name, months</b>. Months is 3 or 12, the same choice you made when you sent the code today, so the codes match. Leave months out for 12. You can paste straight from a spreadsheet too (tab-separated works).</p>
+    <textarea class="inp" id="bulk" rows="7" placeholder="kari@example.com, Kari, 12&#10;ola@example.com, Ola, 3"></textarea>
+    <div class="actions"><button class="btn" type="button" id="bulkGo">Add all</button><label class="muted" style="display:flex;gap:8px;align-items:center;margin:0"><input type="checkbox" id="bulkSent" checked> Mark as sent today</label></div>
+    <div class="err" id="berr" role="alert"></div>
+  </div>
+
   <h2 class="sx">Add someone you’ve already sent a code to</h2>
   <div class="card">
     <p class="muted" style="margin-top:0">For codes you sent by hand. Pick the month the code is valid through (the four digits after TC- in the code, e.g. TC-2711 is November 2027).</p>
@@ -269,6 +277,26 @@ $("copyHtml").onclick = async () => {
 };
 $("copyCode").onclick = async () => { await navigator.clipboard.writeText($("code").textContent); const b = $("copyCode"), o = b.textContent; b.textContent = "Copied"; setTimeout(() => (b.textContent = o), 1400); };
 
+$("bulkGo").onclick = async () => {
+  const lines = $("bulk").value.split(/\n/).map((l) => l.trim()).filter(Boolean);
+  if (!lines.length) { $("berr").textContent = "Paste at least one line."; return; }
+  const btn = $("bulkGo"); btn.disabled = true; let ok = 0; const bad = [];
+  for (const [i, line] of lines.entries()) {
+    const parts = line.split(/\t|,|;/).map((x) => x.trim());
+    const email = parts.find((x) => x.includes("@")) || "";
+    const rest = parts.filter((x) => x !== email);
+    const months = rest.find((x) => /^\d{1,2}$/.test(x)) || "12";
+    const name = rest.find((x) => x && !/^\d{1,2}$/.test(x)) || "";
+    btn.textContent = "Adding " + (i + 1) + " of " + lines.length + "…";
+    if (!email) { bad.push(line); continue; }
+    const p = await makeCode(email, { months }); if (!p) { bad.push(line); continue; }
+    await upsert({ email: p.email, name, code: p.code, validThrough: p.validThrough, issuedAt: today(), sentAt: $("bulkSent").checked ? today() : null });
+    ok++;
+  }
+  btn.disabled = false; btn.textContent = "Add all";
+  $("berr").innerHTML = '<span style="color:var(--glow)">Added ' + ok + " of " + lines.length + ".</span>" + (bad.length ? " Couldn’t read: " + bad.map(esc).join("; ") : "");
+  if (!bad.length) $("bulk").value = "";
+};
 $("isent").value = today();
 $("fi").addEventListener("submit", async (e) => {
   e.preventDefault(); $("ierr").textContent = "";
