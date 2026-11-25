@@ -360,3 +360,18 @@ console.log("Payout checks passed.");
   C.exam.cases.forEach((q) => checkQ(q, "exam"));
   console.log("Academy checks passed:", C.modules.reduce((s, m) => s + m.lessons.length, 0), "lessons,", C.modules.reduce((s, m) => s + m.test.length, 0) + 12, "questions.");
 }
+
+// --- academy is admin-only while in progress ----------------------------------
+{
+  const { gate, makeSession } = await import("../lib/access.js");
+  const env = { ACCESS_SECRET: "s", ADMIN_EMAIL: "boss@example.com", ADMIN_KEY: "k" };
+  const exp = Date.now() + 864e5;
+  const member = await makeSession(env.ACCESS_SECRET, { kind: "personal", email: "m@example.com", exp });
+  const admin = await makeSession(env.ACCESS_SECRET, { kind: "admin", email: "boss@example.com", exp });
+  const req = (path, s) => new Request("https://x.test" + path, { headers: s ? { cookie: "tc_member=" + s.value } : {} });
+  assert.equal((await gate(req("/academy"), env)).status, 302, "anonymous is sent to sign-in");
+  assert.equal((await gate(req("/academy/valuation", member), env)).status, 302, "members can't open the Academy yet");
+  assert.equal(await gate(req("/academy/valuation", admin), env), null, "admin can");
+  assert.equal(await gate(req("/moat", member), env), null, "members still reach the tools");
+  console.log("Academy access checks passed.");
+}

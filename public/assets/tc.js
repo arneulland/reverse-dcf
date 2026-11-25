@@ -9,7 +9,7 @@
     { href: "/diversification", label: "How many stocks?", members: true },
     { href: "/held", label: "Would you have held?", members: true },
     { href: "/moat", label: "Moat test", members: true },
-    { href: "/academy", label: "Academy", members: true }
+    { href: "/academy", label: "Academy", members: true, admin: true }
   ];
   var LOCK = '<svg class="tc-lock" viewBox="0 0 12 14" aria-label="Members only" role="img"><rect x="1" y="6" width="10" height="7.5" rx="1.5" fill="currentColor"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
   sky();
@@ -18,7 +18,7 @@
   var here = location.pathname.replace(/\/index\.html$/, "").replace(/\/$/, "") || "/";
   if (here.indexOf("/academy") === 0) here = "/academy";
   var nav = TOOLS.map(function (t) {
-    return '<a href="' + t.href + '"' + (here === t.href ? ' aria-current="page"' : "") + ">" + t.label + (t.members ? LOCK : "") + "</a>";
+    return '<a href="' + t.href + '"' + (t.admin ? ' data-admin hidden' : "") + (here === t.href ? ' aria-current="page"' : "") + ">" + t.label + (t.members ? LOCK : "") + "</a>";
   }).join("");
   el.className = "tc-top";
   el.innerHTML =
@@ -29,6 +29,8 @@
   fetch("/api/me").then(function (r) { return r.json(); }).then(function (me) {
     var a = document.getElementById("tc-acct");
     document.documentElement.classList.toggle("tc-member", !!me.member);
+    // Admin-only items (the Academy while it's in progress) appear only for the admin session.
+    if (me.admin) document.querySelectorAll("[data-admin]").forEach(function (n) { n.hidden = false; });
     if (a && me.member) { a.href = "/api/logout"; a.textContent = "Sign out"; a.title = me.email ? "Signed in as " + me.email : "Signed in"; }
   }).catch(function () {});
   window.TC_LOCK = LOCK;
