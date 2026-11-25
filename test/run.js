@@ -400,3 +400,36 @@ console.log("Payout checks passed.");
   assert.equal(out.code, 401, "member session can't save");
   console.log("Academy access and save checks passed.");
 }
+
+// --- member overview and codes for a chosen month ---------------------------------
+{
+  const { makeSession, personalCode } = await import("../lib/access.js");
+  const env = { ACCESS_SECRET: "s", ADMIN_EMAIL: "boss@example.com", ADMIN_KEY: "k" };
+  Object.assign(process.env, env);
+  const exp = Date.now() + 864e5;
+  const admin = await makeSession(env.ACCESS_SECRET, { kind: "admin", email: "boss@example.com", exp });
+  const member = await makeSession(env.ACCESS_SECRET, { kind: "personal", email: "m@example.com", exp });
+  const call = async (h, req) => { const out = {}; const res = { setHeader() {}, status(c) { out.code = c; return res; }, json(b) { out.body = b; } }; await h(req, res); return out; };
+  const { default: admApi } = await import("../api/admin.js");
+  const a = await call(admApi, { method: "POST", headers: { cookie: "tc_member=" + admin.value }, body: { email: "Ola@Example.com", yymm: "2711" } });
+  assert.equal(a.body.personal.code, await personalCode("s", "ola@example.com", "2711"), "same code as one sent by hand");
+  assert.equal(a.body.personal.validThrough, "2027-11-30", "valid through the end of that month");
+  const { default: memApi } = await import("../api/members.js");
+  let r = await call(memApi, { method: "GET", headers: { cookie: "tc_member=" + admin.value } });
+  assert.deepEqual(r.body, { storage: false, members: [] }, "without a database the page keeps the list itself");
+  r = await call(memApi, { method: "GET", headers: { cookie: "tc_member=" + member.value } });
+  assert.equal(r.code, 401, "members can't see the list");
+  // with a database (Upstash REST), mocked
+  const db = {}, realFetch = globalThis.fetch;
+  globalThis.fetch = async (u, o) => { const [cmd, key, f, v] = JSON.parse(o.body); db[key] = db[key] || {};
+    if (cmd === "HSET") db[key][f] = v; if (cmd === "HDEL") delete db[key][f];
+    return new Response(JSON.stringify({ result: cmd === "HGETALL" ? Object.entries(db[key]).flat() : 1 })); };
+  Object.assign(process.env, { KV_REST_API_URL: "https://db.test", KV_REST_API_TOKEN: "t" });
+  r = await call(memApi, { method: "POST", headers: { cookie: "tc_member=" + admin.value }, body: { member: { email: "Ola@Example.com", name: "Ola", code: "TC-2711-X", validThrough: "2027-11-30", sentAt: "2026-11-25" } } });
+  assert.equal(r.body.members.length, 1); assert.equal(r.body.members[0].email, "ola@example.com");
+  await call(memApi, { method: "POST", headers: { cookie: "tc_member=" + admin.value }, body: { action: "delete", email: "ola@example.com" } });
+  r = await call(memApi, { method: "GET", headers: { cookie: "tc_member=" + admin.value } });
+  assert.equal(r.body.members.length, 0, "removed");
+  globalThis.fetch = realFetch; delete process.env.KV_REST_API_URL; delete process.env.KV_REST_API_TOKEN;
+  console.log("Member overview checks passed.");
+}

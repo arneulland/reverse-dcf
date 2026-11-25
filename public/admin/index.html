@@ -9,48 +9,89 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/tc.css">
 <style>
-main{max-width:600px}
-form{display:grid;gap:16px;margin-top:24px}
-label{display:block;font-size:14px;margin-bottom:6px}
-.inp{width:100%;padding:12px 14px;border:1px solid rgba(var(--glow-rgb),.4);border-radius:12px;background:rgba(5,10,22,.7);font-size:16px}
+main{max-width:980px}
+h2.sx{font-size:24px;margin:40px 0 4px}
+.card{margin-top:16px;padding:20px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012))}
+form.g{display:grid;gap:12px;grid-template-columns:1fr 1.4fr .9fr auto;align-items:end}
+form.g.imp{grid-template-columns:1fr 1.4fr .9fr .9fr auto}
+@media(max-width:760px){form.g,form.g.imp{grid-template-columns:1fr}}
+label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
+.inp{width:100%;padding:11px 13px;border:1px solid rgba(var(--glow-rgb),.4);border-radius:12px;background:rgba(5,10,22,.7);font-size:15px;color:var(--ink)}
 select.inp{appearance:auto}
-.row{display:grid;grid-template-columns:2fr 1fr;gap:12px}
-.err{color:var(--down);font-size:14px;min-height:1.4em}
-.out{margin-top:28px;padding:18px;background:var(--surface);border-radius:12px}
-.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:600;letter-spacing:.04em;margin:6px 0}
-textarea{width:100%;min-height:210px;border:1px solid var(--line);border-radius:8px;background:rgba(5,10,22,.7);padding:10px;font:14px/1.5 var(--body);margin-top:8px}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.err{color:var(--down);font-size:14px;min-height:1.2em;margin-top:8px}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:600;letter-spacing:.04em;margin:4px 0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+.preview{margin-top:14px;padding:16px 18px;border-radius:12px;background:#fff;color:#1b2233;font:14.5px/1.55 Arial,Helvetica,sans-serif}
+.preview a{color:#2F5FA8}
+.preview p{margin:0 0 10px;color:#1b2233}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 .muted{color:var(--muted);font-size:13.5px}
-table{margin-top:8px}
-td.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.banner{margin-top:18px;padding:14px 16px;border-radius:12px;border:1px dashed rgba(var(--glow-rgb),.55);font-size:14px}
+.banner b{color:var(--glow)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.stats div{padding:10px 14px;border:1px solid var(--line);border-radius:12px;min-width:120px}
+.stats b{display:block;font:700 24px/1.1 var(--display)}
+.stats span{font-size:12.5px;color:var(--muted)}
+table.mem{margin-top:14px;width:100%;font-size:13.5px}
+table.mem td,table.mem th{text-align:left;white-space:nowrap;vertical-align:middle}
+table.mem td.n{white-space:normal}
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.ok{background:rgba(142,227,166,.15);color:#8EE3A6}
+.pill.soon{background:rgba(242,196,109,.15);color:#F2C46D}
+.pill.gone{background:rgba(255,156,133,.15);color:var(--down)}
+.pill.no{background:rgba(244,238,226,.08);color:var(--muted)}
+.sm{border:1px solid var(--line);background:transparent;border-radius:8px;padding:5px 9px;cursor:pointer;font-size:12.5px;color:var(--ink)}
+.sm:hover{border-color:var(--glow)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.tools .inp{max-width:280px;padding:8px 11px;font-size:14px}
 </style>
 </head>
 <body>
 <main>
   <div id="tc-top"></div>
   <script src="/assets/tc.js"></script>
-  <header class="intro"><h1>Access codes</h1><p>Make a personal code for a member and send it to them. <a href="/api/logout">Sign out</a></p></header>
+  <header class="intro"><h1>Members</h1><p>Make codes, send them from Gmail, and keep track of who has access. <a href="/api/logout">Sign out</a></p></header>
+  <div class="banner" id="banner" hidden></div>
 
-  <form id="f">
-    <div class="row">
-      <div><label for="email">Member email</label><input class="inp" id="email" type="email" placeholder="name@example.com"></div>
-      <div><label for="months">Valid for</label>
-        <select class="inp" id="months"><option value="3">3 months</option><option value="6">6 months</option><option value="12" selected>12 months</option><option value="24">24 months</option></select>
-      </div>
-    </div>
+  <h2 class="sx">New member</h2>
+  <div class="card">
+    <form class="g" id="f">
+      <div><label for="name">Name</label><input class="inp" id="name" placeholder="First name"></div>
+      <div><label for="email">Email</label><input class="inp" id="email" type="email" placeholder="name@example.com"></div>
+      <div><label for="months">Valid for</label><select class="inp" id="months"><option value="1">1 month</option><option value="3">3 months</option><option value="6">6 months</option><option value="12" selected>12 months</option><option value="24">24 months</option></select></div>
+      <button class="btn" type="submit">Make code</button>
+    </form>
     <div class="err" id="err" role="alert"></div>
-    <button class="btn" type="submit">Make code</button>
-  </form>
-
-  <div class="out" id="out" hidden>
-    <div class="muted" id="who"></div>
-    <div class="code" id="code"></div>
-    <div class="muted" id="valid"></div>
-    <textarea id="mail" aria-label="Email to send"></textarea>
-    <div class="actions">
-      <button class="btn" type="button" id="copyMail">Copy email</button>
-      <button class="btn ghost" type="button" id="copyCode">Copy code</button>
+    <div id="out" hidden>
+      <div class="muted" id="who"></div>
+      <div class="code" id="code"></div>
+      <div class="muted" id="valid"></div>
+      <div class="preview" id="preview"></div>
+      <div class="actions">
+        <button class="btn" type="button" id="gmail">Send from Gmail</button>
+        <button class="btn ghost" type="button" id="copyHtml">Copy formatted email</button>
+        <button class="btn ghost" type="button" id="copyCode">Copy code</button>
+      </div>
+      <p class="muted" style="margin-top:10px">Send from Gmail opens a ready email in torghattencapital@gmail.com. The sign-in link becomes clickable when it’s sent, and it fills in the email and code for the member. Copy formatted email gives you the same email with a proper link, to paste into any mail program.</p>
     </div>
+  </div>
+
+  <h2 class="sx">Members</h2>
+  <div class="stats" id="stats"></div>
+  <div class="tools"><input class="inp" id="q" placeholder="Search name or email"><button class="sm" type="button" id="csv">Download as CSV</button></div>
+  <div class="scroll"><table class="mem"><thead><tr><th>Name</th><th>Email</th><th>Code</th><th>Valid through</th><th>Status</th><th>Sent</th><th></th></tr></thead><tbody id="rows"><tr><td colspan="7" class="muted">Loading…</td></tr></tbody></table></div>
+
+  <h2 class="sx">Add someone you’ve already sent a code to</h2>
+  <div class="card">
+    <p class="muted" style="margin-top:0">For codes you sent by hand. Pick the month the code is valid through (the four digits after TC- in the code, e.g. TC-2711 is November 2027).</p>
+    <form class="g imp" id="fi">
+      <div><label for="iname">Name</label><input class="inp" id="iname"></div>
+      <div><label for="iemail">Email</label><input class="inp" id="iemail" type="email"></div>
+      <div><label for="imonth">Valid through</label><input class="inp" id="imonth" type="month"></div>
+      <div><label for="isent">Sent on</label><input class="inp" id="isent" type="date"></div>
+      <button class="btn" type="submit">Add</button>
+    </form>
+    <div class="err" id="ierr" role="alert"></div>
   </div>
 
   <section class="block">
@@ -58,53 +99,187 @@ td.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     <p class="hint">When paid subscriptions are on, you can put one shared code in a paid post or perk instead of sending personal codes. Each works during its month and the first week of the next. Don't share these before then.</p>
     <table id="monthly"><tbody><tr><td class="muted">Make a code to see them.</td></tr></tbody></table>
   </section>
-
   <section class="block">
     <h3>Taking access away</h3>
-    <p class="hint">Add the email to <code>REVOKED_EMAILS</code> in Vercel (comma-separated) and redeploy. To end every code and session at once, change <code>ACCESS_SECRET</code>.</p>
+    <p class="hint">Add the email to <code>REVOKED_EMAILS</code> in Vercel (comma-separated) and redeploy. Removing someone from the list above only removes them from the overview. To end every code and session at once, change <code>ACCESS_SECRET</code>.</p>
   </section>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
+const FROM = "torghattencapital@gmail.com", LS = "tc-admin-members";
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const dateFmt = (d) => d ? new Date(d.slice(0, 10) + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "";
+const shortDate = (d) => d ? new Date(d.slice(0, 10) + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "–";
 const monthName = (yymm) => new Date(Date.UTC(2000 + +yymm.slice(0, 2), +yymm.slice(2) - 1, 1)).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
-const dateFmt = (d) => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+const today = () => new Date().toISOString().slice(0, 10);
 
+// ------------------------------------------------------------------ the list
+let storage = false, members = [];
+function local() { try { return JSON.parse(localStorage.getItem(LS)) || []; } catch { return []; } }
+function setLocal(l) { try { localStorage.setItem(LS, JSON.stringify(l)); } catch {} }
+async function load() {
+  try {
+    const r = await fetch("/api/members"); const b = await r.json();
+    storage = !!b.storage;
+    members = storage ? b.members : local();
+  } catch { members = local(); }
+  banner(); draw();
+}
+async function upsert(m) {
+  const i = members.findIndex((x) => x.email === m.email);
+  if (i >= 0) members[i] = { ...members[i], ...m }; else members.push(m);
+  if (storage) {
+    const r = await fetch("/api/members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ member: members.find((x) => x.email === m.email) }) });
+    if (!r.ok) alert("Couldn't save to the database. Try again.");
+  } else setLocal(members);
+  draw();
+}
+async function remove(email) {
+  if (!confirm("Remove " + email + " from the overview? Their code keeps working until it expires.")) return;
+  members = members.filter((x) => x.email !== email);
+  if (storage) await fetch("/api/members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "delete", email }) });
+  else setLocal(members);
+  draw();
+}
+function banner() {
+  const b = $("banner"), loc = local();
+  if (storage && loc.length) {
+    b.hidden = false;
+    b.innerHTML = `<b>${loc.length} members are saved in this browser only.</b> Move them to the database so you see them on every device. <button class="sm" id="move">Move them</button>`;
+    $("move").onclick = async () => {
+      const r = await fetch("/api/members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ members: loc }) });
+      const j = await r.json(); if (r.ok) { localStorage.removeItem(LS); members = j.members; banner(); draw(); }
+    };
+  } else if (!storage) {
+    b.hidden = false;
+    b.innerHTML = `<b>The list is saved in this browser only.</b> To see it on every device, connect a database in Vercel: your project → Storage → Create Database → Upstash for Redis (free plan) → Connect to this project, then redeploy. Your list moves over with one click after that.`;
+  } else b.hidden = true;
+}
+function status(m) {
+  if (!m.validThrough) return ["no", "Unknown"];
+  const days = Math.ceil((new Date(m.validThrough + "T23:59:59Z") - Date.now()) / 864e5);
+  if (days < 0) return ["gone", "Expired"];
+  if (days <= 30) return ["soon", days <= 1 ? "Expires today" : "Expires in " + days + " days"];
+  return ["ok", "Active"];
+}
+function draw() {
+  const q = $("q").value.trim().toLowerCase();
+  const list = members.filter((m) => !q || (m.email + " " + (m.name || "")).toLowerCase().includes(q))
+    .sort((a, b) => (a.validThrough || "").localeCompare(b.validThrough || ""));
+  const st = members.map(status);
+  $("stats").innerHTML = [["Members", members.length], ["Active", st.filter((s) => s[0] === "ok").length], ["Expiring within 30 days", st.filter((s) => s[0] === "soon").length], ["Expired", st.filter((s) => s[0] === "gone").length], ["Not sent yet", members.filter((m) => !m.sentAt).length]]
+    .map(([l, n]) => `<div><b>${n}</b><span>${l}</span></div>`).join("");
+  $("rows").innerHTML = list.length ? list.map((m) => {
+    const [c, t] = status(m);
+    return `<tr><td class="n">${esc(m.name) || "–"}</td><td>${esc(m.email)}</td><td class="mono">${esc(m.code)}</td><td>${shortDate(m.validThrough)}</td><td><span class="pill ${c}">${t}</span></td><td>${m.sentAt ? shortDate(m.sentAt) : '<span class="pill no">Not sent</span>'}</td>
+      <td><button class="sm" data-send="${esc(m.email)}">Send from Gmail</button> <button class="sm" data-renew="${esc(m.email)}">Renew 12 mo</button> <button class="sm" data-del="${esc(m.email)}">Remove</button></td></tr>`;
+  }).join("") : `<tr><td colspan="7" class="muted">${members.length ? "No match." : "No members yet. Make a code above, or add the ones you’ve already sent."}</td></tr>`;
+}
+$("q").addEventListener("input", draw);
+$("rows").addEventListener("click", async (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  const find = (em) => members.find((m) => m.email === em);
+  if (b.dataset.send) { const m = find(b.dataset.send); openGmail(m); await upsert({ email: m.email, sentAt: today() }); }
+  if (b.dataset.del) remove(b.dataset.del);
+  if (b.dataset.renew) {
+    const m = find(b.dataset.renew);
+    const p = await makeCode(m.email, { months: 12 }); if (!p) return;
+    const nm = { ...m, code: p.code, validThrough: p.validThrough, issuedAt: today(), sentAt: null };
+    await upsert(nm); show(nm);
+    $("out").scrollIntoView({ behavior: "smooth" });
+  }
+});
+$("csv").onclick = () => {
+  const q = (s) => '"' + String(s ?? "").replace(/"/g, '""') + '"';
+  const csv = "name,email,code,valid_through,status,sent\n" + members.map((m) => [m.name, m.email, m.code, m.validThrough, status(m)[1], m.sentAt].map(q).join(",")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "members.csv"; a.click();
+};
+
+// ------------------------------------------------------------------ the email
+function mail(m) {
+  const link = location.origin + "/join?email=" + encodeURIComponent(m.email) + "&code=" + encodeURIComponent(m.code);
+  const hi = m.name ? "Hi " + m.name + "," : "Hi,";
+  const subject = "Your access to Torghatten Capital Members’ Corner";
+  const text = `${hi}
+
+Thank you for pledging to Torghatten Capital. I really appreciate the support.
+
+Here is your personal access code for Members’ Corner:
+
+${m.code}
+
+Click this link to sign in. Your email and code are filled in, so you only need to click "Sign in":
+${link}
+
+Your browser will remember you after that. The code is personal and valid until ${dateFmt(m.validThrough)}, so please don’t share it.
+
+In Members’ Corner you’ll find the tools I use myself: reverse DCF, attention score, compounding, diversification, “Would you have held?” and the moat test. The Torghatten Academy is under construction, and members will get it first.
+
+The tools are calculators, not investment advice, and the data can be late or wrong, so check the numbers against the company’s own reports.
+
+If something doesn’t work, or you have ideas for new tools, just reply to this email.
+
+Best regards,
+Arne Ulland
+Torghatten Capital`;
+  const html = `<p>${esc(hi)}</p><p>Thank you for pledging to Torghatten Capital. I really appreciate the support.</p>
+<p>Here is your personal access code for Members’ Corner:</p><p style="font-family:monospace;font-size:18px;font-weight:bold;letter-spacing:1px">${esc(m.code)}</p>
+<p><a href="${esc(link)}" style="display:inline-block;padding:10px 18px;background:#0A1630;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold">Sign in to Members’ Corner</a></p>
+<p>The link fills in your email and code, so you only need to click “Sign in”. Your browser will remember you after that. The code is personal and valid until ${dateFmt(m.validThrough)}, so please don’t share it.</p>
+<p>In Members’ Corner you’ll find the tools I use myself: reverse DCF, attention score, compounding, diversification, “Would you have held?” and the moat test. The Torghatten Academy is under construction, and members will get it first.</p>
+<p>The tools are calculators, not investment advice, and the data can be late or wrong, so check the numbers against the company’s own reports.</p>
+<p>If something doesn’t work, or you have ideas for new tools, just reply to this email.</p>
+<p>Best regards,<br>Arne Ulland<br>Torghatten Capital</p>`;
+  return { subject, text, html };
+}
+function openGmail(m) {
+  const e = mail(m);
+  const u = "https://mail.google.com/mail/?authuser=" + encodeURIComponent(FROM) + "&view=cm&fs=1&to=" + encodeURIComponent(m.email) + "&su=" + encodeURIComponent(e.subject) + "&body=" + encodeURIComponent(e.text);
+  window.open(u, "_blank", "noopener");
+}
+let current = null;
+function show(m) {
+  current = m;
+  $("out").hidden = false;
+  $("who").textContent = (m.name ? m.name + " · " : "") + m.email;
+  $("code").textContent = m.code;
+  $("valid").textContent = "Valid through " + dateFmt(m.validThrough) + ". Works only with this email address.";
+  $("preview").innerHTML = "<div style='color:#5B6478;font-size:12.5px;margin-bottom:8px'>Subject: " + esc(mail(m).subject) + "</div>" + mail(m).html;
+}
+async function makeCode(email, opts) {
+  const r = await fetch("/api/admin", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email, ...opts }) });
+  const b = await r.json();
+  if (!r.ok) { alert(b.message || "Something went wrong."); return null; }
+  $("monthly").tBodies[0].innerHTML = b.monthly.map((m) => `<tr><td>${monthName(m.month)}</td><td class="mono">${m.code}</td></tr>`).join("");
+  return b.personal;
+}
 $("f").addEventListener("submit", async (e) => {
   e.preventDefault(); $("err").textContent = "";
-  try {
-    const r = await fetch("/api/admin", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: $("email").value, months: $("months").value }) });
-    const b = await r.json();
-    if (!r.ok) throw new Error(b.message || "Something went wrong.");
-    $("monthly").tBodies[0].innerHTML = b.monthly.map((m) => `<tr><td>${monthName(m.month)}</td><td class="mono">${m.code}</td></tr>`).join("");
-    if (!b.personal) { $("out").hidden = true; if (!$("email").value) $("err").textContent = "Enter an email to make a personal code."; return; }
-    const p = b.personal, link = location.origin + "/join";
-    $("out").hidden = false;
-    $("who").textContent = p.email;
-    $("code").textContent = p.code;
-    $("valid").textContent = "Valid through " + dateFmt(p.validThrough) + ". Works only with this email address.";
-    $("mail").value =
-`Subject: Your access to Members' Corner
-
-Hi,
-
-Thanks for supporting Torghatten Capital. Here's your access to Members' Corner, the member tools on the site.
-
-1. Go to ${link}
-2. Enter this email address: ${p.email}
-3. Enter your access code: ${p.code}
-
-The code is personal and works through ${dateFmt(p.validThrough)}. Once you're in, the site remembers you on that device.
-
-Arne
-Torghatten Capital`;
-  } catch (x) { $("err").textContent = x.message; }
+  if (!$("email").value.trim()) { $("err").textContent = "Enter an email to make a code."; return; }
+  const p = await makeCode($("email").value, { months: $("months").value }); if (!p) return;
+  const m = { email: p.email, name: $("name").value.trim(), code: p.code, validThrough: p.validThrough, issuedAt: today(), sentAt: null };
+  await upsert(m); show(m);
 });
-async function copy(text, btn) {
-  try { await navigator.clipboard.writeText(text); } catch (e) { const t = document.createElement("textarea"); t.value = text; document.body.append(t); t.select(); document.execCommand("copy"); t.remove(); }
-  const o = btn.textContent; btn.textContent = "Copied"; setTimeout(() => (btn.textContent = o), 1400);
-}
-$("copyMail").onclick = () => copy($("mail").value, $("copyMail"));
-$("copyCode").onclick = () => copy($("code").textContent, $("copyCode"));
+$("gmail").onclick = async () => { if (!current) return; openGmail(current); await upsert({ email: current.email, sentAt: today() }); };
+$("copyHtml").onclick = async () => {
+  if (!current) return; const e = mail(current);
+  try { await navigator.clipboard.write([new ClipboardItem({ "text/html": new Blob([e.html], { type: "text/html" }), "text/plain": new Blob([e.text], { type: "text/plain" }) })]); }
+  catch { await navigator.clipboard.writeText(e.text); }
+  const b = $("copyHtml"), o = b.textContent; b.textContent = "Copied. Paste it into the email."; setTimeout(() => (b.textContent = o), 1800);
+};
+$("copyCode").onclick = async () => { await navigator.clipboard.writeText($("code").textContent); const b = $("copyCode"), o = b.textContent; b.textContent = "Copied"; setTimeout(() => (b.textContent = o), 1400); };
+
+$("isent").value = today();
+$("fi").addEventListener("submit", async (e) => {
+  e.preventDefault(); $("ierr").textContent = "";
+  const em = $("iemail").value.trim(), mo = $("imonth").value;
+  if (!em || !mo) { $("ierr").textContent = "Enter the email and the month the code is valid through."; return; }
+  const p = await makeCode(em, { yymm: mo.slice(2, 4) + mo.slice(5, 7) }); if (!p) return;
+  await upsert({ email: p.email, name: $("iname").value.trim(), code: p.code, validThrough: p.validThrough, issuedAt: null, sentAt: $("isent").value || null });
+  $("ierr").innerHTML = '<span style="color:var(--glow)">Added. Code ' + esc(p.code) + ' — check that it matches the one you sent.</span>';
+  $("iname").value = ""; $("iemail").value = "";
+});
+load();
 </script>
 </body>
 </html>

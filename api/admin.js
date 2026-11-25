@@ -22,10 +22,14 @@ export default async function handler(req, res) {
   const email = normEmail(body?.email);
   if (email) {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return res.status(400).json({ error: "bad_email", message: "That doesn't look like an email address." });
-    const months = Math.min(36, Math.max(1, parseInt(body?.months, 10) || 12));
-    // valid through the end of the month, `months` months from now
-    const yymm = yymmOf(addMonths(now, months - 1));
-    out.personal = { email, code: await personalCode(secret, email, yymm), validThrough: new Date(addMonths(now, months) - 1).toISOString().slice(0, 10) };
+    // Either "valid through" a given month (YYMM, for codes already sent) or `months` from now.
+    let yymm = /^\d{4}$/.test(String(body?.yymm || "")) ? String(body.yymm) : null;
+    if (!yymm) {
+      const months = Math.min(36, Math.max(1, parseInt(body?.months, 10) || 12));
+      yymm = yymmOf(addMonths(now, months - 1));
+    }
+    const end = Date.UTC(2000 + +yymm.slice(0, 2), +yymm.slice(2), 1) - 1; // last moment of that month
+    out.personal = { email, code: await personalCode(secret, email, yymm), validThrough: new Date(end).toISOString().slice(0, 10) };
   }
   res.status(200).json(out);
 }
