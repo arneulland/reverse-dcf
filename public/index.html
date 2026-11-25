@@ -80,6 +80,15 @@ main{max-width:1040px}
 .academy .side span{display:flex;gap:12px;align-items:center;font-size:14px}
 .academy .side b{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--display);border:1px solid rgba(142,227,166,.6);color:var(--glow)}
 .academy .side .cert{margin-top:6px;color:var(--glow);font-family:var(--display);font-style:italic;font-size:17px}
+.academy.building{cursor:default}
+.academy.building:hover{box-shadow:none;border-color:rgba(142,227,166,.45)}
+.academy.building .go{color:var(--muted);font-weight:500}
+.academy.building .go::after{content:""}
+.academy.building .side span:not(.cert){opacity:.6}
+.build-tag{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:5px 11px 5px 9px;border-radius:999px;font:600 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:#06120B;background:repeating-linear-gradient(135deg,#8EE3A6 0 10px,#B7F0C6 10px 20px)}
+.build-tag i{width:7px;height:7px;border-radius:50%;background:#06120B;animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.build-tag i{animation:none}}
 .soon{margin-top:18px;padding:18px 22px;border:1px dashed var(--line);border-radius:20px;color:var(--muted);font-size:15px}
 </style>
 </head>
@@ -102,13 +111,14 @@ main{max-width:1040px}
     <div class="art" role="img" aria-label="A glowing orb over a dotted landscape"></div>
   </section>
 
-  <div class="sec" data-admin hidden><h2>The Academy</h2><span class="eyebrow">Course · Admin preview</span></div>
-  <a class="academy" href="/academy" data-admin hidden>
+  <div class="sec"><h2>The Academy</h2><span class="eyebrow" id="acLabel">Course · Under construction</span></div>
+  <a class="academy building" id="academyCard" aria-disabled="true">
     <div class="body">
+      <span class="build-tag" id="acTag"><i></i>Under construction</span>
       <span class="eyebrow">Six modules · Tests · Certificate</span>
       <h3>The part analysis <em>doesn’t solve.</em></h3>
       <p>A course in patience, valuation discipline, falling markets and behaviour, built on the Torghatten Strategy Book. Lessons, simulations, an assignment and a test in every module, then a final exam.</p>
-      <span class="go">Start the course</span>
+      <span class="go" id="acGo">Coming soon. Members get it first.</span>
     </div>
     <div class="side">
       <span><b>1</b>Mindset</span><span><b>2</b>Quality</span><span><b>3</b>Valuation</span><span><b>4</b>Falling markets</span><span><b>5</b>Behaviour</span><span><b>6</b>The annual review</span>
@@ -196,6 +206,14 @@ main{max-width:1040px}
 </main>
 <script>
 fetch("/api/me").then((r) => r.json()).then((me) => {
+  if (me.admin) {
+    // The admin can open the course while it's being built.
+    const c = document.getElementById("academyCard");
+    c.href = "/academy"; c.classList.remove("building"); c.removeAttribute("aria-disabled");
+    document.getElementById("acLabel").textContent = "Course · Admin preview";
+    document.getElementById("acGo").textContent = "Open the course";
+    document.getElementById("acTag").hidden = true;
+  }
   if (!me.member) return;
   const b = document.getElementById("ctaBtn");
   b.textContent = "Open the reverse DCF"; b.href = "/reverse-dcf";
