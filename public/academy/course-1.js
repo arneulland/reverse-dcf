@@ -1,0 +1,136 @@
+// Module 1: Mindset
+(function () {
+  var SUB = "https://torghattencapital.substack.com/p/";
+  window.COURSE.modules.push({
+    slug: "mindset",
+    title: "Mindset",
+    heading: "Sitting still is <em>the edge.</em>",
+    summary: "Patience, herd behaviour, and why rules written in advance beat judgement in the moment.",
+    minutes: 60,
+    objectives: [
+      "Explain why patience is a real edge, and why so few investors use it",
+      "Put a number on what activity costs over twenty years",
+      "Recognise herd behaviour and media incentives when you feel them",
+      "Write your first rule before you need it"
+    ],
+    lessons: [
+      {
+        title: "The edge nobody wants",
+        html:
+          "<blockquote>The stock market is a highly efficient mechanism for transferring wealth from the impatient to the patient.<cite>Warren Buffett. The first page of the Strategy Book.</cite></blockquote>" +
+          "<p>Most people look for an edge in information. They read more news, follow more accounts and try to know something before everyone else. That edge is almost gone. Thousands of professionals with better data and faster terminals compete for it every day.</p>" +
+          "<p>There’s another edge that is almost free and almost unused: <strong>the ability to wait.</strong> Charlie Munger put it as a gene: few people have the gene for deferred gratification. Most investors can’t wait long enough for a company that reinvests at high returns to show what that reinvestment is worth.</p>" +
+          "<h5>Why waiting is hard</h5>" +
+          "<p>A good business doesn’t change much from one quarter to the next. Its share price does. When a company announces a big investment, the operational effect often takes three to four years to show up in the numbers. If you sell a few months after the announcement because the price hasn’t moved, you give up exactly the part you were waiting for.</p>" +
+          "<p>That’s why the Strategy Book sets the horizon at <strong>three to five years for every investment</strong>. Not because three to five years is magic, but because anything shorter makes you a forecaster of moods instead of an owner of a business.</p>" +
+          "<h5>Slow is not a weakness</h5>" +
+          "<p>I prefer slow, steady growth over fast gains. Wealth that comes quickly is more often luck, and luck reverses. A company that grows its free cash flow per share by 12% a year for twenty years turns 1 krone into almost 10. Nothing about that is exciting in any single year. All of it is exciting in hindsight.</p>" +
+          "<blockquote>To finish first, you must first finish.<cite>Rick Mears, racing driver. Also on the first page of the Strategy Book.</cite></blockquote>" +
+          "<p>The racing quote matters as much as the Buffett one. Compounding only works if you’re still in the race. Leverage, a forced sale at the bottom, or one position that wipes out years of gains all take you out of it. Patience isn’t only waiting for the good outcome. It’s also avoiding the outcomes you can’t come back from.</p>" +
+          "<h5>The Munger test</h5>" +
+          "<p>Munger said that if you can’t stand a 50% fall in what you own, without fussing about it, you’ll get the mediocre results you deserve. The key word is <em>fussing</em>. The fall itself is normal. What you do during it is the part you control.</p>" +
+          '<div class="box"><b class="t">Keep this</b>Your edge is not knowing more. It’s waiting longer than the person on the other side of the trade, and never being forced to stop.</div>'
+      },
+      {
+        title: "What a busy year cost me",
+        html:
+          "<p>This lesson is a case study, and the case is me. In 2025 I broke almost every principle I had written down the year before. I publish the numbers because they teach more than any theory.</p>" +
+          "<h5>The numbers</h5>" +
+          '<table><tr><th>2025</th><th></th></tr><tr><td>Trades</td><td class="num">86 (45 buys, 41 sells), one every fourth trading day</td></tr><tr><td>Commission</td><td class="num">18,233 NOK, about 1% of the portfolio</td></tr><tr><td>My return</td><td class="num">−22%</td></tr><tr><td>The January portfolio, untouched</td><td class="num">at least +2.1%, before dividends</td></tr><tr><td>Global index</td><td class="num">about +8%</td></tr></table>' +
+          "<p>A weaker dollar explains part of the fall. It doesn’t explain the gap between what I did and what I would have earned by doing nothing. That gap is about 24 percentage points, and all of it came from my own decisions.</p>" +
+          "<h5>What actually happened</h5>" +
+          "<ul><li><strong>I sold winners because they had gone up.</strong> I sold Alphabet after it rose from about 165 to 193 dollars, with no view of what it was worth five years out. I sold Moody’s, a business with some of the best moats in the market, to chase more volatile ideas.</li>" +
+          "<li><strong>I bought things I didn’t understand well enough.</strong> One company I owned for three days. Others I bought and sold within weeks, paying commission both ways.</li>" +
+          "<li><strong>I reacted instead of reflecting.</strong> In March and April alone I made 34 trades, and I checked X and Discord almost every day to see what others were doing.</li>" +
+          "<li><strong>I concentrated without conviction.</strong> Big positions in companies I hadn’t written a thesis for meant every headline felt like an emergency.</li></ul>" +
+          "<h5>The real cost is bigger than the fee</h5>" +
+          "<p>Commission is the visible cost. The invisible ones are larger: selling compounders that kept compounding without me, realising losses I didn’t need to take, and the mental energy spent on entries and exits instead of understanding the businesses I owned. On average I made 1.6 investment decisions a week. That’s how a trader behaves, not an owner.</p>" +
+          "<p>In the first exercise you’ll see what my 2025 pace would cost if I kept it up for twenty years. Even counting only commission, the lost wealth is several times the fees, because every krone paid in fees also stops compounding.</p>" +
+          "<h5>What I changed</h5>" +
+          "<p>I set a budget of ten trades for 2026, wrote the Strategy Book, and promised myself in writing that if I couldn’t sit still for a year, I should stop picking stocks and buy an index fund. A rule with a consequence attached is easier to keep than a good intention.</p>" +
+          '<div class="box"><b class="t">Keep this</b>Doing nothing is a strategy with a measurable return. Before you judge your skill, compare yourself with the portfolio you started the year with.</div>'
+      },
+      {
+        title: "The herd and the news",
+        html:
+          "<p>When the market falls, most investors react the way people react to danger: fight or flight. They sell first and ask questions later. In 2020 people sold Netflix, malls and hotels in the same week, before anyone knew which of those shocks would last. Netflix ended up a winner of the pandemic.</p>" +
+          "<h5>Sentiment spreads faster than facts</h5>" +
+          "<p>Rational investors can turn negative remarkably fast. A price fall becomes a story, the story spreads, and soon the price is reflecting the story rather than anything new in the business. When software stocks sold off on fears about AI in early 2026, many investors sold before they had read what had actually changed. The question to ask is always: <em>how bad is the news really</em>, judged from the business, not from the chart?</p>" +
+          "<h5>Who benefits from your attention</h5>" +
+          "<p>After about nine years in the market I concluded that news outlets and market commentators don’t have your interests at heart. Fear and greed hold attention, and attention is what they sell. That’s not a conspiracy. It’s an incentive.</p>" +
+          "<p>The same goes for macro. There is always a reason to sell if you extrapolate the latest bad news: an election, a trade war, a central bank decision. The best long-term managers I have spoken to spend very little time on macro. Investors tend to do worst when politics and the economy drive their decisions.</p>" +
+          "<blockquote>The stock price is the least useful information you can track.<cite>Peter Lynch</cite></blockquote>" +
+          "<h5>The pull of the tribe</h5>" +
+          "<p>Humans are wired to stay with the group. In investing, that wiring is expensive. When everyone owns the same stock, it’s the hardest place to have an edge. When everyone is selling, the prices are often best. One investor put it well: the best time to buy is usually when you don’t want to, because you won’t feel comfortable doing it.</p>" +
+          "<p>Watch for a quieter version too: authority. A person you respect on a podcast, a well-known account on X, a friend who works in finance. A good story from someone you trust can make you throw your own spreadsheet out of the window. That happened to me more than once.</p>" +
+          "<h5>A practical defence</h5>" +
+          "<ul><li>Read quarterly and annual reports, not stock news.</li><li>When a surprise hits, wait a quarter before you act on it, unless the thesis is clearly broken.</li><li>Use the Attention score to check how loud the crowd is before you buy. High attention isn’t bad, but it means the easy insight is already priced in.</li><li>If a friend asks about a holding and you can’t explain it in two minutes, read more before you do anything else.</li></ul>" +
+          '<div class="box"><b class="t">Keep this</b>Ask what changed in the business, not what changed in the price. If the answer is “nothing yet”, the right action is usually also nothing.</div>'
+      },
+      {
+        title: "Rules written in calm",
+        html:
+          "<p>Everything in the first three lessons is easy to agree with on a quiet Sunday. The problem is that you don’t make your worst decisions on quiet Sundays. You make them at 23:00, after a red day, with your phone in your hand.</p>" +
+          "<h5>Discipline is a design problem</h5>" +
+          "<p>In my 2024 annual letter I wrote that discipline means setting up situations so you never have to rely on emotion in the moment. That’s the whole idea of this course. You don’t beat your impulses with willpower. You beat them by deciding in advance, in writing, what you will and won’t do, and then checking every decision against what you wrote.</p>" +
+          "<p>Sailors in old stories had themselves tied to the mast so they could hear the sirens without steering into the rocks. A written rule is the same thing. You decide while you can still think clearly, so the version of you that can’t think clearly doesn’t get the wheel.</p>" +
+          "<h5>Why rules beat judgement in the moment</h5>" +
+          "<ul><li><strong>Decision fatigue is real.</strong> Every decision uses up some willpower. The more decisions you make, the worse the next one gets. Fewer, better decisions beat many quick ones.</li>" +
+          "<li><strong>Feelings arrive before facts.</strong> In a sharp fall the feeling is instant and the facts take a quarter to arrive. A rule buys you time.</li>" +
+          "<li><strong>You can measure a rule.</strong> At the end of the year you can count how often you broke it. You can’t count “good judgement”.</li></ul>" +
+          "<h5>What the Strategy Book is</h5>" +
+          "<p>The Strategy Book is my constitution for Torghatten Capital. It holds the philosophy, the portfolio rules, the sell rules, the behaviour rules and the annual review. Its purpose is written on the first page: to make it easier to follow the principles, stay true to the strategy, and make fewer mistakes. You’ll meet its rules one by one in this course:</p>" +
+          "<ul><li>10 to 20 companies. No position under 4%, none over 10% when you buy, and a hard cap of 20%.</li><li>Buy only under 0.75 x fair value.</li><li>Sell only for a short list of reasons. Never because the price rose or fell.</li><li>At least two days between a decision and an order.</li><li>A written review in the first week of every December.</li></ul>" +
+          "<h5>Start small</h5>" +
+          "<p>You don’t need a 40-page book to start. You need one rule that would have stopped your most expensive mistake. Write it down, put a date on it, and keep it where you place orders. In the assignment for this module you’ll write that rule for a company you own or watch.</p>" +
+          "<blockquote>Discipline is everything.<cite>Arne Ulland, StockUp podcast, 2024</cite></blockquote>" +
+          '<div class="box"><b class="t">Keep this</b>Make decisions when you are calm, write them down, and let the written version decide when you are not.</div>'
+      }
+    ],
+    exercises: [
+      {
+        id: "m1-activity", sim: "activity", title: "What activity costs",
+        intro: "The defaults are my 2025 pace: about 1.7 million NOK, 86 trades a year and about 212 NOK per trade. The return is a steady 9% a year.",
+        task: { q: "With the defaults, how does the wealth lost after 20 years compare with the fees actually paid?", options: ["About the same as the fees", "About half of the fees", "About two and a half times the fees", "Less than 10% of the fees"], answer: 2, why: "Fees of about 365,000 cost about 930,000 in final wealth, because every krone paid also stops compounding. Cut trades to 10 a year and the loss falls to about 110,000." }
+      },
+      {
+        id: "m1-recovery", sim: "recovery", title: "The Munger test in numbers",
+        intro: "Munger said a long-term investor must be able to sit through a 50% fall. See what a fall needs to recover, and how long it takes at different returns.",
+        task: { q: "Set the fall to 50% and the return to 10%. How long does it take to get back to where you started?", options: ["About 3 years", "About 5 years", "About 7 years", "About 12 years"], answer: 2, why: "A 50% fall needs a 100% gain. At 10% a year that takes about 7.3 years. Selling at the bottom turns that wait into a permanent loss." }
+      }
+    ],
+    assignment: {
+      title: "Your first written rule",
+      intro: "Pick a company you own, or one you want to own. Answer each question in a few sentences. This is the start of the thesis you’ll build on in every module.",
+      company: "Company",
+      fields: [
+        { q: "Why do you own it, or want to? Two sentences.", hint: "If you can’t say it in two sentences, you don’t know it well enough yet." },
+        { q: "What outside, verifiable change would make you sell?", hint: "Not a price move. A change in the business or its industry that you can check." },
+        { q: "How far could the price fall before you’d feel the urge to sell? Could you hold through 50%?", hint: "Be honest. The answer tells you how big the position should be." },
+        { q: "Where do you get news about it today, and which of those sources would you mute in a crash?", hint: "X, Discord, newspapers, podcasts, friends." },
+        { q: "Write one rule you will follow for this position, starting today.", hint: "For example: I won’t sell unless the thesis above is broken, and never within two days of deciding." }
+      ]
+    },
+    tools: [
+      { href: "/held", label: "Would you have held?", why: "see every big fall in the best stocks of all time, and what panic selling cost" },
+      { href: "/attention", label: "Attention score", why: "check how loud the crowd is before you act" }
+    ],
+    reading: [
+      { href: SUB + "torghatten-capital-annual-letter", label: "Torghatten Capital annual letter 2024", why: "the principles I broke in 2025" },
+      { href: SUB + "investment-memo-march-2020-its-better-to-keep-your-mouth-closed-and-appear-stupid-than-open-it-and-remove-all-doubt", label: "Investment memo, March 2020", why: "written in the middle of the covid sell-off" },
+      { href: SUB + "podcast-transcript-long-term-investing", label: "Podcast transcript: long-term investing", why: "patience, quality and the deferred gratification gene" }
+    ],
+    test: [
+      { q: "According to the lesson, what is the edge most investors leave unused?", options: ["Faster access to news", "The ability to wait", "Better valuation models", "Trading around earnings"], answer: 1, why: "Information is crowded. Patience is almost free and rarely used." },
+      { q: "What horizon does the Strategy Book set for every investment?", options: ["6–12 months", "One quarter", "3–5 years", "20 years"], answer: 2, why: "Three to five years. Anything shorter makes you a forecaster of moods." },
+      { q: "What does “To finish first, you must first finish” mean for an investor?", options: ["Sell winners early to lock in gains", "Avoid outcomes you can’t recover from, such as leverage or a forced sale at the bottom", "Always be fully invested", "Beat the index every single year"], answer: 1, why: "Compounding only works if you stay in the game." },
+      { q: "In 2025, about how much did the January portfolio return if left untouched, compared with the actual result?", options: ["+2.1% untouched vs −22% actual", "−22% untouched vs +2.1% actual", "+8% for both", "−10% for both"], answer: 0, why: "Doing nothing would have earned at least 2.1% before dividends. Activity turned it into −22%." },
+      { q: "Why is the wealth lost to trading larger than the fees paid?", options: ["Because brokers hide extra fees", "Because money paid in fees stops compounding", "Because taxes are included in the fee", "It isn’t larger"], answer: 1, why: "Every krone paid in fees also loses all its future returns." },
+      { q: "What question should you ask when a holding falls sharply?", options: ["How far can it fall?", "What are others on X doing?", "What changed in the business?", "How fast can I get out?"], answer: 2, why: "Judge the news from the business, not from the chart." },
+      { q: "Why does the lesson treat macro news as a trap?", options: ["Macro is always wrong", "There is always a reason to sell if you extrapolate bad macro news", "Macro only matters for bonds", "Central banks are predictable"], answer: 1, why: "Investors tend to do worst when politics and the economy drive their decisions." },
+      { q: "According to the 2024 annual letter, what is discipline?", options: ["Strong willpower in the moment", "Setting up situations so you never have to rely on emotion in the moment", "Trading less than your friends", "Following the best investors on X"], answer: 1, why: "Discipline is a design problem, not a willpower problem." },
+      { q: "Which of these is a behaviour rule in the Strategy Book?", options: ["Sell when a position falls 20%", "At least two days between a decision and an order", "Buy every time the market falls 10%", "Never hold more than five companies"], answer: 1, why: "The two-day rule buys time for the facts to catch up with the feeling." },
+      { q: "What should your first written rule do?", options: ["Predict next year’s market", "Stop the mistake that has cost you most", "Copy the rules of a famous investor word for word", "Allow exceptions when you feel strongly"], answer: 1, why: "Start with one rule that would have stopped your most expensive mistake." }
+    ]
+  });
+})();

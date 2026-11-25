@@ -310,3 +310,53 @@ console.log("Payout checks passed.");
   assert.equal(A.titleMatches("Nestlé", "Nestle"), true, "accents ignored");
   console.log("Attention fixes passed.");
 }
+
+// --- academy -------------------------------------------------------------------
+{
+  const read = (f) => readFileSync(new URL("../public/academy/" + f, import.meta.url), "utf8");
+  const ms = { exports: {} };
+  vm.runInNewContext(read("sims.js"), { module: ms, Math });
+  const S = ms.exports;
+  // the justified P/E grid in the Strategy Book (8% cost of capital, 15 years)
+  const book = { "2,4": 10.1, "4,4": 7.1, "6,4": 3.3, "2,12": 13.3, "12,12": 21.6, "20,12": 39.3, "10,20": 24.4, "20,20": 60.7, "14,30": 39.2, "20,40": 76.8, "2,8": 12.5, "20,8": 12.5 };
+  for (const k in book) { const [g, r] = k.split(",").map((x) => x / 100); near(S.justifiedPE(g, r), book[k], 0.051, "justified P/E " + k); }
+  assert.equal(S.justifiedPE(0.08, 0.04), null, "NM when growth destroys too much");
+  const fv = S.fairValue(10, 0.1, 20, 0.1);
+  near(fv, 200, 1e-9, "fair value");
+  near(S.impliedIRR(fv, 10, 0.1, 20), 0.1, 1e-12, "IRR at fair value equals the hurdle");
+  near(S.impliedIRR(0.75 * fv, 10, 0.1, 20), 0.165, 0.001, "0.75 x FV gives about 16.5%");
+  near(S.needToRecover(0.5), 1, 1e-12);
+  assert.equal(S.ruleCheck({ price: 70, fv: 100, weight: 0.05, topUps: 0, sameThesis: 0, category: 0 }).add, "full");
+  assert.equal(S.ruleCheck({ price: 80, fv: 100, weight: 0.03, topUps: 0, sameThesis: 0, category: 0 }).add, "starter");
+  assert.equal(S.ruleCheck({ price: 80, fv: 100, weight: 0.05, topUps: 0, sameThesis: 0, category: 0 }).add, "no", "starter only under 4%");
+  assert.equal(S.ruleCheck({ price: 70, fv: 100, weight: 0.05, topUps: 2, sameThesis: 0, category: 0 }).add, "no", "two top-ups a year");
+  assert.equal(S.ruleCheck({ price: 120, fv: 100, weight: 0.12, topUps: 0, sameThesis: 0, category: 0 }).trim, true, "trim when both");
+  assert.equal(S.ruleCheck({ price: 105, fv: 100, weight: 0.14, topUps: 0, sameThesis: 0, category: 0 }).trim, false, "no trim at 1.05");
+  assert.equal(S.ruleCheck({ price: 120, fv: 100, weight: 0.06, topUps: 0, sameThesis: 0, category: 0 }).trim, false, "no trim under 10%");
+  assert.equal(S.sizing(true, true).range, "4–5%");
+  const rv = S.review({ start: 1000000, end: 1050000, deposits: 60000, nothing: 1100000, index: 0.08, fees: 4000 });
+  near(rv.gapIdle, -0.1097, 0.001, "review gap");
+  assert.equal(S.certId("Arne", "2026-11-25"), S.certId(" arne ", "2026-11-25"), "cert id ignores case and spaces");
+
+  // course content: structure, answers in range, exercises point at real simulations
+  const win = { COURSE: null };
+  const ctx = { window: win };
+  for (let i = 0; i <= 6; i++) vm.runInNewContext(read(`course-${i}.js`), ctx);
+  const C = win.COURSE;
+  const ui = read("academy.js");
+  assert.equal(C.modules.length, 6, "six modules");
+  const ids = new Set();
+  const checkQ = (q, where) => { assert.ok(q.options.length >= 2 && q.answer >= 0 && q.answer < q.options.length, "answer in range: " + where + " " + q.q); assert.ok(q.why, "explanation: " + where); };
+  C.modules.forEach((m) => {
+    assert.equal(m.lessons.length, 4, m.slug + " has four lessons");
+    assert.equal(m.test.length, 10, m.slug + " has ten test questions");
+    m.test.forEach((q) => checkQ(q, m.slug));
+    m.exercises.forEach((x) => { assert.ok(!ids.has(x.id), "unique exercise id " + x.id); ids.add(x.id); assert.ok(new RegExp("\\b" + x.sim + ": function").test(ui), "simulation exists: " + x.sim); checkQ(x.task, x.id); });
+    assert.ok(m.assignment.fields.length >= 5, m.slug + " assignment");
+    const pageHtml = read(m.slug + "/index.html");
+    assert.ok(pageHtml.includes('data-page="' + m.slug + '"'), "page shell for " + m.slug);
+  });
+  assert.equal(C.exam.cases.length, 12, "twelve exam cases");
+  C.exam.cases.forEach((q) => checkQ(q, "exam"));
+  console.log("Academy checks passed:", C.modules.reduce((s, m) => s + m.lessons.length, 0), "lessons,", C.modules.reduce((s, m) => s + m.test.length, 0) + 12, "questions.");
+}

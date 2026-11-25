@@ -8,13 +8,15 @@
     { href: "/compounding", label: "Compounding", members: true },
     { href: "/diversification", label: "How many stocks?", members: true },
     { href: "/held", label: "Would you have held?", members: true },
-    { href: "/moat", label: "Moat test", members: true }
+    { href: "/moat", label: "Moat test", members: true },
+    { href: "/academy", label: "Academy", members: true }
   ];
   var LOCK = '<svg class="tc-lock" viewBox="0 0 12 14" aria-label="Members only" role="img"><rect x="1" y="6" width="10" height="7.5" rx="1.5" fill="currentColor"/><path d="M3.5 6V4.2a2.5 2.5 0 0 1 5 0V6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
   sky();
   var el = document.getElementById("tc-top");
   if (!el) return;
   var here = location.pathname.replace(/\/index\.html$/, "").replace(/\/$/, "") || "/";
+  if (here.indexOf("/academy") === 0) here = "/academy";
   var nav = TOOLS.map(function (t) {
     return '<a href="' + t.href + '"' + (here === t.href ? ' aria-current="page"' : "") + ">" + t.label + (t.members ? LOCK : "") + "</a>";
   }).join("");

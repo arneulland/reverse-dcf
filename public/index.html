@@ -66,6 +66,20 @@ main{max-width:1040px}
 .tool:hover .go::after{margin-left:4px}
 .lock{position:absolute;left:16px;top:14px;font:600 10.5px/1 var(--body);letter-spacing:.22em;text-transform:uppercase;color:var(--ink);background:rgba(3,6,14,.55);border:1px solid var(--line);padding:6px 9px;border-radius:999px;backdrop-filter:blur(4px)}
 .tc-member .lock{display:none}
+.academy{--glow:#8EE3A6;--glow-rgb:142,227,166;display:grid;gap:0;margin-top:22px;border:1px solid rgba(142,227,166,.45);border-radius:22px;overflow:hidden;text-decoration:none;color:var(--ink);background:radial-gradient(80% 140% at 100% 100%,rgba(142,227,166,.22),transparent 60%),linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));transition:box-shadow .2s,border-color .2s}
+.academy:hover{box-shadow:0 18px 60px rgba(142,227,166,.18);border-color:rgba(142,227,166,.8)}
+@media(min-width:720px){.academy{grid-template-columns:1.3fr 1fr}}
+.academy .body{padding:26px 26px 24px;display:flex;flex-direction:column;gap:10px}
+.academy h3{font-size:30px}
+.academy h3 em{font-style:italic;color:var(--glow)}
+.academy p{color:var(--muted);font-size:15.5px}
+.academy .go{margin-top:6px;font-weight:600;font-size:14px;color:var(--glow)}
+.academy .go::after{content:" \2192"}
+.academy .side{position:relative;padding:26px;display:flex;flex-direction:column;justify-content:center;gap:9px;border-top:1px solid var(--line)}
+@media(min-width:720px){.academy .side{border-top:0;border-left:1px solid var(--line)}}
+.academy .side span{display:flex;gap:12px;align-items:center;font-size:14px}
+.academy .side b{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--display);border:1px solid rgba(142,227,166,.6);color:var(--glow)}
+.academy .side .cert{margin-top:6px;color:var(--glow);font-family:var(--display);font-style:italic;font-size:17px}
 .soon{margin-top:18px;padding:18px 22px;border:1px dashed var(--line);border-radius:20px;color:var(--muted);font-size:15px}
 </style>
 </head>
@@ -87,6 +101,20 @@ main{max-width:1040px}
     </div>
     <div class="art" role="img" aria-label="A glowing orb over a dotted landscape"></div>
   </section>
+
+  <div class="sec"><h2>The Academy</h2><span class="eyebrow">Course · New</span></div>
+  <a class="academy" href="/academy">
+    <div class="body">
+      <span class="eyebrow">Six modules · Tests · Certificate</span>
+      <h3>The part analysis <em>doesn’t solve.</em></h3>
+      <p>A course in patience, valuation discipline, falling markets and behaviour, built on the Torghatten Strategy Book. Lessons, simulations, an assignment and a test in every module, then a final exam.</p>
+      <span class="go">Start the course</span>
+    </div>
+    <div class="side">
+      <span><b>1</b>Mindset</span><span><b>2</b>Quality</span><span><b>3</b>Valuation</span><span><b>4</b>Falling markets</span><span><b>5</b>Behaviour</span><span><b>6</b>The annual review</span>
+      <span class="cert">★ Certified Rational Investor</span>
+    </div>
+  </a>
 
   <div class="sec"><h2>The tools</h2><span class="eyebrow">Playbook · Tools</span></div>
   <div class="tools">
