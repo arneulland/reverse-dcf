@@ -1,0 +1,217 @@
+{
+ "slug": "annual-review",
+ "title": "The annual review",
+ "heading": "The letter you write <em>to yourself.</em>",
+ "summary": "Five written questions every December, an honest benchmark, and how a review becomes next year’s rules.",
+ "minutes": 60,
+ "objectives": [
+  "Measure your return honestly, against doing nothing and against an index",
+  "Answer the five review questions in writing",
+  "Decide, with numbers, whether picking stocks is worth it for you",
+  "Turn what you learn into one or two measurable goals and updated rules"
+ ],
+ "lessons": [
+  {
+   "title": "You can only improve what you measure",
+   "html": "<p>Every December I write an annual letter to myself. Not a marketing document: a review of what I did, what it cost, and what I’ll change. Some years it’s pleasant to write. 2025 started with two words: <em>annus horribilis</em>.</p><blockquote>You can only improve what you measure.<cite>Torghatten Capital annual letter 2024</cite></blockquote><h5>Why write it down</h5><p>Memory is a generous editor. It keeps the trades that worked and blurs the ones that didn’t. It remembers that you bought a great company, and forgets you sold it six months later. A written review, built on your trade log, is the only way to see your behaviour as it was.</p><p>Writing also forces clarity. It’s easy to think “I was a bit too active this year”. It’s harder to write “86 trades, 18,233 NOK in commission, and a 24 percentage point gap to doing nothing”, and not change something.</p><h5>Be strict, not generous</h5><p>When I judge performance, I prefer to be strict rather than generous with myself. That means:</p><ul><li>Count all costs: commission, currency costs, taxes paid on gains you didn’t need to realise.</li><li>Compare with the right benchmark, and with doing nothing.</li><li>Look at several years, not one good one. Over 2018–2024 I returned about 20% a year against about 15.6% for the global index. Then came 2025. Both are true, and both belong in the record.</li><li>Separate luck from skill where you can. A stock that doubled for a reason you didn’t predict isn’t evidence of skill.</li></ul><h5>When to do it</h5><p>The Strategy Book sets a date: the first week of December. A fixed date makes it a habit rather than something you do after a bad year. December also gives you time to act on what you find before the new year starts, and before the January urge to reshuffle everything.</p><div class=\"box\"><b class=\"t\">Keep this</b>A written review every December, built on the trade log, judged strictly. Memory flatters; numbers don’t.</div>"
+  },
+  {
+   "title": "The five questions",
+   "html": "<p>The Strategy Book asks five questions, each with a written answer. They’re short on purpose. Each one targets a mistake that costs real money.</p><h5>1. How many trades did I make, and what did commission cost as a share of the portfolio?</h5><p>Count them from the trade log, and divide total fees by the average portfolio value. Compare with your budget. In 2025 the answer was 86 trades and about 1%: as much as a fund would have charged me to do the whole job.</p><h5>2. What would the return have been if I had done nothing at all?</h5><p>Take the portfolio you held on 1 January and value it today, as if you had never touched it. This is the cleanest test of your behaviour, because it uses your own picks. The gap between your actual return and this number is what your decisions during the year added or cost.</p><h5>3. Which positions broke the rules, and why did I let it happen?</h5><p>Go through the trade log and check every trade against the Strategy Book: buy limit, position sizes, thesis and category caps, two-day rule, sell rules. The second half of the question matters most. “Why did I let it happen” finds the situation, the Italy trap, that you need a new rule for.</p><h5>4. Has any tracking variable crossed its threshold without me acting?</h5><p>For every holding, the thesis should name a few variables that would tell you it’s working or failing: organic growth, return on acquisitions, market share, margins. Have any crossed the line you set? Did you update the model within 30 days, or look away? This question catches the opposite mistake from question 3: not acting when the facts say you should.</p><h5>5. What is the return against the index since the start, and what does the gap say?</h5><p>I compare with KLP AksjeGlobal, a low-cost global index fund, from 2018. One year says little. Several years start to say something. The gap is the price of your time and effort. If it’s negative over many years, that’s an answer too.</p><div class=\"box\"><b class=\"t\">Keep this</b>Trades and costs. Doing nothing. Broken rules and why. Tracking variables. The index since the start. Five written answers, every December.</div>"
+  },
+  {
+   "title": "Against the index",
+   "html": "<p>Every stock picker has a silent competitor: a low-cost global index fund that never trades in a panic, never reads X and never sells a winner too early. For most people, and for my own family’s money, that’s what I recommend.</p><h5>Why the index is the right benchmark</h5><p>The index is what you’d get for almost no effort and very low cost. Picking stocks has to beat that by enough to pay for the hours, the stress and the risk of concentration. The diversification simulator in Members’ Corner shows how much real edge you need for a concentrated portfolio to beat the index most of the time. With no edge, most concentrated portfolios lose to it.</p><h5>The honest test</h5><p>In my 2025 letter I wrote a rule with a consequence: if I made more than ten trades in 2026, I would have to admit that picking stocks isn’t for me, and find something else to do with my spare time. It’s too expensive not to let compounding work, and too silly to keep making the same mistakes as the money grows.</p><p>You don’t have to set the same rule. But you should decide, in advance and in writing, what result over what period would make you switch to the index. Without that line, you’ll always find a reason why next year will be different.</p><h5>The middle way</h5><p>It doesn’t have to be all or nothing. The Strategy Book counts a fund as one position, and I use a low-cost fund of investment companies as ballast. It does fifteen trades’ worth of diversification in one, at no commission, and rebalances automatically: trimming what has risen and buying what has fallen. That’s exactly the discipline I had failed to keep by hand.</p><p>Steinhardt’s grid from module 3 points the same way: where you have no edge, own the fund. Spend your stock-picking effort only where you see something others don’t.</p><div class=\"box\"><b class=\"t\">Keep this</b>The index is the competitor. Decide in writing what would make you switch, and use a fund where you have no edge.</div>"
+  },
+  {
+   "title": "From review to rules",
+   "html": "<p>A review that doesn’t change anything is a diary. The last step is turning what you found into next year’s behaviour.</p><h5>One or two measurable goals</h5><p>In my 2024 letter I wrote that I should track one or two measurable goals a year, not ten. For 2026 the goal was: at most ten trades. It’s concrete, it’s easy to count, and it targets the mistake that cost most. Good goals are about behaviour you control, not returns you don’t. “Beat the index” is a hope. “No trade without two days and a written reason” is a goal.</p><h5>Update the Strategy Book</h5><p>Every broken rule in question 3 is a chance to make the rules better. Sometimes the rule was right and you need a way to make it stick, like deactivating X instead of muting it. Sometimes the rule was wrong or missing. The Strategy Book grows this way. The two-day rule, the Italy trap, digital hygiene and the trade budget all came out of a review.</p><h5>Update the theses</h5><p>For each holding, reread the thesis you wrote before you bought. Is it still true? Have the tracking variables moved? Are you holding it because the thesis is intact, or because selling would mean admitting a mistake? If you wouldn’t buy it today at today’s price, ask why you still own it. That’s not a sell rule. It’s a question that keeps you honest.</p><h5>Your own Strategy Book</h5><p>By now you have the pieces: a first rule from module 1, a quality check from module 2, a valuation and position size from module 3, a crash plan from module 4, and a behaviour audit from module 5. Put them in one document. Write the date on it. Keep it where you place orders. Read it before every trade, and every December.</p><blockquote>The stock market is a highly efficient mechanism for transferring wealth from the impatient to the patient.<cite>Warren Buffett</cite></blockquote><p>The course started with that quote. Everything in between has been about the same thing: building a system that lets you be the patient one.</p><div class=\"box\"><b class=\"t\">Keep this</b>One or two behaviour goals. Rules updated where you broke them. Theses reread. Everything in one dated document you read before every trade.</div>"
+  }
+ ],
+ "exercises": [
+  {
+   "id": "m6-review",
+   "sim": "review",
+   "title": "Your year in five numbers",
+   "intro": "Enter your own numbers, or keep the example. Deposits are assumed to arrive in the middle of the year.",
+   "task": {
+    "q": "With the example numbers, what did activity during the year cost, compared with doing nothing?",
+    "options": [
+     "Nothing: about the same",
+     "About 2 percentage points",
+     "About 11 percentage points",
+     "It added 10 percentage points"
+    ],
+    "answer": 2,
+    "why": "The return was about −1%, while the 1 January holdings untouched returned 10%. The gap of about 11 points is the cost of the year’s decisions."
+   }
+  }
+ ],
+ "assignment": {
+  "title": "Your annual review",
+  "intro": "Answer the five questions for the last twelve months, with numbers. Then set your goals. This is the start of your own annual letter.",
+  "company": "",
+  "fields": [
+   {
+    "q": "How many trades did you make, and what did commission cost as a share of the portfolio?",
+    "hint": "From your trade log or your broker."
+   },
+   {
+    "q": "What would your return have been if you had done nothing at all since 1 January?",
+    "hint": "Value your 1 January holdings at today’s prices."
+   },
+   {
+    "q": "Which positions broke the rules, and why did you let it happen?",
+    "hint": "The why is the important part."
+   },
+   {
+    "q": "Has any tracking variable crossed its threshold without you acting?",
+    "hint": "Growth, margins, returns, market share."
+   },
+   {
+    "q": "What is your return against a global index fund since you started, and what does the gap say?",
+    "hint": "Several years, not one."
+   },
+   {
+    "q": "One or two measurable behaviour goals for the next twelve months, and the result that would make you switch to an index fund.",
+    "hint": "Things you control, with a number."
+   }
+  ]
+ },
+ "tools": [
+  {
+   "href": "/diversification",
+   "label": "How many stocks?",
+   "why": "how much edge a concentrated portfolio needs to beat the index"
+  },
+  {
+   "href": "/compounding",
+   "label": "Compounding",
+   "why": "what a few percentage points a year add up to"
+  }
+ ],
+ "reading": [
+  {
+   "href": "https://torghattencapital.substack.com/p/torghatten-capital-annual-letter",
+   "label": "Torghatten Capital annual letter 2024",
+   "why": "an example of the review, including the mistakes list"
+  },
+  {
+   "href": "https://torghattencapital.substack.com/p/interviews-with-me",
+   "label": "Interviews with me",
+   "why": "the track record and the long view"
+  }
+ ],
+ "test": [
+  {
+   "q": "When does the Strategy Book set the annual review?",
+   "options": [
+    "After every bad quarter",
+    "The first week of December",
+    "Whenever the market falls 20%",
+    "On your birthday"
+   ],
+   "answer": 1,
+   "why": "A fixed date makes it a habit, not a reaction."
+  },
+  {
+   "q": "Why write the review down instead of thinking it through?",
+   "options": [
+    "It’s required by law",
+    "Memory flatters you; written numbers don’t",
+    "It’s faster",
+    "So you can publish it"
+   ],
+   "answer": 1,
+   "why": "Memory keeps the wins and blurs the rest."
+  },
+  {
+   "q": "What does “the return if I had done nothing” measure?",
+   "options": [
+    "The market return",
+    "The effect of your own decisions during the year, using your own picks",
+    "Currency effects",
+    "Dividends"
+   ],
+   "answer": 1,
+   "why": "It’s the cleanest test of behaviour because the companies are the same."
+  },
+  {
+   "q": "What is the most important half of question 3?",
+   "options": [
+    "Which positions broke the rules",
+    "Why you let it happen",
+    "How much they cost",
+    "Who else owns them"
+   ],
+   "answer": 1,
+   "why": "The why finds the situation that needs a new rule."
+  },
+  {
+   "q": "What mistake does question 4, on tracking variables, catch?",
+   "options": [
+    "Trading too much",
+    "Not acting when the facts say you should",
+    "Paying too much commission",
+    "Buying too many companies"
+   ],
+   "answer": 1,
+   "why": "It’s the opposite of question 3: looking away from a real change."
+  },
+  {
+   "q": "What benchmark does Torghatten Capital use, and from when?",
+   "options": [
+    "The S&P 500 from 2000",
+    "KLP AksjeGlobal, a global index fund, from 2018",
+    "Oslo Børs from last year",
+    "Cash"
+   ],
+   "answer": 1,
+   "why": "A low-cost global index fund, over several years."
+  },
+  {
+   "q": "What makes a good yearly goal?",
+   "options": [
+    "Beat the index by 5%",
+    "A measurable behaviour you control, such as at most ten trades",
+    "Find one ten-bagger",
+    "Read more news"
+   ],
+   "answer": 1,
+   "why": "Returns are a hope; behaviour is a goal."
+  },
+  {
+   "q": "Where should you use a fund instead of picking stocks?",
+   "options": [
+    "Nowhere",
+    "Where you have no edge",
+    "Only in bear markets",
+    "For your largest position"
+   ],
+   "answer": 1,
+   "why": "Steinhardt’s grid: no edge, low consequence means buy the fund."
+  },
+  {
+   "q": "What did the 2025 letter say would happen after more than ten trades in 2026?",
+   "options": [
+    "Double the trade budget",
+    "Admit that picking stocks isn’t for me and do something else",
+    "Move everything to cash",
+    "Nothing"
+   ],
+   "answer": 1,
+   "why": "A rule with a consequence is easier to keep than a good intention."
+  },
+  {
+   "q": "What should you do with what you learn in the review?",
+   "options": [
+    "Keep it in your head",
+    "Turn it into one or two goals and updated rules in your own dated Strategy Book",
+    "Publish it on X",
+    "Wait until next year"
+   ],
+   "answer": 1,
+   "why": "A review that doesn’t change anything is a diary."
+  }
+ ]
+}

@@ -164,3 +164,10 @@ main.ac{max-width:860px}
   body.printing-lesson h1,body.printing-lesson h3,body.printing-lesson .lesson strong{color:#111}
   body::before,#tc-sky{display:none!important}
 }
+
+/* admin: link to the editor */
+.editfab{position:fixed;right:18px;bottom:18px;z-index:20;background:var(--glow);color:#06120B;font-weight:600;font-size:14px;text-decoration:none;padding:10px 16px;border-radius:999px;box-shadow:0 8px 30px rgba(var(--glow-rgb),.45)}
+.editfab:hover{transform:translateY(-1px)}
+@media print{.editfab{display:none}}
+.adminnote{margin-bottom:14px;padding:8px 12px;border-radius:10px;border:1px dashed rgba(var(--glow-rgb),.5);color:var(--glow);font-size:13px}
+@media print{.adminnote{display:none}}

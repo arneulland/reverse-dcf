@@ -1,7 +1,7 @@
 // Torghatten Academy: progress, pages and simulations.
-// Content lives in course-*.js (window.COURSE), models in sims.js (window.TCSims).
+// Content lives in content/*.json (edited from /academy/edit), models in sims.js (window.TCSims).
 (function () {
-  var C = window.COURSE, S = window.TCSims;
+  var C, S = window.TCSims, TESTN = 10, ADMIN = false; // ADMIN: preview with every step open
   var KEY = "tc-academy-v1", PASS = 0.8;
   var st = load();
 
@@ -13,8 +13,8 @@
     return m;
   }
   function done(slug) { return !!(st.m[slug] && st.m[slug].test && st.m[slug].test.passed); }
-  function unlocked(i) { for (var k = 0; k < i; k++) if (!done(C.modules[k].slug)) return false; return true; }
-  function allDone() { return C.modules.every(function (m) { return done(m.slug); }); }
+  function unlocked(i) { if (ADMIN) return true; for (var k = 0; k < i; k++) if (!done(C.modules[k].slug)) return false; return true; }
+  function allDone() { return ADMIN || C.modules.every(function (m) { return done(m.slug); }); }
   function progress(mod) {
     var m = ms(mod.slug), n = mod.lessons.length + mod.exercises.length + 2, d = 0;
     mod.lessons.forEach(function (_, i) { if (m.read[i]) d++; });
@@ -84,11 +84,11 @@
     C.modules.forEach(function (m, i) {
       var p = progress(m), lock = !unlocked(i), d = done(m.slug);
       html += '<a class="mod' + (d ? " done" : "") + (lock ? " locked" : "") + '" href="' + (lock ? "#" : "/academy/" + m.slug) + '"' + (lock ? ' aria-disabled="true"' : "") + '><span class="num">' + (d ? "✓" : i + 1) + '</span><div><h3>' + m.title + "</h3><p>" + m.summary + '</p><div class="bar"><i style="width:' + Math.round(p * 100) + '%"></i></div></div><span class="st">' +
-        (d ? "Passed " + st.m[m.slug].test.bestRaw + "/10" : lock ? "Locked" : p > 0 ? Math.round(p * 100) + "%" : "~" + m.minutes + " min") + "</span></a>";
+        (d ? "Passed " + st.m[m.slug].test.bestRaw + "/" + (st.m[m.slug].test.n || 10) : lock ? "Locked" : p > 0 ? Math.round(p * 100) + "%" : "~" + m.minutes + " min") + "</span></a>";
     });
     var ex = st.exam || {};
     html += '<a class="mod exam' + (ex.passed ? " done" : "") + (allDone() ? "" : " locked") + '" href="' + (allDone() ? "/academy/exam" : "#") + '"><span class="num">' + (ex.passed ? "✓" : "Exam") + '</span><div><h3>Final exam</h3><p>' + C.exam.summary + '</p></div><span class="st">' + (ex.passed ? "Passed" : allDone() ? "Open" : "After module 6") + "</span></a>";
-    html += '<a class="mod' + (ex.passed ? "" : " locked") + '" href="' + (ex.passed ? "/academy/certificate" : "#") + '"><span class="num">★</span><div><h3>Your certificate</h3><p>Certified Rational Investor, from Torghatten Capital. Yours when you pass the final exam.</p></div><span class="st">' + (ex.passed ? "Open" : "Locked") + "</span></a></div>";
+    html += '<a class="mod' + (ex.passed || ADMIN ? "" : " locked") + '" href="' + (ex.passed || ADMIN ? "/academy/certificate" : "#") + '"><span class="num">★</span><div><h3>Your certificate</h3><p>Certified Rational Investor, from Torghatten Capital. Yours when you pass the final exam.</p></div><span class="st">' + (ex.passed ? "Open" : "Locked") + "</span></a></div>";
     html += '<div class="resources">' + C.outro + "</div>";
     root.innerHTML = html;
     root.querySelectorAll('a[aria-disabled="true"],a.locked').forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); }); });
@@ -104,7 +104,7 @@
     var mins = mod.minutes;
     var html = '<p class="crumbs"><a href="/academy">Academy</a> › Module ' + (i + 1) + " of " + C.modules.length + "</p>" +
       '<header class="mhead intro"><span class="eyebrow">Module ' + (i + 1) + "</span><h1 style=\"margin-top:16px\">" + mod.heading + '</h1><p class="lead">' + mod.summary + "</p>" +
-      '<div class="meta"><span>' + mod.lessons.length + " lessons</span><span>" + mod.exercises.length + (mod.exercises.length === 1 ? " exercise" : " exercises") + "</span><span>1 assignment</span><span>10-question test</span><span>About " + mins + " minutes</span></div></header>" +
+      '<div class="meta"><span>' + mod.lessons.length + " lessons</span><span>" + mod.exercises.length + (mod.exercises.length === 1 ? " exercise" : " exercises") + "</span><span>1 assignment</span><span>' + Math.min(TESTN, mod.test.length) + '-question test</span><span>About " + mins + " minutes</span></div></header>" +
       '<div class="objectives"><h4>When you have finished this module, you can</h4><ul>' + mod.objectives.map(function (o) { return "<li>" + o + "</li>"; }).join("") + "</ul></div>";
     var steps = [];
     mod.lessons.forEach(function (l, k) { steps.push({ id: "l" + k, label: "Lesson " + (k + 1) }); });
@@ -120,7 +120,7 @@
       (mod.assignment.company ? '<div class="field"><label for="asg-co">' + mod.assignment.company + '</label><input id="asg-co" value="' + esc(m.asg.company || "") + '"></div>' : "") +
       mod.assignment.fields.map(function (f, k) { return '<div class="field"><label for="asg-' + k + '">' + (k + 1) + ". " + f.q + "</label>" + (f.hint ? "<small>" + f.hint + "</small>" : "") + '<textarea id="asg-' + k + '" rows="3">' + esc(m.asg.a[k] || "") + "</textarea></div>"; }).join("") +
       '<div class="readbar"><button class="btn ghost" type="button" id="asgCopy">Copy as text</button><span class="hint" id="asgHint">Answer every question to unlock the test. Your answers stay in this browser.</span></div></section>';
-    html += '<section class="unit" id="test"><div class="kicker"><span class="eyebrow">Knowledge test</span><span class="tick"></span></div><h3>Ten questions</h3><p style="color:var(--muted);margin-top:6px">You need 8 of 10 to pass. The order changes every time you take it.</p><div id="testQ"></div><div class="readbar"><button class="btn" type="button" id="submit">Submit answers</button><span class="hint" id="testHint"></span></div><div id="testOut"></div></section>';
+    html += '<section class="unit" id="test"><div class="kicker"><span class="eyebrow">Knowledge test</span><span class="tick"></span></div><h3>' + Math.min(TESTN, mod.test.length) + ' questions</h3><p style="color:var(--muted);margin-top:6px">You need ' + Math.ceil(Math.min(TESTN, mod.test.length) * PASS) + " of " + Math.min(TESTN, mod.test.length) + ' to pass. The questions and their order change every time you take it.</p><div id="testQ"></div><div class="readbar"><button class="btn" type="button" id="submit">Submit answers</button><span class="hint" id="testHint"></span></div><div id="testOut"></div></section>';
     html += '<div id="nextCard"></div><div class="resources"><h4 style="font:600 11.5px/1 var(--body);letter-spacing:.26em;text-transform:uppercase;color:var(--glow)">Tools for this module</h4><ul>' +
       mod.tools.map(function (t) { return '<li><a href="' + t.href + '">' + t.label + "</a>: " + t.why + "</li>"; }).join("") + '</ul><h4 style="font:600 11.5px/1 var(--body);letter-spacing:.26em;text-transform:uppercase;color:var(--glow);margin-top:22px">From the archive</h4><ul>' +
       mod.reading.map(function (t) { return '<li><a href="' + t.href + '" target="_blank" rel="noopener">' + t.label + "</a>" + (t.why ? ": " + t.why : "") + "</li>"; }).join("") +
@@ -175,19 +175,19 @@
     // test
     function buildTest() {
       var box = $("#testQ"); box.innerHTML = "";
-      shuffle(mod.test).forEach(function (q, k) { var d = document.createElement("div"); d.className = "q"; box.appendChild(d); mcq(d, q, k, "test"); d._q = q; });
+      shuffle(mod.test).slice(0, TESTN).forEach(function (q, k) { var d = document.createElement("div"); d.className = "q"; box.appendChild(d); mcq(d, q, k, "test"); d._q = q; });
       $("#testOut").innerHTML = ""; $("#submit").hidden = false; $("#testHint").textContent = "";
     }
     buildTest();
     $("#submit").addEventListener("click", function () {
       var qs = Array.prototype.slice.call(document.querySelectorAll("#testQ .q"));
-      if (qs.some(function (d) { return d.value() == null; })) { $("#testHint").textContent = "Answer all ten questions first."; return; }
-      var right = qs.filter(function (d) { return d.mark(); }).length, ok = right / qs.length >= PASS;
-      m.test.bestRaw = Math.max(m.test.bestRaw || 0, right);
+      if (qs.some(function (d) { return d.value() == null; })) { $("#testHint").textContent = "Answer every question first."; return; }
+      var right = qs.filter(function (d) { return d.mark(); }).length, n = qs.length, ok = right / n >= PASS;
+      m.test.bestRaw = Math.max(m.test.bestRaw || 0, right); m.test.n = n;
       if (ok && !m.test.passed) { m.test.passed = true; m.test.at = new Date().toISOString().slice(0, 10); }
       save(); refresh();
       $("#submit").hidden = true;
-      $("#testOut").innerHTML = '<div class="score' + (ok ? "" : " fail") + '"><b>' + right + "/10</b> " + (ok ? "Passed. The explanations are under each question." : "Not yet. You need 8. Read the explanations, go back to the lessons, and try again.") +
+      $("#testOut").innerHTML = '<div class="score' + (ok ? "" : " fail") + '"><b>' + right + "/" + n + "</b> " + (ok ? "Passed. The explanations are under each question." : "Not yet. You need " + Math.ceil(n * PASS) + ". Read the explanations, go back to the lessons, and try again.") +
         '</div><p style="margin-top:12px"><button class="btn ghost" type="button" id="retake">' + (ok ? "Take it again" : "Try again") + "</button></p>";
       $("#retake").addEventListener("click", function () { buildTest(); $("#test").scrollIntoView({ behavior: "smooth" }); });
     });
@@ -198,22 +198,22 @@
       var prevOk = true;
       mod.lessons.forEach(function (_, k) {
         var sec = $("#l" + k);
-        sec.classList.toggle("locked", !prevOk); sec.classList.toggle("done", !!m.read[k]);
+        sec.classList.toggle("locked", !prevOk && !ADMIN); sec.classList.toggle("done", !!m.read[k]);
         $(".tick", sec).textContent = m.read[k] ? "✓ Read" : "";
         var b = $("[data-read]", sec);
         if (m.read[k]) { b.disabled = true; b.textContent = "Read"; $(".hint", sec).textContent = ""; }
         prevOk = prevOk && !!m.read[k];
       });
       var exOk = mod.exercises.every(function (x) { return m.ex[x.id]; });
-      $("#ex").classList.toggle("locked", !prevOk); $("#ex").classList.toggle("done", exOk);
+      $("#ex").classList.toggle("locked", !prevOk && !ADMIN); $("#ex").classList.toggle("done", exOk);
       $(".tick", $("#ex")).textContent = exOk ? "✓ Done" : "";
       prevOk = prevOk && exOk;
       var aOk = asgDone(mod);
-      $("#asg").classList.toggle("locked", !prevOk); $("#asg").classList.toggle("done", aOk);
+      $("#asg").classList.toggle("locked", !prevOk && !ADMIN); $("#asg").classList.toggle("done", aOk);
       $(".tick", $("#asg")).textContent = aOk ? "✓ Done" : "";
       prevOk = prevOk && aOk;
-      $("#test").classList.toggle("locked", !prevOk); $("#test").classList.toggle("done", !!m.test.passed);
-      $(".tick", $("#test")).textContent = m.test.passed ? "✓ Passed " + m.test.bestRaw + "/10" : "";
+      $("#test").classList.toggle("locked", !prevOk && !ADMIN); $("#test").classList.toggle("done", !!m.test.passed);
+      $(".tick", $("#test")).textContent = m.test.passed ? "✓ Passed " + m.test.bestRaw + "/" + (m.test.n || 10) : "";
       var stepOk = { ex: exOk, asg: aOk, test: !!m.test.passed };
       mod.lessons.forEach(function (_, k) { stepOk["l" + k] = !!m.read[k]; });
       document.querySelectorAll("#steps a").forEach(function (a) { var s = a.getAttribute("data-s"); a.classList.toggle("ok", !!stepOk[s]); a.classList.toggle("lk", $("#" + s).classList.contains("locked")); });
@@ -250,6 +250,7 @@
 
   function certificate() {
     var ex = st.exam || {};
+    if (ADMIN && !ex.passed) ex = { passed: true, at: new Date().toISOString().slice(0, 10) };
     if (!ex.passed) { root.innerHTML = '<p class="crumbs"><a href="/academy">Academy</a></p><h1>Not yet</h1><p class="lead">Your certificate appears here when you pass the final exam.</p><p style="margin-top:20px"><a class="btn" href="/academy">Back to the Academy</a></p>'; return; }
     var logo = document.querySelector(".tc-brand") ? document.querySelector(".tc-brand").innerHTML : "";
     root.innerHTML = '<p class="crumbs"><a href="/academy">Academy</a> › Certificate</p><header class="intro"><span class="eyebrow">You made it</span><h1 style="margin-top:16px">Certified Rational <em>Investor.</em></h1><p class="lead">Write your name the way you want it on the certificate, then print it or save it as PDF in landscape.</p></header>' +
@@ -467,9 +468,31 @@
       });
     }
   };
-  // Route last, so every function and simulation above is defined.
-  if (page === "overview") overview();
-  else if (page === "exam") exam();
-  else if (page === "certificate") certificate();
-  else module_(page);
+  // Load the content, then route. Everything above is defined by now.
+  function getJSON(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(u + " " + r.status); return r.json(); }); }
+  var meP = fetch("/api/me").then(function (r) { return r.json(); }).catch(function () { return {}; });
+  Promise.all([getJSON("/academy/content/course.json"), meP]).then(function (x) {
+    var meta = x[0]; ADMIN = !!x[1].admin;
+    return Promise.all(meta.order.map(function (s) { return getJSON("/academy/content/" + s + ".json"); })).then(function (mods) {
+      meta.modules = mods; C = window.COURSE = meta;
+      if (page === "overview") overview();
+      else if (page === "exam") exam();
+      else if (page === "certificate") certificate();
+      else module_(page);
+      adminBar();
+    });
+  }).catch(function (e) { root.innerHTML = '<p class="lead">The course couldn\u2019t load. Reload the page.</p>'; console.error(e); });
+
+  // Admin only: a link to the editor for the page you're on.
+  function adminBar() {
+    meP.then(function (me) {
+      if (!me.admin) return;
+      var target = page === "overview" || page === "exam" || page === "certificate" ? "course" : page;
+      var a = document.createElement("a");
+      a.className = "editfab"; a.href = "/academy/edit?m=" + target; a.textContent = "\u270e Edit " + (target === "course" ? "course page and exam" : "this module");
+      var n = document.createElement("div"); n.className = "adminnote"; n.textContent = "Admin preview: every step is open. Members unlock them in order.";
+      root.insertBefore(n, root.firstChild);
+      document.body.appendChild(a);
+    }).catch(function () {});
+  }
 })();

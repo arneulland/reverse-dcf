@@ -1,0 +1,235 @@
+{
+ "slug": "behaviour",
+ "title": "Behaviour",
+ "heading": "Your worst enemy <em>has your login.</em>",
+ "summary": "The biases that cost the most, the two-day rule, the Italy trap, digital hygiene and the trade log.",
+ "minutes": 65,
+ "objectives": [
+  "Name the biases that cost investors most, and catch them in yourself",
+  "Use the two-day rule and the Italy trap to slow down decisions",
+  "Keep a trade log with a written reason for every trade",
+  "Know the few reasons to sell, and the many reasons never to"
+ ],
+ "lessons": [
+  {
+   "title": "Biases you can name",
+   "html": "<blockquote>Investing is largely about psychology, not just mathematics.<cite>Arne Ulland, podcast on long-term investing</cite></blockquote><p>You can do every calculation in module 3 perfectly and still lose money, because the person who places the order isn’t a calculator. The first defence is to know the biases by name. A bias you can name is a bias you can catch.</p><h5>Anchoring</h5><p>You fix on a number and judge everything against it: the price you paid, last year’s high, a historical discount. I’ve watched investors, me included, insist a holding company “should” trade at its old 20% discount to net asset value long after the reasons for that discount were gone. The market doesn’t know what you paid.</p><h5>Sunk cost</h5><p>You hold on because of the time, money and pride already put in. After the 2026 sell-off I wrote openly that I wasn’t sure whether anchoring or sunk cost was affecting my decisions on Novo and Constellation. Asking the question doesn’t make the bias go away. Not asking it guarantees it stays.</p><h5>Authority and social proof</h5><p>A respected investor on a podcast, a big account on X, a friend in finance: a good story from someone you trust can override your own analysis in seconds. I’ve thrown my own spreadsheets out of the window more than once because someone I looked up to sounded certain.</p><h5>Recency and action bias</h5><p>What happened last week feels like what will happen next year. And doing something feels better than doing nothing, even when nothing is the better choice. Most of my 86 trades in 2025 came from these two together.</p><h5>Confirmation bias</h5><p>Once you own something, you look for reasons you’re right. Read the bear case on purpose. The pre-mortem from module 2 is a tool against exactly this.</p><h5>Decision fatigue</h5><p>Every decision uses willpower, and you have a limited daily supply. Constantly searching for new ideas wears down your judgement. That’s why I follow a fixed universe of companies and change holdings only for a compelling reason. Sleep matters too: when my sleep is bad, my decisions are worse, and I’ve learned to check that before I over-analyse anything else.</p><div class=\"box\"><b class=\"t\">Keep this</b>Anchoring, sunk cost, authority, recency, action, confirmation, fatigue. Name the bias, and you have a chance to stop it.</div>"
+  },
+  {
+   "title": "The two-day rule and the Italy trap",
+   "html": "<p>Knowing your biases isn’t enough. You need rules that work when you’re not at your best. Two of the behaviour rules in the Strategy Book do most of the work.</p><h5>The two-day rule</h5><div class=\"box\"><b class=\"t\">Rule 1</b>At least two days must pass between a decision and an order.</div><p>In 2024 I wrote that I should wait at least one day before acting on a change in conviction. In 2025 I learned that a day wasn’t enough, and the rule became two. The reason is simple: feelings arrive instantly, and facts take time. Two days lets the first wave of emotion pass, lets you sleep on it twice, and gives you time to read what actually happened. If the decision is right, it will still be right in two days. Almost nothing in long-term investing needs to happen today.</p><h5>The Italy trap</h5><div class=\"box\"><b class=\"t\">Rule 2</b>No decisions late in the evening, when tired, or after alcohol.</div><p>The rule is named after a real trade. On holiday in Italy in the summer of 2025, at 23:00 and after a few glasses of wine, I sold my whole position in UnitedHealth, a company I had bought a few weeks earlier, because of a bit of noise in the news. I hadn’t done the groundwork, the position was too big, and I didn’t really know what I owned. The loss was over 12,000 NOK, and it could have been avoided by doing nothing.</p><p>Every investor has an Italy trap. Yours might be the train home after a long day, or the hour after a red close, or a Sunday night scroll. Find yours, and make it a no-trade zone.</p><h5>Make the rules physical</h5><ul><li>Log every decision with the time. The earliest allowed order time follows automatically.</li><li>Don’t keep the trading app on your phone’s home screen. Friction is a feature.</li><li>If you feel urgency, write the urgency down. It’s the most useful data point you’ll have when you review the trade later.</li></ul><p>In the exercises you’ll use a trade log that does this for you. It refuses to log a decision if you say you’re tired, upset or have had a drink, and it tells you the earliest time you may place the order.</p><div class=\"box\"><b class=\"t\">Keep this</b>Two days between decision and order. No decisions late, tired or after alcohol. If it’s right today, it’s right on Thursday.</div>"
+  },
+  {
+   "title": "Digital hygiene and the trade log",
+   "html": "<h5>Digital hygiene</h5><div class=\"box\"><b class=\"t\">Rule 3</b>Deactivate X immediately in a crash. March and April 2025 were 34 trades because of X.</div><p>Social media in a calm market is mostly harmless. In a falling market it’s a machine for spreading fear and copying trades. In spring 2025 I checked X and Discord almost every day to see what others were buying and selling, and my trading followed theirs. The rule is blunt on purpose: deactivate, don’t mute. Muting relies on willpower. Deactivating doesn’t.</p><p>The same goes for price checking. The more often you look, the more often you see a loss, and losses hurt about twice as much as equal gains feel good. Looking at your portfolio every day turns a good decade into hundreds of small pains.</p><h5>The trade log</h5><div class=\"box\"><b class=\"t\">Rule 4</b>Every trade is logged with date, amount and a written reason.</div><p>The trade log does three jobs:</p><ol><li><strong>It slows you down.</strong> Writing a reason takes a minute. Many bad trades don’t survive that minute.</li><li><strong>It makes you name the rule.</strong> If you can’t point to a rule in the Strategy Book that allows the trade, you have your answer.</li><li><strong>It’s the raw material for your annual review.</strong> You can’t learn from trades you don’t remember, and memory flatters you.</li></ol><h5>A trade budget</h5><p>For 2026 I set a budget of ten trades for the whole year. That isn’t a magic number. It’s a clear, measurable test of whether I can let compounding do its work. Ten trades also means every trade has to be worth one tenth of the year’s decisions, which raises the bar for each one.</p><h5>Watchlist discipline</h5><p>The last part of hygiene is what you let into the portfolio at all. Only buy companies that have been on your watchlist for three months, and never buy without a thesis written first: why the company fits, what you expect over five years, and what would prove you wrong.</p><div class=\"box\"><b class=\"t\">Keep this</b>Deactivate, don’t mute. Log every trade with a reason and a rule. Set a yearly trade budget, and only buy what you’ve watched for three months.</div>"
+  },
+  {
+   "title": "When to sell, and when never to",
+   "html": "<p>Most investors spend all their energy on what to buy and almost none on when to sell. That’s backwards. Selling is where most of my mistakes happened.</p><h5>Sell only when at least one of these is true</h5><ol><li><strong>The thesis is broken by an outside, verifiable change</strong>, not by a fall in the price.</li><li><strong>The case has changed</strong> and is different from what I wrote down before I bought.</li><li><strong>A new opportunity is clearly better</strong> on management, reinvestment opportunities or place in the life cycle. Valuation alone doesn’t count.</li><li><strong>The position is over 10% and over 1.1 x fair value.</strong> Then it’s trimmed to 10%, not sold out.</li></ol><h5>Never sell because</h5><ul><li>The price has risen.</li><li>The price has fallen.</li><li>There’s noise in the media.</li><li>Someone on X, Discord or a podcast said something.</li><li>I need cash for a more exciting idea.</li></ul><p>Read the never-list again and compare it with your last five sales. When I did that with 2025, almost every sale was on it. Alphabet and Medistim: sold because they had risen. Evolution: sold in panic, at large losses, because the price was falling. UnitedHealth: noise in the media, at 23:00. Moody’s: cash for a more exciting idea.</p><h5>Why the bar is so high</h5><p>The best companies tend to beat expectations over time, because of their market position and culture. Selling them is giving up the part of the distribution that makes all the money. Every sale also costs commission, often tax, and a new decision about where to put the cash, which is another chance to be wrong.</p><h5>Signals that do matter</h5><p>Some things should make you look harder, even if they don’t trigger a sale on their own: poor capital allocation, management that becomes unclear about direction, and margins or returns that fall in a way that looks structural. A drop in operating margin from 30% to 20% is a serious warning. These are thesis questions. Investigate, update the model within 30 days, and sell only if the investigation shows the thesis is broken.</p><h5>Selling is also a decision to buy</h5><p>When you sell, you choose to own cash or something else instead. Keep sold companies on the watchlist with a re-entry price. When I sold Lifco I set one. A sale isn’t a verdict on the company forever. It’s a verdict on the price and the thesis today.</p><div class=\"box\"><b class=\"t\">Keep this</b>Four reasons to sell, five reasons never to. Check every sale against both lists, and write which one you used.</div>"
+  }
+ ],
+ "exercises": [
+  {
+   "id": "m5-sell",
+   "sim": "sell",
+   "title": "Is this a reason to sell?",
+   "intro": "Tick the reasons you have for selling. The checker compares them with the sell rules in the Strategy Book.",
+   "task": {
+    "q": "A holding has risen 60% this year, a well-known investor on a podcast just called it overvalued, and you want the cash for a new idea. Is that a reason to sell?",
+    "options": [
+     "Yes, three good reasons",
+     "Yes, if the price keeps rising",
+     "No: all three are on the never-sell list",
+     "Yes, but only half"
+    ],
+    "answer": 2,
+    "why": "A price rise, someone on a podcast, and cash for a more exciting idea are all on the never-sell list. Three bad reasons don’t add up to one good one."
+   }
+  },
+  {
+   "id": "m5-log",
+   "sim": "tradelog",
+   "title": "The trade log",
+   "intro": "Log one real or practice decision. The log saves in this browser, shows the earliest allowed order time, and counts your trades against a budget of ten a year.",
+   "task": {
+    "q": "Try to log a decision and choose “I’ve had a drink”. What does the log do, and why?",
+    "options": [
+     "It logs it with a warning",
+     "It refuses: the Italy trap says no decisions after alcohol, late or tired",
+     "It shortens the waiting time",
+     "It sells for you"
+    ],
+    "answer": 1,
+    "why": "The log enforces the Italy trap. Come back when you’re rested, and then wait two days."
+   }
+  }
+ ],
+ "assignment": {
+  "title": "Audit your own behaviour",
+  "intro": "This assignment is about you, not a company. Look at your actual trades from the last year. Be as honest as you’d want an adviser to be.",
+  "company": "",
+  "fields": [
+   {
+    "q": "How many trades did you make in the last twelve months, and what did they cost in commission?",
+    "hint": "Your broker can export this. Divide fees by your portfolio value."
+   },
+   {
+    "q": "Take your last five sales. Which reason from the sell list, or the never-sell list, applies to each?",
+    "hint": "Write one line per sale."
+   },
+   {
+    "q": "Which bias has cost you most? Describe one trade where you can see it.",
+    "hint": "Anchoring, sunk cost, authority, recency, action, confirmation, fatigue."
+   },
+   {
+    "q": "What is your Italy trap? When and where do you make your worst decisions?",
+    "hint": "Time of day, place, mood, device."
+   },
+   {
+    "q": "Your trade budget for the next twelve months, and the apps you’ll deactivate in the next crash.",
+    "hint": "A number, and a list of names."
+   }
+  ]
+ },
+ "tools": [
+  {
+   "href": "/attention",
+   "label": "Attention score",
+   "why": "check whether you’re following the crowd"
+  },
+  {
+   "href": "/held",
+   "label": "Would you have held?",
+   "why": "what panic selling would have cost in real stocks"
+  }
+ ],
+ "reading": [
+  {
+   "href": "https://torghattencapital.substack.com/p/the-truth-is-in-the-numbers-bias",
+   "label": "The truth is in the numbers",
+   "why": "on bias"
+  },
+  {
+   "href": "https://torghattencapital.substack.com/p/torghatten-capital-annual-letter",
+   "label": "Torghatten Capital annual letter 2024",
+   "why": "discipline, decision fatigue and the sleep lesson"
+  },
+  {
+   "href": "https://torghattencapital.substack.com/p/some-thoughts-about-csu-and-nvo-after",
+   "label": "Some thoughts about CSU and NVO",
+   "why": "anchoring and sunk cost, written in real time"
+  }
+ ],
+ "test": [
+  {
+   "q": "You hold a share because you paid 400 for it and want to “get back to even”. Which bias is this?",
+   "options": [
+    "Confirmation",
+    "Anchoring",
+    "Recency",
+    "Authority"
+   ],
+   "answer": 1,
+   "why": "The market doesn’t know what you paid."
+  },
+  {
+   "q": "You keep a losing position because of all the work you’ve put into the thesis. Which bias?",
+   "options": [
+    "Sunk cost",
+    "Social proof",
+    "Overconfidence",
+    "Recency"
+   ],
+   "answer": 0,
+   "why": "Past effort is gone whatever you do next."
+  },
+  {
+   "q": "What does the two-day rule say?",
+   "options": [
+    "Hold every stock at least two days",
+    "At least two days between a decision and an order",
+    "Check prices only every two days",
+    "Buy only on Tuesdays"
+   ],
+   "answer": 1,
+   "why": "Feelings arrive instantly; facts take time."
+  },
+  {
+   "q": "What is the Italy trap?",
+   "options": [
+    "Buying European stocks on holiday",
+    "Making decisions late, tired or after alcohol",
+    "Holding too much cash",
+    "Trading in a foreign currency"
+   ],
+   "answer": 1,
+   "why": "Named after a sale at 23:00 on holiday, after a few glasses of wine."
+  },
+  {
+   "q": "Why does the rule say deactivate X, not mute it?",
+   "options": [
+    "Muting doesn’t work technically",
+    "Muting relies on willpower; deactivating doesn’t",
+    "X charges for muting",
+    "It doesn’t matter"
+   ],
+   "answer": 1,
+   "why": "Rules work best when they don’t depend on willpower in the moment."
+  },
+  {
+   "q": "Which three things does every trade log entry need?",
+   "options": [
+    "Ticker, price, mood",
+    "Date, amount and a written reason",
+    "Broker, fee, currency",
+    "Only the reason"
+   ],
+   "answer": 1,
+   "why": "Date, amount and a written reason. Naming the rule that allows it is even better."
+  },
+  {
+   "q": "Which of these is an allowed reason to sell?",
+   "options": [
+    "The price has doubled",
+    "The thesis is broken by an outside, verifiable change",
+    "Someone on a podcast called it overvalued",
+    "I need cash for an exciting new idea"
+   ],
+   "answer": 1,
+   "why": "The others are all on the never-sell list."
+  },
+  {
+   "q": "A position is 15% of the portfolio and at 1.2 x fair value. What should happen?",
+   "options": [
+    "Sell all of it",
+    "Trim it to 10%",
+    "Nothing",
+    "Buy more"
+   ],
+   "answer": 1,
+   "why": "Both trim conditions are true. Trim to 10%, don’t sell out."
+  },
+  {
+   "q": "Operating margin falls from 30% to 20%. What does the lesson say to do?",
+   "options": [
+    "Sell immediately",
+    "Investigate, update the model within 30 days, and sell only if the thesis is broken",
+    "Ignore it",
+    "Buy more because it’s cheaper"
+   ],
+   "answer": 1,
+   "why": "It’s a serious warning and a thesis question, not an automatic sale."
+  },
+  {
+   "q": "Why keep sold companies on the watchlist with a re-entry price?",
+   "options": [
+    "To track your mistakes",
+    "A sale is a verdict on the price and thesis today, not on the company forever",
+    "Brokers require it",
+    "To short them later"
+   ],
+   "answer": 1,
+   "why": "Good companies at bad prices can become good companies at good prices."
+  }
+ ]
+}

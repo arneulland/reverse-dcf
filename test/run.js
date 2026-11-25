@@ -339,26 +339,31 @@ console.log("Payout checks passed.");
   assert.equal(S.certId("Arne", "2026-11-25"), S.certId(" arne ", "2026-11-25"), "cert id ignores case and spaces");
 
   // course content: structure, answers in range, exercises point at real simulations
-  const win = { COURSE: null };
-  const ctx = { window: win };
-  for (let i = 0; i <= 6; i++) vm.runInNewContext(read(`course-${i}.js`), ctx);
-  const C = win.COURSE;
+  const json = (f) => JSON.parse(read("content/" + f + ".json"));
+  const C = json("course");
+  C.modules = C.order.map(json);
   const ui = read("academy.js");
+  const { validateModule, validateCourse, cleanHtml } = await import("../lib/academy.js");
   assert.equal(C.modules.length, 6, "six modules");
   const ids = new Set();
   const checkQ = (q, where) => { assert.ok(q.options.length >= 2 && q.answer >= 0 && q.answer < q.options.length, "answer in range: " + where + " " + q.q); assert.ok(q.why, "explanation: " + where); };
   C.modules.forEach((m) => {
-    assert.equal(m.lessons.length, 4, m.slug + " has four lessons");
-    assert.equal(m.test.length, 10, m.slug + " has ten test questions");
+    assert.deepEqual(validateModule(m, m.slug).errors, [], m.slug + " passes the save check");
+    assert.ok(m.lessons.length >= 1, m.slug + " has lessons");
+    assert.ok(m.test.length >= 10, m.slug + " has at least ten test questions");
     m.test.forEach((q) => checkQ(q, m.slug));
     m.exercises.forEach((x) => { assert.ok(!ids.has(x.id), "unique exercise id " + x.id); ids.add(x.id); assert.ok(new RegExp("\\b" + x.sim + ": function").test(ui), "simulation exists: " + x.sim); checkQ(x.task, x.id); });
-    assert.ok(m.assignment.fields.length >= 5, m.slug + " assignment");
     const pageHtml = read(m.slug + "/index.html");
     assert.ok(pageHtml.includes('data-page="' + m.slug + '"'), "page shell for " + m.slug);
   });
-  assert.equal(C.exam.cases.length, 12, "twelve exam cases");
+  assert.deepEqual(validateCourse(C).errors, [], "course page passes the save check");
   C.exam.cases.forEach((q) => checkQ(q, "exam"));
-  console.log("Academy checks passed:", C.modules.reduce((s, m) => s + m.lessons.length, 0), "lessons,", C.modules.reduce((s, m) => s + m.test.length, 0) + 12, "questions.");
+  // the save check rejects broken content and strips scripts
+  const bad = JSON.parse(JSON.stringify(C.modules[0])); bad.test[0].answer = 9; bad.lessons[0].title = "";
+  assert.equal(validateModule(bad, "mindset").errors.length, 2, "two problems found");
+  assert.equal(validateModule(C.modules[0], "quality").errors.length > 0, true, "slug must match");
+  assert.equal(cleanHtml('<p onclick="x()">Hi</p><script>alert(1)</script><a href="javascript:x">l</a>'), '<p>Hi</p><a href="#">l</a>');
+  console.log("Academy checks passed:", C.modules.reduce((s, m) => s + m.lessons.length, 0), "lessons,", C.modules.reduce((s, m) => s + m.test.length, 0) + C.exam.cases.length, "questions.");
 }
 
 // --- academy is admin-only while in progress ----------------------------------
@@ -373,5 +378,25 @@ console.log("Payout checks passed.");
   assert.equal((await gate(req("/academy/valuation", member), env)).status, 302, "members can't open the Academy yet");
   assert.equal(await gate(req("/academy/valuation", admin), env), null, "admin can");
   assert.equal(await gate(req("/moat", member), env), null, "members still reach the tools");
-  console.log("Academy access checks passed.");
+  assert.equal((await gate(req("/api/academy", member), env)).status, 401, "members can't save");
+  assert.equal((await gate(req("/academy/edit", member), env)).status, 302, "members can't open the editor");
+  // the save endpoint commits to GitHub with the admin session
+  const { default: save } = await import("../api/academy.js");
+  const content = JSON.parse(readFileSync(new URL("../public/academy/content/mindset.json", import.meta.url), "utf8"));
+  content.summary = "Edited summary";
+  const calls = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (u, o = {}) => { calls.push([String(u), o.method || "GET", o.body]); return u.includes("?ref=") ? new Response(JSON.stringify({ sha: "abc" })) : new Response(JSON.stringify({ commit: { html_url: "https://github.com/c/1" } })); };
+  Object.assign(process.env, env, { GITHUB_TOKEN: "t" });
+  const out = {}; const res = { setHeader() {}, status(c) { out.code = c; return res; }, json(b) { out.body = b; } };
+  await save({ method: "POST", headers: { cookie: "tc_member=" + admin.value }, body: { key: "mindset", content } }, res);
+  globalThis.fetch = realFetch; delete process.env.GITHUB_TOKEN;
+  assert.equal(out.code, 200, "saved: " + JSON.stringify(out.body));
+  const put = calls.find((c) => c[1] === "PUT"), sent = JSON.parse(put[2]);
+  assert.ok(put[0].endsWith("/repos/arneulland/reverse-dcf/contents/public/academy/content/mindset.json"), "right file");
+  assert.equal(sent.sha, "abc"); assert.equal(sent.branch, "main");
+  assert.equal(JSON.parse(Buffer.from(sent.content, "base64").toString()).summary, "Edited summary", "content committed");
+  await save({ method: "POST", headers: { cookie: "tc_member=" + member.value }, body: { key: "mindset", content } }, res);
+  assert.equal(out.code, 401, "member session can't save");
+  console.log("Academy access and save checks passed.");
 }

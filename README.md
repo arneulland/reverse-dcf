@@ -110,3 +110,14 @@ Set these in Vercel (Production and Preview), then redeploy:
 | `ADMIN_EMAIL` | Your email. Only this address can open `/admin`. |
 | `ADMIN_KEY` | Your admin password. Sign in at `/admin` with `ADMIN_EMAIL` and this. |
 | `REVOKED_EMAILS` | Optional. Comma-separated emails that lose access. |
+
+## Academy editor
+
+The course content lives in `public/academy/content/*.json`. Sign in as admin and open any Academy page; the **Edit** button opens `/academy/edit`, where you change lessons, exercises, the assignment and the test, and click **Save and publish**.
+
+Saving commits the JSON file to GitHub, and Vercel redeploys in a minute or two. It needs one environment variable in Vercel:
+
+- `GITHUB_TOKEN`: a fine-grained personal access token with **Contents: Read and write** on `arneulland/reverse-dcf` only.
+- Optional: `GITHUB_REPO` (default `arneulland/reverse-dcf`) and `GITHUB_BRANCH` (default `main`).
+
+Locally, run the dev server with `ACADEMY_LOCAL_WRITE=1` to save to disk instead.

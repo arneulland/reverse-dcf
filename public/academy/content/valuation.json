@@ -1,0 +1,261 @@
+{
+ "slug": "valuation",
+ "title": "Valuation",
+ "heading": "What is it worth, and <em>what will you pay?</em>",
+ "summary": "Owner earnings, fair value, what multiple a business deserves, and why I only buy at a discount.",
+ "minutes": 80,
+ "objectives": [
+  "Adjust reported earnings into owner earnings",
+  "Estimate fair value with five years of earnings, an exit multiple and a hurdle",
+  "Read the justified P/E grid and explain what drives a multiple",
+  "Apply the buy limit, the trim rule and position sizing"
+ ],
+ "lessons": [
+  {
+   "title": "Owner earnings, not reported earnings",
+   "html": "<p>Valuation starts with one question: how much cash could the owner of this business take out each year without hurting it? Warren Buffett called that number <strong>owner earnings</strong>. It’s the base for every valuation in Torghatten Capital, and it’s never just the earnings per share in the annual report, or the free cash flow taken at face value.</p><h5>Why reported numbers aren’t enough</h5><ul><li><strong>Earnings include non-cash items</strong> like amortisation of acquired intangibles, which can make a cash-rich acquirer look less profitable than it is.</li><li><strong>Free cash flow can flatter</strong> a company that underinvests, or punish one that invests heavily for growth in a single year.</li><li><strong>Stock-based compensation</strong> is a real cost to owners even though no cash leaves the company. It dilutes you instead.</li><li><strong>One-offs</strong> come every year in some companies. If they keep coming, they aren’t one-offs.</li></ul><h5>A practical recipe</h5><div class=\"box\"><b class=\"t\">Owner earnings, step by step</b>1. Start with operating cash flow.<br>2. Subtract the capital spending needed to <em>maintain</em> the business, not to grow it. If you can’t split it, use an average over several years.<br>3. Subtract stock-based compensation.<br>4. Normalise working capital swings and true one-offs.<br>5. For serial acquirers, decide whether acquisitions are growth spending (the usual view) or part of keeping the machine running.<br>6. Divide by the number of shares, after dilution.</div><p>The exact recipe depends on the type of business. A software acquirer, an insurer and an industrial company each need their own adjustments. What matters is that you make them on purpose, write them down, and use the same method every year.</p><h5>Back of the envelope is enough</h5><p>The Strategy Book lists the methods I use under the pillar of simplicity: simple back-of-the-envelope calculations, reverse DCF, free cash flow yield and P/E against the historical average, and earnings per share projected with a required return of 12% for large companies and 15% for small ones.</p><p>No 40-tab spreadsheet. I look about five years ahead, start from today’s earnings, project growth from history, and apply a range of multiples. A model you understand completely beats a model you trust blindly. Precision in the third decimal doesn’t help when the uncertainty is in the first.</p><h5>Think in ranges</h5><p>Never settle on one number. Before the 2020 crash I had a low, base and high value for every company I owned or followed, and that table helped me more than anything else when prices fell. Value is a range of probabilities. Extreme prices are outliers that create either opportunity or risk.</p><div class=\"box\"><b class=\"t\">Keep this</b>Value the cash the owner can take out, adjusted on purpose and written down. Then think in ranges, not points.</div>"
+  },
+  {
+   "title": "Fair value in five lines",
+   "html": "<p>Once you have owner earnings per share, fair value is a short calculation. This is the method behind my company models, and it’s the one you’ll use in the exercises.</p><div class=\"box\"><b class=\"t\">Five lines</b>1. Owner earnings per share today: E<br>2. Growth per year for five years: g<br>3. Owner earnings in year five: E x (1 + g)<sup>5</sup><br>4. Value in year five: earnings in year five x exit multiple<br>5. Fair value today: value in year five / (1 + hurdle)<sup>5</sup></div><p>The hurdle for fair value is 10%. That means fair value is the price at which you’d earn 10% a year if your estimates are right. Dividends and buybacks along the way are left out, which makes the answer slightly conservative.</p><h5>The implied return</h5><p>Turn it around and you get the return the current price offers:</p><div class=\"box\"><b class=\"t\">Implied return</b>Implied return per year = (value in year five / price today)<sup>1/5</sup> − 1</div><p>This is the number I actually compare across companies. In 2024 I sold Lifco when the implied return fell to about 6% a year, with a risk-free rate around 5%. The extra return wasn’t worth the risk. The money went to Visa, where I estimated about 12%. I didn’t think Lifco had become a worse company. It had become a worse price.</p><h5>Entry prices</h5><p>The same formula gives you the price to pay for any return you want. For each company I calculate the price that gives 8%, 12%, 15% and 20% a year. When the market falls, I don’t have to think. I look up which companies have crossed which line.</p><h5>Where the inputs come from</h5><ul><li><strong>Growth:</strong> start from what the company has delivered over ten years, then ask what could make the next five different. Be stingier than management.</li><li><strong>Exit multiple:</strong> what multiple a business with that ROIC and that growth deserves at the end of the period. The next lesson gives you a grid for it. Don’t assume today’s multiple will hold if it’s far above that.</li><li><strong>Hurdle:</strong> 10% for fair value. Your actual buy limit sits well below that, as you’ll see in lesson 4.</li></ul><h5>Fair value is not fixed</h5><p>The Strategy Book has a model update rule: when an outside, verifiable change hits the moat of a company you own, update the model within 30 days. The point isn’t the spreadsheet. It’s to make you look at the inputs again, so you don’t start believing fair value is a fact.</p><div class=\"box\"><b class=\"t\">Keep this</b>Five years of owner earnings, a sensible exit multiple, and a 10% hurdle give you fair value. The implied return lets you compare everything you could own.</div>"
+  },
+  {
+   "title": "What multiple does a business deserve?",
+   "html": "<p>The exit multiple is the most sensitive input in any valuation. Pick 30 instead of 20 and fair value rises by half. So what multiple is fair? The Strategy Book answers with a grid: the justified P/E given ROIC and growth.</p><h5>How the grid is built</h5><p>Each cell assumes a company grows its earnings at the given rate for 15 years, reinvesting growth / ROIC of its earnings to do it, and pays out the rest. After 15 years growth stops. Everything is discounted at a cost of capital of 8%. The answer is the P/E that makes the price fair.</p><table><tr><th>Growth \\ ROIC</th><th>8%</th><th>12%</th><th>20%</th><th>40%</th></tr><tr><td>4%</td><td class=\"num\">12.5x</td><td class=\"num\">14.3x</td><td class=\"num\">15.7x</td><td class=\"num\">16.8x</td></tr><tr><td>10%</td><td class=\"num\">12.5x</td><td class=\"num\">19.1x</td><td class=\"num\">24.4x</td><td class=\"num\">28.3x</td></tr><tr><td>16%</td><td class=\"num\">12.5x</td><td class=\"num\">28.5x</td><td class=\"num\">41.3x</td><td class=\"num\">50.9x</td></tr><tr><td>20%</td><td class=\"num\">12.5x</td><td class=\"num\">39.3x</td><td class=\"num\">60.7x</td><td class=\"num\">76.8x</td></tr></table><h5>Three lessons in one table</h5><ol><li><strong>When ROIC equals the cost of capital, growth is worth nothing.</strong> Look at the 8% column: 12.5x in every row. A company that earns exactly what its capital costs creates no value by growing. It just gets bigger.</li><li><strong>When ROIC is below the cost of capital, growth destroys value.</strong> At 4% ROIC, more growth means a lower justified P/E. Past a point the number stops making sense, and the grid says NM.</li><li><strong>When ROIC is high, growth is worth a lot, and the multiple can be high.</strong> A business that earns 20% on capital and grows 16% a year for 15 years deserves over 40x earnings. Paying 30x for it isn’t expensive.</li></ol><h5>Why great companies look expensive</h5><p>High-ROIC companies often look expensive on today’s P/E, and that P/E compresses as earnings grow into it. A seemingly high multiple can be reasonable a few years later. The Strategy Book says it directly: the market systematically misprices durability, so a premium multiple isn’t necessarily expensive and should never on its own be a reason to sell.</p><h5>The other way round: reverse DCF</h5><p>The grid asks what a business is worth given your assumptions. The Reverse DCF tool asks the opposite: given today’s price, what growth is the market already assuming? Use both. If the price needs 18% growth for ten years and the company has never done more than 12%, you don’t need a precise model to know the price is optimistic.</p><div class=\"box\"><b class=\"t\">Keep this</b>A multiple is a bet on returns and growth together. High ROIC earns a high multiple. Growth at low returns earns nothing.</div>"
+  },
+  {
+   "title": "Buy at a discount, size with care",
+   "html": "<p>Fair value tells you what a business is worth. It doesn’t tell you what to pay. Every estimate in the last three lessons can be wrong, so I only buy with a margin of safety.</p><h5>The buy limit: 0.75 x fair value</h5><p>The Strategy Book says: buy only under 0.75 x fair value. With fair value set at a 10% hurdle, that works out to about 15–16% a year if your estimates are right. If they’re too optimistic, the discount absorbs some of the error and you still earn something reasonable.</p><ul><li><strong>Starter exception:</strong> a position under 4% may be opened up to 0.85 x fair value. Full weight still needs 0.75.</li><li><strong>Top-ups:</strong> at most two per position per year. That stops you averaging down every week in a falling market.</li></ul><h5>The trim rule, and why it’s strict</h5><p>Trim a position to 10% only when it is <em>both</em> over 10% of the portfolio <em>and</em> over 1.1 x fair value. One of them isn’t enough. A great business that has grown to 15% of the portfolio at fair value stays. An expensive position at 6% stays. Trimming is the only valuation-driven sale the rules allow, and it trims, it doesn’t sell out.</p><p>Why so strict? Because selling winners early was my most expensive habit. Alphabet, Moody’s and Medistim were all sold because they had risen, not because anything was wrong. Winners tend to keep winning. Water the flowers, not the weeds.</p><h5>How big? Steinhardt’s grid</h5><p>Size depends on two questions. <strong>Do I have a differentiated view?</strong> Am I seeing something the market isn’t? And <strong>what is the consequence if I’m wrong?</strong> That’s what happens to your wealth if the thesis fails, not how far the price can fall.</p><table><tr><th></th><th>No edge</th><th>Edge</th></tr><tr><td>Low consequence</td><td>No position. Buy the fund instead.</td><td><strong>Full weight, 8–10%</strong>. Copart, HEICO, Amphenol.</td></tr><tr><td>High consequence</td><td>Never.</td><td><strong>Half weight, 4–5%</strong>. Binary or hard to see.</td></tr></table><h5>The portfolio rules</h5><table><tr><th>Rule</th><th>Limit</th></tr><tr><td>Number of companies</td><td>10–20, a fund counts as one</td></tr><tr><td>Smallest position</td><td>4%</td></tr><tr><td>Largest position when you buy</td><td>10%</td></tr><tr><td>Hard cap</td><td>20%, whatever the valuation</td></tr><tr><td>Per thesis</td><td>25%. Positions that fail on the same input count as one.</td></tr><tr><td>Per category</td><td>35%</td></tr><tr><td>Top-ups</td><td>2 per position per year</td></tr></table><p>The thesis rule deserves a second look. A thesis is a set of positions that fail on the same input. The test: can you name that shared input in one sentence? “AI won’t erode the moats of vertical software” is one input, even if it covers five companies. I learned this the hard way. By 2026 one family of related companies made up 86% of my portfolio.</p><div class=\"box\"><b class=\"t\">Keep this</b>Buy under 0.75 x fair value, trim only when a position is over 10% and over 1.1 x fair value, and let the edge and the consequence decide the size.</div>"
+  }
+ ],
+ "exercises": [
+  {
+   "id": "m3-pe",
+   "sim": "pe",
+   "title": "The justified P/E grid",
+   "intro": "Move growth and ROIC and see the P/E a business deserves. With an 8% cost of capital and 15 years of growth, the grid matches the Strategy Book.",
+   "task": {
+    "q": "Set ROIC to 8% and try different growth rates. What happens to the justified P/E?",
+    "options": [
+     "It rises with growth",
+     "It falls with growth",
+     "It stays at 12.5x whatever the growth",
+     "It becomes NM"
+    ],
+    "answer": 2,
+    "why": "When ROIC equals the cost of capital, growth adds nothing. The business just gets bigger."
+   }
+  },
+  {
+   "id": "m3-fv",
+   "sim": "fv",
+   "title": "Fair value, implied return and entry prices",
+   "intro": "The defaults: owner earnings of 10 per share, growing 10% a year for five years, an exit multiple of 20, a 10% hurdle and a share price of 150.",
+   "task": {
+    "q": "With the defaults, what does the price of 150 imply, and what do the rules allow?",
+    "options": [
+     "About 10% a year; hold",
+     "About 16.5% a year, price is 0.75 x fair value; a full position is allowed",
+     "About 16.5% a year, but buying isn’t allowed",
+     "About 25% a year; trim"
+    ],
+    "answer": 1,
+    "why": "Fair value is 200, so 150 is exactly 0.75 x fair value. That gives about 16.5% a year, and a full position is allowed."
+   }
+  },
+  {
+   "id": "m3-sizing",
+   "sim": "sizing",
+   "title": "Steinhardt’s grid",
+   "intro": "Two questions decide the size of a position. Try every combination.",
+   "task": {
+    "q": "You have a differentiated view, but the outcome depends on one big event you can’t predict. What size fits?",
+    "options": [
+     "Full weight, 8–10%",
+     "Half weight, 4–5%",
+     "No position",
+     "Never"
+    ],
+    "answer": 1,
+    "why": "Edge plus high consequence is half weight. The edge earns a place; the consequence limits the size."
+   }
+  }
+ ],
+ "assignment": {
+  "title": "Value a real company",
+  "intro": "Use the same company as before. Use the exercises, the Reverse DCF tool and the company’s reports. Show your numbers, not just the answer.",
+  "company": "Company",
+  "fields": [
+   {
+    "q": "Owner earnings per share today, and the adjustments you made.",
+    "hint": "Start from operating cash flow. Maintenance capex, stock-based compensation, one-offs."
+   },
+   {
+    "q": "Growth per year for the next five years, and where it comes from.",
+    "hint": "Compare with ten years of history. Be stingier than management."
+   },
+   {
+    "q": "Exit multiple in year five, and why. Where does it sit in the justified P/E grid?",
+    "hint": "Use the company’s ROIC and the growth you expect after year five."
+   },
+   {
+    "q": "Fair value at a 10% hurdle, the implied return at today’s price, and the buy limit at 0.75 x fair value.",
+    "hint": "Add a low and a high case if you can."
+   },
+   {
+    "q": "What does the Reverse DCF say the price assumes? Do you believe it?",
+    "hint": "Compare the implied growth with what the company has actually done."
+   },
+   {
+    "q": "Position size by Steinhardt’s grid, and how it fits the thesis and category caps.",
+    "hint": "Edge? Consequence? Which other holdings fail on the same input?"
+   }
+  ]
+ },
+ "tools": [
+  {
+   "href": "/reverse-dcf",
+   "label": "Reverse DCF",
+   "why": "what growth today’s price already assumes"
+  },
+  {
+   "href": "/moat",
+   "label": "Moat test",
+   "why": "ROIC history to anchor the exit multiple"
+  },
+  {
+   "href": "/compounding",
+   "label": "Compounding",
+   "why": "what a steady return adds up to"
+  }
+ ],
+ "reading": [
+  {
+   "href": "https://torghattencapital.substack.com/p/prepare-while-you-still-can",
+   "label": "Prepare while you still can",
+   "why": "low, base and high values, and returns at several prices"
+  },
+  {
+   "href": "https://torghattencapital.substack.com/p/podcast-transcript-arne-ulland-on",
+   "label": "Podcast transcript: Arne Ulland on investing",
+   "why": "the Lifco sale and ranking by expected return"
+  },
+  {
+   "href": "https://torghattencapital.substack.com/p/podcast-transcript-long-term-investing",
+   "label": "Podcast transcript: long-term investing",
+   "why": "why multiples fall over time for high-ROIC companies"
+  }
+ ],
+ "test": [
+  {
+   "q": "What are owner earnings?",
+   "options": [
+    "Reported earnings per share",
+    "The cash the owner could take out each year without hurting the business",
+    "Revenue minus all costs",
+    "Dividends paid"
+   ],
+   "answer": 1,
+   "why": "Buffett’s definition, and the base for every valuation in Torghatten Capital."
+  },
+  {
+   "q": "Why is stock-based compensation subtracted from owner earnings?",
+   "options": [
+    "It’s a cash cost",
+    "It dilutes owners even though no cash leaves the company",
+    "Tax rules require it",
+    "It isn’t subtracted"
+   ],
+   "answer": 1,
+   "why": "It’s a real cost paid with your ownership instead of cash."
+  },
+  {
+   "q": "What hurdle does fair value use?",
+   "options": [
+    "5%",
+    "8%",
+    "10%",
+    "20%"
+   ],
+   "answer": 2,
+   "why": "Fair value is the price at which you’d earn 10% a year if the estimates are right."
+  },
+  {
+   "q": "Owner earnings are 10 today and grow 10% a year. The exit multiple is 20. What is the value in year five, roughly?",
+   "options": [
+    "200",
+    "322",
+    "161",
+    "500"
+   ],
+   "answer": 1,
+   "why": "10 x 1.1^5 = 16.1, and 16.1 x 20 = 322."
+  },
+  {
+   "q": "Why did I sell Lifco in 2024?",
+   "options": [
+    "The business got worse",
+    "The implied return fell to about 6% with a risk-free rate around 5%",
+    "The CEO left",
+    "It fell 30%"
+   ],
+   "answer": 1,
+   "why": "It became a worse price, not a worse company."
+  },
+  {
+   "q": "In the justified P/E grid, what happens to growth when ROIC equals the cost of capital?",
+   "options": [
+    "It’s worth a lot",
+    "It’s worth nothing: P/E is 12.5x in every row",
+    "It’s worth more than at high ROIC",
+    "The grid can’t say"
+   ],
+   "answer": 1,
+   "why": "Earning exactly the cost of capital creates no value, however fast you grow."
+  },
+  {
+   "q": "What does the buy limit of 0.75 x fair value correspond to?",
+   "options": [
+    "About 10% a year",
+    "About 15–16% a year",
+    "About 25% a year",
+    "Exactly the index return"
+   ],
+   "answer": 1,
+   "why": "With fair value at a 10% hurdle, 0.75 x fair value gives about 15–16% if the estimates hold."
+  },
+  {
+   "q": "A position is 12% of the portfolio and trades at 1.0 x fair value. What do the rules say?",
+   "options": [
+    "Trim to 10%",
+    "Sell all",
+    "Hold: trimming needs over 10% AND over 1.1 x fair value",
+    "Buy more"
+   ],
+   "answer": 2,
+   "why": "Both conditions must be true."
+  },
+  {
+   "q": "In Steinhardt’s grid, what does “consequence” mean?",
+   "options": [
+    "How far the price can fall",
+    "What happens to your wealth if the thesis is wrong",
+    "How volatile the stock is",
+    "How many people own it"
+   ],
+   "answer": 1,
+   "why": "It’s about the thesis failing, not the price moving."
+  },
+  {
+   "q": "What counts as one thesis in the Strategy Book?",
+   "options": [
+    "One company",
+    "One sector",
+    "A set of positions that fail on the same input",
+    "One country"
+   ],
+   "answer": 2,
+   "why": "If you can name the shared input in one sentence, it’s one thesis, capped at 25%."
+  }
+ ]
+}

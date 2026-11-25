@@ -1,0 +1,240 @@
+{
+ "slug": "falling-markets",
+ "title": "Falling markets",
+ "heading": "When everything <em>turns red.</em>",
+ "summary": "The three kinds of decline, how to prepare before they come, and the crash protocol I follow.",
+ "minutes": 70,
+ "objectives": [
+  "Explain why a fall needs a bigger rise to recover, and what that means for selling",
+  "Tell a market, sector and company fall apart, and a falling share from a failing business",
+  "Prepare values, entry prices and priorities before a fall",
+  "Follow a written crash protocol before, during and after"
+ ],
+ "lessons": [
+  {
+   "title": "Volatility is the price of admission",
+   "html": "<p>On 8 March 2020, with markets falling fast on the first covid news, I wrote an investment memo. Its main message was simple: tune out the macro noise and stay invested. Looking back, the memo was right. What I learned since is how hard it is to follow your own memo when the screen is red for weeks.</p><h5>A feature, not a bug</h5><p>Falls are not a malfunction of the stock market. They’re the reason it pays more than a bank account. If shares only went up, everyone would own them, and the extra return would disappear. Volatility is the fee you pay for a higher long-term return. You can’t have one without the other.</p><p>Even the best companies fall hard. Amazon fell more than 90% after 2000 on its way to becoming one of the best investments ever made. Use the Would you have held? tool to see the falls in any stock you own. Almost every great long-term chart has at least one fall that felt like the end.</p><h5>The asymmetry of losses</h5><table><tr><th>Fall</th><th>Gain needed to recover</th></tr><tr><td>10%</td><td class=\"num\">11%</td></tr><tr><td>20%</td><td class=\"num\">25%</td></tr><tr><td>33%</td><td class=\"num\">50%</td></tr><tr><td>50%</td><td class=\"num\">100%</td></tr><tr><td>75%</td><td class=\"num\">300%</td></tr></table><p>This table is why some investors sell in a fall: they want to stop the loss before it gets worse. But read it again. The asymmetry is an argument for <strong>avoiding permanent losses</strong>, not for selling temporary ones. If the business is intact, the recovery comes with it. If you sell at the bottom, you lock in the fall and miss the recovery. Panic turns a temporary loss into a permanent one.</p><h5>What the memo got right</h5><ul><li><strong>Nobody knows.</strong> Research on past pandemics showed no fixed pattern for how markets react. The unknowns outweighed the knowns. Wise investors admit that, and don’t tell others what to do.</li><li><strong>Prices weren’t even cheap yet.</strong> Most of the high-quality companies I followed traded at 0.95 to 1.10 x fair value. Scary news isn’t the same as a bargain.</li><li><strong>Buy at the normal pace, in pieces.</strong> I kept buying as usual, adding gradually as prices fell. No heroics.</li></ul><p>A few weeks later prices did get cheap. I saw good companies at 8 to 10 times earnings, against a usual 20. Some I bought at less than half of book value. That was possible because I had kept cash flowing in and had a list ready, not because I was brave.</p><div class=\"box\"><b class=\"t\">Keep this</b>Falls are the fee for the return. The real risk is turning a temporary fall into a permanent loss by selling an intact business.</div>"
+  },
+  {
+   "title": "Three kinds of decline",
+   "html": "<p>When a holding falls, the first question isn’t what to do. It’s what kind of fall this is. I separate three kinds:</p><table><tr><th>Kind</th><th>What falls</th><th>Example</th></tr><tr><td>Market</td><td>Almost everything, at the same time</td><td>March 2020</td></tr><tr><td>Sector</td><td>A group of companies sharing one story</td><td>Software on AI fears, early 2026</td></tr><tr><td>Company</td><td>One company, while peers hold up</td><td>Novo Nordisk, 2025</td></tr></table><h5>Market falls</h5><p>In a market fall, good and bad companies fall together because people need cash or want to reduce risk. Your company’s business usually hasn’t changed at all. These falls are the easiest to act well in, and the hardest to sit through emotionally. They’re also where your preparation pays off most.</p><h5>Sector falls</h5><p>A sector fall starts with a story about a whole group. In early 2026 software stocks sold off on the idea that AI would let anyone build cheap replacements. The story has something to it, so you can’t dismiss it. But a story about a sector isn’t evidence about your company. In vertical software, being reliably right matters more than being cheap: would a municipality swap a system that never fails for one that’s 80% cheaper but fails 0.5% of the time? Questions like that sort the real threat from the narrative.</p><h5>Company falls</h5><p>A company-specific fall deserves the most attention, because the market is telling you something about this business in particular. Sometimes it’s overreacting to one bad quarter. Sometimes it has seen the thesis break before you have. Novo Nordisk fell because a competitor took share, prices fell and new data disappointed. That was not noise.</p><blockquote>It’s important to distinguish between a stock that falls and a business that fails.<cite>Arne Ulland, Dagens Næringsliv, 2026</cite></blockquote><h5>Value trap or opportunity?</h5><p>A share that falls because the business is deteriorating is a value trap: it looks cheaper every quarter because it keeps getting worse. A share that falls while the business holds up is an opportunity. The difference is in the company’s own numbers and filings, not in the chart. Ask:</p><ol><li>Did the market or the peers fall as much? Then it’s probably not about this company.</li><li>Has something changed in the business that I can verify?</li><li>Does that change break the thesis I wrote down before I bought?</li></ol><p>If you don’t know yet, that is an answer too: wait for the next report. Waiting a quarter before you act on a surprise is part of the process. And watch yourself while you wait. When a thesis is under pressure, anchoring to your buy price and the sunk cost of all the work you’ve done can keep you in a position the facts have turned against.</p><div class=\"box\"><b class=\"t\">Keep this</b>Classify the fall first: market, sector or company. Then ask whether the business changed, and whether that change breaks your written thesis.</div>"
+  },
+  {
+   "title": "Prepare while you still can",
+   "html": "<p>In April 2020 a Norwegian newspaper asked me how I had avoided big losses in the covid crash. The honest answer was preparation. A 10–30% fall in a few weeks is almost impossible to plan for in real time. You have to plan for it before.</p><blockquote>Prior preparation prevents poor performance.<cite>James Baker, quoted in “Prepare while you still can”</cite></blockquote><h5>1. Check the quality of what you own</h5><p>Before a crash, ask three questions about every holding. Is it consistently profitable? Are its margins high enough to absorb a bad year without drastic cuts? Is debt low? When credit tightens, leverage is what forces good companies into bad decisions.</p><h5>2. Value everything, including the watchlist</h5><p>For every company you own <em>and</em> every company you want to own, write down a low, base and high value. Then calculate the price that gives 8%, 12%, 15% and 20% a year. When prices fall, you don’t need to think about what something is worth. You look at your table and see which companies have crossed which line.</p><h5>3. Rank your priorities</h5><p>Cash is limited in a crash. Decide in advance where it goes first:</p><ul><li><strong>Priority 1:</strong> high conviction, strong fundamentals and moat, or a large discount to fair value.</li><li><strong>Priority 2:</strong> solid companies with a smaller discount or lower conviction.</li><li><strong>Priority 3:</strong> more speculative ideas that only make sense at very low prices.</li></ul><h5>4. Keep the watchlist honest</h5><p>In the 2025 sell-off I started making lists of what I wanted to own, and at what price, in the middle of the chaos. The strange part: I had written a blog post about exactly this a few weeks earlier, and hadn’t done it myself. The rule I made afterwards: only buy companies that have been on the watchlist for at least three months, and note the date each one was added. A company you met during a crash is a company you don’t know.</p><h5>5. Keep some room</h5><p>I stay close to fully invested, but the Strategy Book allows 0–15% in cash when nothing is interesting, and a steady flow of new savings is cash in itself. Become more defensive as prices and optimism rise, and more offensive as they fall. That’s not market timing. It’s letting your entry prices decide.</p><div class=\"box\"><b class=\"t\">Keep this</b>Do the thinking before the fall: quality check, values and entry prices for everything, a priority list, and a watchlist older than three months.</div>"
+  },
+  {
+   "title": "The crash protocol",
+   "html": "<p>Preparation tells you what to buy. The protocol tells you how to behave. It’s written for the version of you that has just watched the portfolio fall 20% in a week.</p><h5>The first hour</h5><ol><li><strong>Deactivate X.</strong> Not mute, deactivate. In March and April 2025 I made 34 trades, most of them after reading what others were doing. Social media in a crash has the opposite effect of what you want.</li><li><strong>No decisions tonight.</strong> Not late, not tired, not after a drink. You’ll meet this rule, the Italy trap, in module 5.</li><li><strong>Open your table, not the news.</strong> Look at your values, entry prices and priority list.</li></ol><h5>The first weeks</h5><ul><li><strong>Classify every big fall</strong> as market, sector or company, using the questions from lesson 2.</li><li><strong>Buy at your normal pace, in pieces.</strong> Only below your limits: a starter under 4% up to 0.85 x fair value, full weight under 0.75. At most two top-ups per position per year.</li><li><strong>Sell only by the sell rules.</strong> The thesis is broken by an outside, verifiable change. Not because the price fell.</li><li><strong>Two days between decision and order.</strong> Write the decision in the trade log with a reason, then wait.</li><li><strong>Read reports, not opinions.</strong> When a company reports, read the report. Wait a quarter before you act on a surprise unless the thesis is clearly broken.</li></ul><h5>After</h5><ul><li>Count your trades and compare them with your budget.</li><li>Check every trade against the rules. Which ones broke them, and why did you let it happen?</li><li>Update the models where something really changed, within 30 days.</li><li>Write what you’ll do differently in the next crash, while you still remember how it felt.</li></ul><h5>Accept bad numbers for a while</h5><p>After the 2026 sell-off I wrote that I was ready to accept poor quarterly and even yearly results while the market was uncertain, and to wait for the fundamentals to confirm or reject the story. That’s the hardest part of the protocol: doing little while it hurts, because doing a lot usually hurts more.</p><p>Munger called it assiduity: waiting patiently, sometimes for years, for a great opportunity, and then acting decisively. The crash is when the waiting pays. But only if you’re still there, with cash, a list and a clear head.</p><div class=\"box\"><b class=\"t\">Keep this</b>Deactivate X, open your table, classify the fall, buy in pieces below your limits, sell only by the rules, and wait two days before every order.</div>"
+  }
+ ],
+ "exercises": [
+  {
+   "id": "m4-decline",
+   "sim": "decline",
+   "title": "Classify the fall",
+   "intro": "Answer the four questions for a fall you have lived through, or for the case in the task.",
+   "task": {
+    "q": "A stock falls 35%. The index fell 30% in the same weeks, and peers fell about as much. Nothing has changed in the company’s numbers. What kind of fall is it, and what do you do?",
+    "options": [
+     "A company fall: sell before it falls more",
+     "A market fall: the price fell, not the business. Follow the crash protocol and buy only below your limits",
+     "A sector fall: switch to another sector",
+     "A broken thesis: sell after two days"
+    ],
+    "answer": 1,
+    "why": "When the market and peers fall as much and the business is unchanged, it’s a price event."
+   }
+  },
+  {
+   "id": "m4-rules",
+   "sim": "rules",
+   "title": "May I buy? Must I trim?",
+   "intro": "Enter a price, your fair value, and where the position stands today. The tool applies the buy, top-up, cap and trim rules from the Strategy Book.",
+   "task": {
+    "q": "Price 80, fair value 100, the position is 3% of the portfolio, no top-ups yet this year. What may you do?",
+    "options": [
+     "Buy a full position",
+     "Add as a starter, keeping it under 4%",
+     "Nothing: 0.8 x fair value is too expensive",
+     "Trim"
+    ],
+    "answer": 1,
+    "why": "0.80 is between 0.75 and 0.85 x fair value. A starter under 4% is allowed, full weight waits for 0.75."
+   }
+  }
+ ],
+ "assignment": {
+  "title": "Your crash plan",
+  "intro": "Write the plan you’ll follow in the next crash, for the company you’ve been working on and for your portfolio as a whole.",
+  "company": "Company",
+  "fields": [
+   {
+    "q": "Low, base and high value for the company, and the prices that give 12%, 15% and 20% a year.",
+    "hint": "Use the fair value exercise from module 3."
+   },
+   {
+    "q": "Which priority tier is it in, 1, 2 or 3, and why?",
+    "hint": "Conviction, fundamentals, moat, discount."
+   },
+   {
+    "q": "What kind of fall would break the thesis? Describe the outside change, not the price.",
+    "hint": "Think of the binding force from module 2."
+   },
+   {
+    "q": "Your first hour: which apps do you deactivate, and where is your table?",
+    "hint": "Be specific. Name the apps."
+   },
+   {
+    "q": "Which three companies on your watchlist would you buy first, and at what prices? How long have they been on the list?",
+    "hint": "Fewer than three months on the list means you wait."
+   }
+  ]
+ },
+ "tools": [
+  {
+   "href": "/held",
+   "label": "Would you have held?",
+   "why": "every big fall in any stock, and what selling at the wrong time cost"
+  },
+  {
+   "href": "/reverse-dcf",
+   "label": "Reverse DCF",
+   "why": "check what the new, lower price assumes"
+  }
+ ],
+ "reading": [
+  {
+   "href": "https://torghattencapital.substack.com/p/investment-memo-march-2020-its-better-to-keep-your-mouth-closed-and-appear-stupid-than-open-it-and-remove-all-doubt",
+   "label": "Investment memo, March 2020",
+   "why": "written as the covid crash began"
+  },
+  {
+   "href": "https://torghattencapital.substack.com/p/prepare-while-you-still-can",
+   "label": "Prepare while you still can",
+   "why": "the preparation steps in full"
+  },
+  {
+   "href": "https://torghattencapital.substack.com/p/some-thoughts-about-csu-and-nvo-after",
+   "label": "Some thoughts about CSU and NVO",
+   "why": "a sector fall and a company fall, in real time"
+  },
+  {
+   "href": "https://torghattencapital.substack.com/p/interviews-with-me",
+   "label": "Interviews with me",
+   "why": "the StockUp episode on the three kinds of decline"
+  }
+ ],
+ "test": [
+  {
+   "q": "Why are falls called “a feature, not a bug”?",
+   "options": [
+    "Because they never last",
+    "Because volatility is the fee for a higher long-term return",
+    "Because they only happen in bad companies",
+    "Because you can predict them"
+   ],
+   "answer": 1,
+   "why": "If shares only went up, the extra return would disappear."
+  },
+  {
+   "q": "A stock falls 50%. What gain does it need to get back?",
+   "options": [
+    "50%",
+    "75%",
+    "100%",
+    "200%"
+   ],
+   "answer": 2,
+   "why": "From 50 back to 100 is a 100% gain."
+  },
+  {
+   "q": "What does the asymmetry of losses argue for?",
+   "options": [
+    "Selling every time a stock falls 10%",
+    "Avoiding permanent losses, not selling temporary ones",
+    "Using stop-losses",
+    "Holding only cash in bad years"
+   ],
+   "answer": 1,
+   "why": "If the business is intact, the recovery comes with it. Selling at the bottom makes the loss permanent."
+  },
+  {
+   "q": "In March 2020, how did most quality companies trade compared with fair value?",
+   "options": [
+    "0.5 to 0.6",
+    "About 0.95 to 1.10",
+    "Over 1.5",
+    "Nobody knew"
+   ],
+   "answer": 1,
+   "why": "Scary news isn’t the same as a bargain. Cheap prices came weeks later."
+  },
+  {
+   "q": "Which kind of fall deserves the most attention to the business itself?",
+   "options": [
+    "Market fall",
+    "Sector fall",
+    "Company fall",
+    "All the same"
+   ],
+   "answer": 2,
+   "why": "When only your company falls, the market may be telling you something about this business."
+  },
+  {
+   "q": "What separates a value trap from an opportunity?",
+   "options": [
+    "How far the price has fallen",
+    "Whether the business itself is deteriorating, judged from its own numbers",
+    "The P/E ratio",
+    "What analysts say"
+   ],
+   "answer": 1,
+   "why": "A trap keeps getting cheaper because it keeps getting worse."
+  },
+  {
+   "q": "When should you write down values and entry prices for watchlist companies?",
+   "options": [
+    "During the crash",
+    "Before the crash",
+    "After the crash",
+    "Only for companies you own"
+   ],
+   "answer": 1,
+   "why": "In a crash you look up your table; you don’t build it."
+  },
+  {
+   "q": "How long must a company be on the watchlist before you buy?",
+   "options": [
+    "One week",
+    "One month",
+    "Three months",
+    "One year"
+   ],
+   "answer": 2,
+   "why": "A company you met during a crash is a company you don’t know."
+  },
+  {
+   "q": "What is the first step of the crash protocol?",
+   "options": [
+    "Sell the weakest holding",
+    "Deactivate X",
+    "Buy the biggest faller",
+    "Move to cash"
+   ],
+   "answer": 1,
+   "why": "In March and April 2025 I made 34 trades, most after reading X."
+  },
+  {
+   "q": "How should you buy during a crash?",
+   "options": [
+    "All at once at the first big fall",
+    "At your normal pace, in pieces, only below your limits",
+    "Only after the market has recovered",
+    "With borrowed money, since prices are low"
+   ],
+   "answer": 1,
+   "why": "No heroics. Limits and a pace decided in advance."
+  }
+ ]
+}
