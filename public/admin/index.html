@@ -72,7 +72,7 @@ table.mem td.n{white-space:normal}
         <button class="btn ghost" type="button" id="copyHtml">Copy formatted email</button>
         <button class="btn ghost" type="button" id="copyCode">Copy code</button>
       </div>
-      <p class="muted" style="margin-top:10px">Send from Gmail opens a ready email in torghattencapital@gmail.com. The sign-in link becomes clickable when it’s sent, and it fills in the email and code for the member. Copy formatted email gives you the same email with a proper link, to paste into any mail program.</p>
+      <p class="muted" style="margin-top:10px"><b>Send from Gmail</b> copies the email above, with the sign-in button, and opens Gmail in torghattencapital@gmail.com with the recipient and subject filled in. Click in the message, press Ctrl+V (Cmd+V on Mac), and Send. The button fills in the member’s email and code when they click it.</p>
     </div>
   </div>
 
@@ -216,8 +216,7 @@ Here is your personal access code for Members’ Corner:
 
 ${m.code}
 
-Click this link to sign in. Your email and code are filled in, so you only need to click "Sign in":
-${link}
+Sign in here (your email and code are filled in): ${link}
 
 Your browser will remember you after that. The code is personal and valid until ${dateFmt(m.validThrough)}, so please don’t share it.
 
@@ -233,17 +232,33 @@ Torghatten Capital`;
   const html = `<p>${esc(hi)}</p><p>Thank you for pledging to Torghatten Capital. I really appreciate the support.</p>
 <p>Here is your personal access code for Members’ Corner:</p><p style="font-family:monospace;font-size:18px;font-weight:bold;letter-spacing:1px">${esc(m.code)}</p>
 <p><a href="${esc(link)}" style="display:inline-block;padding:10px 18px;background:#0A1630;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold">Sign in to Members’ Corner</a></p>
-<p>The link fills in your email and code, so you only need to click “Sign in”. Your browser will remember you after that. The code is personal and valid until ${dateFmt(m.validThrough)}, so please don’t share it.</p>
+<p>The button fills in your email and code, so you only need to click “Sign in”. If it doesn’t work, go to <a href="${esc(location.origin)}/join">${esc(location.host)}/join</a> and enter your email and the code above. Your browser will remember you after that. The code is personal and valid until ${dateFmt(m.validThrough)}, so please don’t share it.</p>
 <p>In Members’ Corner you’ll find the tools I use myself: reverse DCF, attention score, compounding, diversification, “Would you have held?” and the moat test. The Torghatten Academy is under construction, and members will get it first.</p>
 <p>The tools are calculators, not investment advice, and the data can be late or wrong, so check the numbers against the company’s own reports.</p>
 <p>If something doesn’t work, or you have ideas for new tools, just reply to this email.</p>
 <p>Best regards,<br>Arne Ulland<br>Torghatten Capital</p>`;
   return { subject, text, html };
 }
+// Gmail's compose link only takes plain text, so the formatted email (with a real button)
+// goes on the clipboard and Gmail opens with the recipient and subject filled in. Paste, then Send.
+async function copyFormatted(m) {
+  const e = mail(m);
+  try { await navigator.clipboard.write([new ClipboardItem({ "text/html": new Blob([e.html], { type: "text/html" }), "text/plain": new Blob([e.text], { type: "text/plain" }) })]); return true; }
+  catch { try { await navigator.clipboard.writeText(e.text); } catch {} return false; }
+}
 function openGmail(m) {
   const e = mail(m);
-  const u = "https://mail.google.com/mail/?authuser=" + encodeURIComponent(FROM) + "&view=cm&fs=1&to=" + encodeURIComponent(m.email) + "&su=" + encodeURIComponent(e.subject) + "&body=" + encodeURIComponent(e.text);
-  window.open(u, "_blank", "noopener");
+  // Copy first, while this page still has focus; then open Gmail (still within the click, so it isn't blocked).
+  copyFormatted(m).then(() => {
+    const u = "https://mail.google.com/mail/?authuser=" + encodeURIComponent(FROM) + "&view=cm&fs=1&to=" + encodeURIComponent(m.email) + "&su=" + encodeURIComponent(e.subject);
+    window.open(u, "_blank");
+    toast("The email is copied. In Gmail, click in the message and press " + (navigator.platform.includes("Mac") ? "Cmd" : "Ctrl") + "+V, then Send.");
+  });
+}
+function toast(t) {
+  let d = document.getElementById("toast");
+  if (!d) { d = document.createElement("div"); d.id = "toast"; d.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;max-width:560px;padding:12px 18px;border-radius:12px;background:#8EE3A6;color:#06120B;font-weight:600;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.4)"; document.body.append(d); }
+  d.textContent = t; d.hidden = false; clearTimeout(d._t); d._t = setTimeout(() => (d.hidden = true), 7000);
 }
 let current = null;
 function show(m) {
@@ -270,9 +285,7 @@ $("f").addEventListener("submit", async (e) => {
 });
 $("gmail").onclick = async () => { if (!current) return; openGmail(current); await upsert({ email: current.email, sentAt: today() }); };
 $("copyHtml").onclick = async () => {
-  if (!current) return; const e = mail(current);
-  try { await navigator.clipboard.write([new ClipboardItem({ "text/html": new Blob([e.html], { type: "text/html" }), "text/plain": new Blob([e.text], { type: "text/plain" }) })]); }
-  catch { await navigator.clipboard.writeText(e.text); }
+  if (!current) return; await copyFormatted(current);
   const b = $("copyHtml"), o = b.textContent; b.textContent = "Copied. Paste it into the email."; setTimeout(() => (b.textContent = o), 1800);
 };
 $("copyCode").onclick = async () => { await navigator.clipboard.writeText($("code").textContent); const b = $("copyCode"), o = b.textContent; b.textContent = "Copied"; setTimeout(() => (b.textContent = o), 1400); };
