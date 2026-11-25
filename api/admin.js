@@ -1,8 +1,11 @@
 // Issues access codes. Protected by ADMIN_KEY. Used by /admin.
+import { membersHandler } from "../lib/members.js";
 import { personalCode, monthlyCode, normEmail, yymmOf, addMonths, readSession, cookieValue, isAdminSession } from "../lib/access.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
+  const op = req.query?.op ?? new URL(req.url || "/", "http://x").searchParams.get("op");
+  if (op === "members") return membersHandler(req, res);
   if (req.method !== "POST") return res.status(405).json({ error: "method" });
   let body = req.body;
   if (typeof body === "string") { try { body = JSON.parse(body); } catch { body = {}; } }

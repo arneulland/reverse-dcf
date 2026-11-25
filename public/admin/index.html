@@ -119,7 +119,7 @@ function local() { try { return JSON.parse(localStorage.getItem(LS)) || []; } ca
 function setLocal(l) { try { localStorage.setItem(LS, JSON.stringify(l)); } catch {} }
 async function load() {
   try {
-    const r = await fetch("/api/members"); const b = await r.json();
+    const r = await fetch("/api/admin?op=members"); const b = await r.json();
     storage = !!b.storage;
     members = storage ? b.members : local();
   } catch { members = local(); }
@@ -129,7 +129,7 @@ async function upsert(m) {
   const i = members.findIndex((x) => x.email === m.email);
   if (i >= 0) members[i] = { ...members[i], ...m }; else members.push(m);
   if (storage) {
-    const r = await fetch("/api/members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ member: members.find((x) => x.email === m.email) }) });
+    const r = await fetch("/api/admin?op=members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ member: members.find((x) => x.email === m.email) }) });
     if (!r.ok) alert("Couldn't save to the database. Try again.");
   } else setLocal(members);
   draw();
@@ -137,7 +137,7 @@ async function upsert(m) {
 async function remove(email) {
   if (!confirm("Remove " + email + " from the overview? Their code keeps working until it expires.")) return;
   members = members.filter((x) => x.email !== email);
-  if (storage) await fetch("/api/members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "delete", email }) });
+  if (storage) await fetch("/api/admin?op=members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "delete", email }) });
   else setLocal(members);
   draw();
 }
@@ -147,7 +147,7 @@ function banner() {
     b.hidden = false;
     b.innerHTML = `<b>${loc.length} members are saved in this browser only.</b> Move them to the database so you see them on every device. <button class="sm" id="move">Move them</button>`;
     $("move").onclick = async () => {
-      const r = await fetch("/api/members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ members: loc }) });
+      const r = await fetch("/api/admin?op=members", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ members: loc }) });
       const j = await r.json(); if (r.ok) { localStorage.removeItem(LS); members = j.members; banner(); draw(); }
     };
   } else if (!storage) {
